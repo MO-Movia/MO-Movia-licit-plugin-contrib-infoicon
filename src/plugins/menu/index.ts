@@ -80,7 +80,7 @@ export default () =>
                         run: toggleMark(marks.strong),
                     }),
                     new MenuItem({
-                        title: 'Toggle Emphasis',
+                        title: 'Toggle Italics',
                         icon: icons.em,
                         enable: () => true,
                         active: markActive(marks.em),

@@ -86,15 +86,18 @@
     "write-file-webpack-plugin": "^4.5.1"
   },
   "scripts": {
-    "test": "jest --coverage",
     "clean": "rm -rf dist/ && rm -f modusoperandi-licit-info-icon-*.*.*.tgz",
     "webpack": "webpack",
     "build:ts": "tsc -p tsconfig.json",
     "build:babel": "babel src --out-dir dist --extensions .ts,.tsx",
     "build:css": "mkdirp ./dist/ui && cp src/ui/*.css dist/ui",
     "build:dist": "npm run clean && npm run build:ts && npm run webpack && npm run build:babel && npm run build:css",
+    "lint": "npm run lint:css & npm run lint:ts",
     "lint:ts": "eslint src --ext .ts,.tsx --fix",
     "lint:css": "stylelint \"**/*.css\"",
+    "test:unit": "jest",
+    "test:coverage": "jest --coverage",
+    "test": "jest --passWithNoTests",
     "prepare": "npm run build:dist",
     "publish:dist": "npm publish"
   },
