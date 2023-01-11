@@ -1,0 +1,235 @@
+
+/* CAPCO marking mode set to manual
+ Right click on canvas
+ Open context menu on right click
+ Select new Capco Marking option
+ Open ngb-modal-window for create classification marking
+ Modal header save andf cancel button */
+.czi-editor-frameset .molcit-marker-btn {
+  float: right;
+  margin-right: 10px;
+  padding-top: 1px;
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+  width: 68px;
+  height: 33px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* CAPCO marking mode set to manual
+ Right click on canvas
+ Open context menu on right click
+ Select new Capco Marking option
+ Open ngb-modal-window for create classification marking
+ Contains classifications */
+.czi-editor-frameset .molcit-tab-item {
+  padding: 10px;
+  display: inline-grid;
+}
+
+/* CAPCO marking mode set to manual
+ Right click on canvas
+ Open context menu on right click
+ Select new Capco Marking option
+ Open ngb-modal-window for create classification marking
+ Input tag enter classification style */
+.czi-editor-frameset .molcit-marker-input-container {
+  background-color: #8e8e8e;
+}
+
+/* CAPCO marking mode set to manual
+ Right click on canvas
+ Open context menu on right click
+ Select new Capco Marking option
+ Open ngb-modal-window for create classification marking
+ Marker name style */
+.czi-editor-frameset .molcit-marker-name {
+  float: left;
+  width: 77%;
+  white-space: pre-wrap;
+}
+
+.czi-editor-frameset .molcit-ulmarker {
+  margin-bottom: 0;
+  padding-left: 10px;
+}
+
+.czi-editor-frameset .molcit-builder-list-unstyled {
+  list-style: none;
+  font-size: 12px;
+}
+
+.czi-editor-frameset .molcit-btn {
+  border-radius: 0 !important;
+}
+
+/* Single & Double Slash button style */
+.czi-editor-frameset .molcit-btn-sslash,
+.czi-editor-frameset .molcit-btn-dslash {
+  box-sizing: border-box;
+  height: calc(1.5em + 0.75rem + 1px);
+  padding-top: 0.375rem;
+  padding-bottom: 0.375rem;
+  padding-right: 0.75rem;
+  padding-left: 0.75rem;
+  line-height: 1.4;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border-color: #ced4da;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 0.25rem;
+}
+
+.czi-editor-frameset .molcit-builder-header-border h2 {
+  margin: 6px;
+}
+
+.czi-editor-frameset .molcit-btnslash {
+  width: 36px;
+  padding-bottom: 3px;
+  height: 27px;
+  font-weight: bold;
+  margin: 2px;
+}
+
+.czi-editor-frameset .molcit-compartment-height {
+  min-height: 180px;
+  overflow: auto;
+  max-height: 400px;
+  padding-left: 1px;
+  padding-right: 1px;
+  width: 365px;
+  margin: 1px;
+  color: black;
+}
+
+.czi-editor-frameset .molcit-capco-input {
+  width: 81%;
+  height: 15px;
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 2px;
+  margin-right: 2px;
+}
+
+.czi-editor-frameset .molcit-builder-card {
+  position: relative;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #fff;
+  background-clip: border-box;
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  border-radius: 0.25rem;
+}
+
+.czi-editor-frameset .molcit-marker-body {
+  min-height: 100px;
+  max-height: 195px;
+  overflow-y: auto;
+}
+
+.czi-editor-frameset .molcit-header {
+  background-color: lightslategray !important;
+}
+
+.czi-editor-frameset .molcit-builder-header-border {
+  border-bottom: 1px solid darkgray;
+  background-color: #565555;
+  display: grid;
+  grid-gap: 10px;
+  grid-template-columns: auto auto;
+  padding: 5px;
+  height: 33px;
+  color: white;
+}
+
+.czi-editor-frameset .molcit-builder-card-header {
+  padding: 0 !important;
+  margin-bottom: 0;
+  background-color: #eaeaea !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+}
+
+.czi-editor-frameset .molcit-builder-card-header h6 {
+  margin-left: 5px;
+  margin-top: 6px;
+}
+
+.czi-editor-frameset .molcit-builder-card-header h2 {
+  margin: 6px 4px;
+}
+
+.czi-editor-frameset .molcit-builder-body-grid {
+  display: grid;
+  grid-gap: 5px;
+  grid-template-columns: auto auto;
+  padding: 5px;
+  color: white;
+}
+
+.czi-editor-frameset .molcit-builder-card-body {
+  -ms-flex: 1 1 auto;
+  flex: 1 1 auto;
+  min-height: 1px;
+  width: 365px;
+}
+
+.czi-editor-frameset .molcit-builder-text-break {
+  cursor: default;
+  word-break: break-word !important;
+  word-wrap: break-word !important;
+  padding: 0.5rem !important;
+}
+
+.czi-editor-frameset .molcit-errorspan {
+  font-style: italic;
+  position: absolute;
+  z-index: 10;
+  width: 99.5%;
+  border-top: 1px solid lightgray;
+  color: rgb(255, 206, 191);
+}
+
+.czi-editor-frameset .molcit-default-marker-value {
+  width: 100%;
+  float: left;
+  font-family: 'calibri', serif;
+  font-size: 13px;
+}
+
+.czi-editor-frameset .molcit-capco-list {
+  height: 143px;
+  padding-left: 1px;
+  padding-right: 1px;
+  min-width: 320px;
+  margin: 1px;
+}
+
+.czi-editor-frameset .molcit-customcapco-body {
+  height: 143px;
+  overflow: auto;
+}
+
+.czi-editor-frameset #builderBody {
+  min-height: 300px;
+}
+
+.czi-editor-frameset #DisseminationMarkingsCompartment {
+  height: 205px;
+}

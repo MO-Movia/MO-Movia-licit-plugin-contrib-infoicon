@@ -1,0 +1,72 @@
+import { Node, Schema } from 'prosemirror-model';
+import { Plugin, PluginKey } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
+import {
+  makeKeyMapWithCommon,
+  createKeyMapPlugin,
+} from '@modusoperandi/licit-doc-attrs-step';
+import InfoIconNodeSpec from './infoIconNodeSpec';
+import InfoIconView from './infoIconView';
+import { InfoIconCommand } from './infoIconCommand';
+
+export const INFO_ICON = 'infoicon';
+export const KEY_INFO_ICON = makeKeyMapWithCommon(
+  'infoIcon',
+  'Mod-Alt' + '-i'
+);
+const INFO_ICON_CMD = new InfoIconCommand();
+
+export class InfoIconPlugin extends Plugin {
+  constructor() {
+    super({
+      key: new PluginKey('InfoIconPlugin'),
+      props: {
+        nodeViews: {},
+      },
+      state: {
+        init(_config, _state) {
+          this.spec.props.nodeViews[INFO_ICON] = bindInfoIconView.bind(this);
+        },
+        apply(_tr, _prev, _, _newState) {
+          //do nothing
+        },
+      },
+    });
+  }
+
+  getEffectiveSchema(schema: Schema): Schema {
+    const nodes = schema.spec.nodes.addToEnd('infoicon', InfoIconNodeSpec);
+    const marks = schema.spec.marks;
+    schema = new Schema({ nodes, marks });
+    return schema;
+  }
+
+  initKeyCommands(): unknown {
+    return createKeyMapPlugin(
+      {
+        [KEY_INFO_ICON.common]: INFO_ICON_CMD.waitForUserInput,
+      },
+      'InfoIconKeyMap'
+    );
+  }
+
+  initButtonCommands(): unknown {
+    return {
+      '[info_outline] Add Info Icon': INFO_ICON_CMD,
+    };
+  }
+}
+
+export function bindInfoIconView(
+  node: Node,
+  view: EditorView,
+  curPos: boolean | (() => number)
+): InfoIconViewExt {
+  return new InfoIconViewExt(node, view, curPos);
+}
+
+class InfoIconViewExt extends InfoIconView {
+  constructor(node: Node, view: EditorView, getCurPos) {
+    super(node, view, getCurPos);
+  }
+}
