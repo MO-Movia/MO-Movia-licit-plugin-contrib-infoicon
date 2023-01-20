@@ -93,15 +93,7 @@ export default () =>
                         active: markActive(marks.link),
                         run: toggleMark(view.state.schema.marks.link, { href: marks.link })
                     }),
-                ],
-                [
-                    new MenuItem({
-                        title: 'Insert Paragraph',
-                        label: '¶',
-                        enable: canInsert(nodes.paragraph),
-                        run: insertBlock(nodes.paragraph),
-                    }),
-                ],
+                ]
             ];
 
             const { dom, update } = renderGrouped(view, content);

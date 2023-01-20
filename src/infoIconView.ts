@@ -1,10 +1,14 @@
 import { DOMSerializer, Node } from 'prosemirror-model';
+import { Transaction } from 'prosemirror-state';
+import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
-import type { PopUpHandle } from '@modusoperandi/licit-ui-commands';
+import { createPopUp, PopUpHandle, atAnchorTopCenter } from '@modusoperandi/licit-ui-commands';
+import InfoIconSubMenu from './InfoIconSubMenu';
 import {
   INFO_ICON,
 } from './constants';
 import './ui/infoicon-note.css';
+import InfoIconDialog from './infoIconDialog';
 
 type CBFn = () => void;
 
@@ -81,6 +85,21 @@ class InfoIconView {
     }
     const popup = this._popUp_subMenu;
     popup && popup.close('');
+    const viewPops = {
+      editorState: this.outerView.state,
+      editorView: this.outerView,
+
+      onCancel: this.onCancel,
+      onEdit: this.onEditInfo,
+      onRemove: this.onInfoRemove,
+      onMouseOut: this.onInfoSubMenuMouseOut,
+    };
+    this._popUp_subMenu = createPopUp(InfoIconSubMenu, viewPops, {
+      anchor: anchorEl,
+      autoDismiss: false,
+      onClose: this._onClose,
+      position: atAnchorTopCenter,
+    });
   }
 
   _onClose = (): void => {
@@ -97,9 +116,91 @@ class InfoIconView {
     this._popUp_subMenu && this._popUp_subMenu.close('');
   }
 
+  onInfoSubMenuMouseOut = (): void => {
+    this.destroyPopup();
+  };
+
+  onEditInfo = (view: EditorView): void => {
+    this._popUp_subMenu && this._popUp_subMenu.close('');
+
+    this._popUp = createPopUp(
+      InfoIconDialog,
+      this.createInfoObject(view, 2),
+      {
+        modal: true,
+        IsChildDialog: false,
+        autoDismiss: false,
+        onClose: (val) => {
+          if (this._popUp) {
+            this._popUp = null;
+            if (undefined !== val) {
+              this.updateInfoIcon(view, val);
+            }
+          }
+        },
+      }
+    );
+  }
+
+  createInfoObject(
+    editorView: EditorView,
+    mode: number
+  ) {
+    return {
+      infoIcon: this.node.attrs.infoIcon,
+      description: this.node.attrs.description,
+      mode: mode, //0 = new , 1- modify, 2- delete
+      editorView: editorView,
+      from: this.node.attrs.from,
+      to: this.node.attrs.to
+    };
+  }
+
+  updateInfoIcon(view: EditorView, infoicon): void {
+    if (view.dispatch) {
+      const { selection } = view.state;
+      let { tr } = view.state;
+      tr = tr.setSelection(selection);
+      tr = this.updateInfoObject(tr, infoicon) as Transaction;
+      view.dispatch(tr);
+    }
+  }
+
+  updateInfoObject(tr: Transform, infoIcon): Transform {
+    const newattrs = {};
+    Object.assign(newattrs, this.node.attrs);
+    const div = document.createElement('div');
+    const fragm = DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(infoIcon.editorView.state.doc.content);
+    div.appendChild(fragm);
+    const desc = div.innerHTML;
+    newattrs['description'] = desc;
+    newattrs['infoIcon'] = infoIcon.infoIcon;
+    tr = tr.setNodeMarkup(
+      infoIcon.from,
+      undefined,
+      newattrs
+    );
+    return tr;
+  }
+
+  onInfoRemove = (view: EditorView): void => {
+    const { selection } = view.state;
+    let { tr } = view.state;
+    tr = tr.setSelection(selection);
+    if (INFO_ICON === this.getNameAfter(selection)) {
+      tr = tr.delete(selection.$head.pos, selection.$head.pos + 2);
+      view.dispatch(tr);
+    }
+  }
+
+  getNameAfter(selection) {
+    const s = selection.from;
+    return selection.$head?.nodeAfter?.type?.name;
+  }
+
   showInfoIcon() {
     if (this.node.attrs.infoIcon) {
-      const iconSuperScript = this.dom.appendChild(document.createElement('SUP'));
+      const iconSuperScript = this.dom.appendChild(document.createElement('sup'));
       const iconSpan = iconSuperScript.appendChild(document.createElement('span'));
       iconSpan.innerHTML = this.node.attrs.infoIcon;
       iconSpan.className = 'fa';

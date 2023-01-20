@@ -3,6 +3,7 @@ import { Transform } from 'prosemirror-transform';
 export const INFO_ICON = 'infoicon';
 export const MARKFROM = 'markFrom';
 export const PARAGRAPH = 'paragraph';
+export const SELECTEDINFOICON = 'selectedInfoIcons';
 export type KeyValuePair = { [key: string]: unknown };
 
 //to get the selected node

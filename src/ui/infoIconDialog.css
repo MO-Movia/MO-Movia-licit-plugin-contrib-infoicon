@@ -56,7 +56,7 @@
   width: 10%;
 }
 
-.czi-editor-frameset .molinfo-dot-container > i {
+.czi-editor-frameset .molinfo-dot-container>i {
   float: right;
   padding-right: 5px;
   padding-top: 3px;
@@ -99,8 +99,21 @@
 
 .molinfo-icon-list-div i {
   padding: 4px 7px;
+  cursor: pointer;
 }
 
 .molinfo-icon-active {
   border: 3px solid #e8b415;
+}
+
+.icon-control-cont {
+  padding: 10px;
+  border: solid 2px #e8b415;
+  margin-left: 4rem;
+  position: fixed;
+  background: white;
+}
+
+.icon-control-cont>button {
+  margin: 2px;
 }

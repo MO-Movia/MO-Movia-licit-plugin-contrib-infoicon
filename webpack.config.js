@@ -35,6 +35,18 @@ var options = {
         test: /\.(jpe?g|png|gif|svg)$/i,
         loader: 'file-loader',
       },
+      {
+        test: /\.(woff(2)?|ttf|otf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/',
+            },
+          },
+        ],
+      },
     ],
   },
   resolve: {
