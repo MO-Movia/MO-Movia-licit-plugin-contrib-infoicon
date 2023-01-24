@@ -74,7 +74,7 @@ export class InfoIconCommand extends UICommand {
       const from = state.selection.from;
       const to = state.selection.to;
       const node = getNode(from, to, tr);
-      if (node) {
+      if (node && infoIcon) {
         const div = document.createElement('div');
         const fragm = DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(infoIcon.editorView.state.doc.content);
         div.appendChild(fragm);

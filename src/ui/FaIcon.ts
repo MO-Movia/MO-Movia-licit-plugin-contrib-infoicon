@@ -1225,11 +1225,6 @@ export const FONTAWESOMEICONS = [
         selected: false
     },
     {
-        name: 'fa fa-facebook-official',
-        unicode: '&#xf230;',
-        selected: false
-    },
-    {
         name: 'fa fa-facebook-square',
         unicode: '&#xf082;',
         selected: false

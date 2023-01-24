@@ -33,6 +33,8 @@
   display: inline-block;
   line-height: 10px;
   position: relative;
+  padding-left: 1px;
+  padding-right: 1px;
 }
 
 /* .czi-editor-frameset .infoicon::after {
@@ -43,7 +45,8 @@
 }  */
 
 .czi-editor-frameset .molinfo-editor-container .ProseMirror {
-  padding: 0px 7px;
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
 .czi-editor-frameset .molcit-textborder {
@@ -106,10 +109,10 @@
   width: 0;
 }
 
-.czi-editor-frameset .molcit-alert {
-  background-color: white;
+.czi-editor-frameset .molcit-infoicon-alert {
+  background-color: #ff7575;
   box-sizing: border-box;
-  color: darkgray;
+  color: white;
   padding: 20px;
   width: 340px;
 }

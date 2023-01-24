@@ -194,7 +194,6 @@ class InfoIconView {
   }
 
   getNameAfter(selection) {
-    const s = selection.from;
     return selection.$head?.nodeAfter?.type?.name;
   }
 
@@ -258,6 +257,7 @@ class InfoIconView {
     this.node = node;
     return true;
   }
+
   destroy(): void {
     this.removeEventListenerToView();
     this.close();

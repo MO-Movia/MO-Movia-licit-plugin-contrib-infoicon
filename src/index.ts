@@ -16,6 +16,13 @@ export const KEY_INFO_ICON = makeKeyMapWithCommon(
 );
 const INFO_ICON_CMD = new InfoIconCommand();
 
+
+function createInfoIconKeyMap() {
+  return {
+    [KEY_INFO_ICON.common]: INFO_ICON_CMD.waitForUserInput,
+  };
+}
+
 export class InfoIconPlugin extends Plugin {
   constructor() {
     super({
@@ -42,10 +49,7 @@ export class InfoIconPlugin extends Plugin {
   }
 
   initKeyCommands(): unknown {
-    return createKeyMapPlugin(
-      {
-        [KEY_INFO_ICON.common]: INFO_ICON_CMD.waitForUserInput,
-      },
+    return createKeyMapPlugin(createInfoIconKeyMap(),
       'InfoIconKeyMap'
     );
   }

@@ -26,38 +26,41 @@ type InfoDialogProps = {
   to: number,
   faIcons,
   isOpen: boolean,
+  isEditorEmpty: boolean,
   close: (val?) => void;
 };
 
 class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProps> {
   _popUp = null;
   _anchorEl = null;
-  count: number
+  count: number;
+  view: EditorView;
   constructor(props: InfoDialogProps) {
     super(props);
     this.state = {
       infoIcon: null,
       faIcons: this.getCacheIcons(),
       isOpen: false,
+      isEditorEmpty: false,
       ...props,
     };
-    // this.faIcons = 
   }
 
   togglePopover = () => {
     this.setState({ isOpen: !this.state.isOpen });
   };
+
   componentDidMount() {
     // Mix the nodes from prosemirror-schema-list into the basic schema to
     // create a schema with list support.
     const mySchema = new Schema({
-      nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
+      nodes: addListNodes(schema.spec.nodes, '', ''),
       marks: schema.spec.marks
     });
 
-    const content = document.getElementById("content");
+    const content = document.getElementById('content');
     content.innerHTML = this.props.description;
-    const view = new EditorView(document.querySelector('#editor'), {
+    this.view = new EditorView(document.querySelector('#editor'), {
       state: EditorState.create({
         doc: DOMParser.fromSchema(mySchema).parse(
           document.querySelector('#content')
@@ -68,8 +71,8 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     });
     this.setState(
       {
-        editorView: view,
-        // faIconCount: this.faIcons.filter((obj) => obj.selected === true).length,
+        editorView: this.view,
+        isEditorEmpty: this.view.state.doc.textContent === '' ? false : true
       },
     );
   }
@@ -105,7 +108,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
               {this.state.isOpen &&
                 <div className='icon-control-cont'>
                   <button onClick={this._onAdd.bind(this)} >Add</button>
-                  <button onClick={this._onRemove.bind(this)} disabled={!this.state.infoIcon}>Remove</button>
+                  <button disabled={!this.state.infoIcon} onClick={this._onRemove.bind(this)}>Remove</button>
                 </div>}
 
             </div>
@@ -113,11 +116,11 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
           <div className='molinfo-display-t'>
             <span>Display Text</span>
           </div>
-          <div className='molinfo-editor-container' id="editor"></div>
+          <div className='molinfo-editor-container' id="editor" onInput={(event) => this.editorOnChange(event)}></div>
           <div hidden id="content">
           </div>
           <div className='molinfo-insert-container'>
-            <button className='molinfo-insert-btn' disabled={!this.state.infoIcon} onClick={this._insert.bind(this)}>{this.props.mode === 1 ? 'Insert' : 'Update'}</button>
+            <button className='molinfo-insert-btn' disabled={!this.validateInsert()} onClick={this._insert.bind(this)}>{this.props.mode === 1 ? 'Insert' : 'Update'}</button>
           </div>
         </div>
       </div >
@@ -129,17 +132,26 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
 
   selectInfoIcon = (iName: string): void => {
     if (iName === this.state.infoIcon) {
-      this.setState({ infoIcon: null });
+      this.setState({ infoIcon: '' });
     } else {
       this.setState({ infoIcon: iName });
     }
 
   }
+
   _insert = (): void => {
     this.props.close(this.state);
   };
 
-  _onAdd(event: React.SyntheticEvent): void {
+  editorOnChange = (event): void => {
+    event.currentTarget.textContent == '' ? this.setState({ isEditorEmpty: false }) : this.setState({ isEditorEmpty: true });
+  };
+
+  validateInsert = (): boolean => {
+    return this.state.infoIcon !== '' && this.state.isEditorEmpty === true;
+  }
+
+  _onAdd(_event: React.SyntheticEvent): void {
     this.disableInfoWIndow(false);
     this._popUp = createPopUp(
       SearchInfoIcon, null, {
@@ -149,7 +161,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
           this._popUp.close();
           this._popUp = null;
           if (undefined !== val) {
-            this.setState({ faIcons: this.getCacheIcons() })
+            this.setState({ faIcons: this.getCacheIcons() });
           }
         }
       },
@@ -158,7 +170,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
   }
 
   setVisible(isOpen) {
-    this.setState({ isOpen: isOpen })
+    this.setState({ isOpen: isOpen });
   }
 
   getFaIconCount(): number {
@@ -167,12 +179,12 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
   _onRemove() {
     const iconName = this.state.infoIcon;
     const lcList = localStorage.getItem(SELECTEDINFOICON);
-    let lcListItem = JSON.parse(lcList);
+    const lcListItem = JSON.parse(lcList);
     lcListItem.forEach((element, i) => {
       if (element.unicode === iconName) {
         lcListItem.splice(i, 1);
         localStorage.setItem(SELECTEDINFOICON, JSON.stringify(lcListItem));
-        this.setState({ faIcons: this.getCacheIcons(), infoIcon: null })
+        this.setState({ faIcons: this.getCacheIcons(), infoIcon: null });
       }
     });
   }
@@ -193,7 +205,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     if (ccList) {
       return JSON.parse(ccList);
     } else {
-      let fq = FONTAWESOMEICONS.slice(0, 10);
+      const fq = FONTAWESOMEICONS.slice(0, 10);
       localStorage.setItem(SELECTEDINFOICON, JSON.stringify(fq));
       return fq;
     }

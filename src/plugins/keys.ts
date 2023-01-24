@@ -1,8 +1,7 @@
-import { em, strong } from 'jest-prosemirror';
 import { baseKeymap, joinBackward, toggleMark } from 'prosemirror-commands';
 import { undo, redo } from 'prosemirror-history';
 import { keymap } from 'prosemirror-keymap';
-import { MarkSpec } from 'prosemirror-model'
+import { MarkSpec } from 'prosemirror-model';
 
 export default () =>
   keymap({
@@ -26,4 +25,4 @@ export const marks: { [key in Marks]: MarkSpec } = {
     parseDOM: [{ tag: 'strong' }, { tag: 'b' }, { style: 'font-weight=bold' }],
     toDOM: () => ['strong', 0],
   },
-}
+};
