@@ -85,13 +85,12 @@
 .czi-editor-frameset .molcit-infoicon-tooltip {
   background: transparent !important;
   cursor: auto;
-  left: 15px;
   line-height: normal;
   margin: auto;
   max-width: max-content;
   position: absolute;
   text-align: left;
-  top: calc(100%);
+  top: 15px;
   width: 400px;
   z-index: 9999;
 }

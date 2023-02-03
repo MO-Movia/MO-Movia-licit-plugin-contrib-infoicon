@@ -3,19 +3,21 @@ import {
     EditorState,
     Plugin,
 } from 'prosemirror-state';
+import { EditorView } from 'prosemirror-view';
 import { toggleMark } from 'prosemirror-commands';
 import { MarkType } from 'prosemirror-model';
 
 
-const markActive = (markType: MarkType) => (state: EditorState) => {
+
+function markActive(state: EditorState, type: MarkType) {
     const { from, $from, to, empty } = state.selection;
+    if (empty) return !!type.isInSet(state.storedMarks || $from.marks());
+    else return state.doc.rangeHasMark(from, to, type);
+}
 
-    if (empty) {
-        return Boolean(markType.isInSet(state.storedMarks || $from.marks()));
-    }
-
-    return state.doc.rangeHasMark(from, to, markType);
-};
+function getLink(view: EditorView) {
+    return view.state.doc.cut(view.state.selection.from, view.state.selection.to).textContent.trim();
+}
 
 export default () =>
     new Plugin({
@@ -32,22 +34,32 @@ export default () =>
                         title: 'Toggle Strong',
                         icon: icons.strong,
                         enable: () => true,
-                        active: markActive(marks.strong),
+                        active(state) { return markActive(state, marks.strong); },
                         run: toggleMark(marks.strong),
                     }),
                     new MenuItem({
                         title: 'Toggle Italics',
                         icon: icons.em,
                         enable: () => true,
-                        active: markActive(marks.em),
+                        active(state) { return markActive(state, marks.em); },
                         run: toggleMark(marks.em),
                     }),
                     new MenuItem({
                         title: 'Link',
                         icon: icons.link,
                         enable: () => true,
-                        active: markActive(marks.link),
-                        run: toggleMark(view.state.schema.marks.link, { href: marks.link })
+                        active(state) { return markActive(state, marks.link); },
+                        run(state, dispatch) {
+                            if (markActive(state, marks.link)) {
+                                toggleMark(marks.link)(state, dispatch);
+                                return true;
+                            }
+                            toggleMark(marks.link, {
+                                href: getLink(view), title: getLink(view),
+                            })(view.state, view.dispatch);
+                            view.focus();
+                            return false;
+                        }
                     }),
                 ]
             ];
@@ -61,7 +73,7 @@ export default () =>
             view.dom.parentNode.insertBefore(menubar, view.dom);
 
             return {
-                update: (view, _prevState) => update(view.state),
+                update: (_prevState) => update(view.state),
             };
         },
     });

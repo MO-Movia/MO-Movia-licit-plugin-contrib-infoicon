@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { EditorState, NodeSelection } from 'prosemirror-state';
+import { EditorState } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 import InfoIconDialog from './infoIconDialog';
@@ -132,12 +132,7 @@ export class InfoIconCommand extends UICommand {
 
   _isEnabled = (state: EditorState): boolean => {
     const tr = state.tr;
-    const { selection } = tr;
-    if (
-      selection &&
-      (selection as NodeSelection).node &&
-      'image' === (selection as NodeSelection).node.type.name
-    ) {
+    if (!tr.selection.empty) {
       return false;
     }
     return true;

@@ -10,7 +10,7 @@ const InfoIconNodeSpec: NodeSpec = {
     from: { default: null },
     to: { default: null },
     description: { default: null },
-    infoIcon: { default: null },
+    infoIcon: { default: null }
   },
   toDOM,
   parseDOM: [
@@ -27,18 +27,17 @@ function getAttrs(dom: HTMLElement): Record<string, unknown> {
 
   const description = dom.getAttribute('description') || null;
   const infoIcon = dom.getAttribute('infoIcon') || null;
-
   return {
     from,
     to,
     description,
-    infoIcon,
+    infoIcon
   };
 }
 
 function toDOM(node: Node): DOMOutputSpec {
   const { from, to, description,
-    infoIcon,
+    infoIcon
   } = node.attrs;
   const attrs = {
     from,
@@ -50,7 +49,6 @@ function toDOM(node: Node): DOMOutputSpec {
   attrs.to = to;
   attrs.description = description;
   attrs.infoIcon = infoIcon;
-
   return ['infoicon', attrs, 0];
 }
 export default InfoIconNodeSpec;

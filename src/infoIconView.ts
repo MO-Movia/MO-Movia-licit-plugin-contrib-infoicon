@@ -67,9 +67,12 @@ class InfoIconView {
   }
 
   hideSourceText(_e: MouseEvent): void {
-    this.close();
+    const target = (_e.relatedTarget as HTMLInputElement);
+    const close = !(target?.className == "infoicon" || target?.className == "ProseMirror molcit-infoicon-tooltip-content" || target?.className == "" || target?.className == "fa");
+    if (close) {
+      this.close();
+    }
   }
-
 
   selectNode(e: MouseEvent): void {
     if (undefined === e) {
@@ -184,24 +187,17 @@ class InfoIconView {
   }
 
   onInfoRemove = (view: EditorView): void => {
-    const { selection } = view.state;
-    let { tr } = view.state;
-    tr = tr.setSelection(selection);
-    if (INFO_ICON === this.getNameAfter(selection)) {
-      tr = tr.delete(selection.$head.pos, selection.$head.pos + 2);
-      view.dispatch(tr);
-    }
-  }
-
-  getNameAfter(selection) {
-    return selection.$head?.nodeAfter?.type?.name;
+    const iconObj = this.node.attrs;
+    const { tr } = view.state;
+    tr.delete(iconObj.from, iconObj.from + 2);
+    view.dispatch(tr);
   }
 
   showInfoIcon() {
     if (this.node.attrs.infoIcon) {
       const iconSuperScript = this.dom.appendChild(document.createElement('sup'));
       const iconSpan = iconSuperScript.appendChild(document.createElement('span'));
-      iconSpan.innerHTML = this.node.attrs.infoIcon;
+      iconSpan.innerHTML = this.node.attrs.infoIcon?.unicode;
       iconSpan.className = 'fa';
       iconSpan.style.fontFamily = 'FontAwesome';
     }
@@ -210,17 +206,26 @@ class InfoIconView {
   open(e: MouseEvent): void {
     // Append a tooltip to the outer node
     // get the editor div
-    const parent = document.getElementsByClassName(
-      'ProseMirror czi-prosemirror-editor'
-    )[0];
-    const tooltip = this.dom.appendChild(document.createElement('div'));
-    tooltip.className = 'molcit-infoicon-tooltip';
-    const ttContent = tooltip.appendChild(document.createElement('div'));
-    ttContent.innerHTML = this.node.attrs.description;
-    ttContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
-    this.setContentRight(e, parent, tooltip, ttContent);
-    if (window.screen.availHeight - e.clientY < 170 && ttContent.style.right) {
-      ttContent.style.bottom = '114px';
+    const tooltipIsExisit = document.getElementsByClassName('molcit-infoicon-tooltip');
+    if (tooltipIsExisit.length === 0) {
+      const parent = document.getElementsByClassName(
+        'ProseMirror czi-prosemirror-editor'
+      )[0];
+      const tooltip = this.dom.appendChild(document.createElement('div'));
+      tooltip.className = 'molcit-infoicon-tooltip';
+      const ttContent = tooltip.appendChild(document.createElement('div'));
+      ttContent.innerHTML = this.node.attrs.description;
+      ttContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
+      ttContent.id = 'tooltip-content'
+      this.setContentRight(e, parent, tooltip, ttContent);
+      if (window.screen.availHeight - e.clientY < 170 && ttContent.style.right) {
+        ttContent.style.bottom = '114px';
+      }
+      const toolContent = document.getElementById('tooltip-content');
+      const links = toolContent.getElementsByTagName("a");
+      for (var i = 0; i < links.length; i++) {
+        links[i].setAttribute('target', '_blank');
+      }
     }
   }
 
@@ -231,16 +236,12 @@ class InfoIconView {
     ttContent: HTMLDivElement
   ) {
     // Append a tooltip to the outer node
-    const MAX_CLIENT_WIDTH = 975;
-    const RIGHT_MARGIN_ADJ = 50;
-    const POSITION_ADJ = -110;
-
+    const MAX_CLIENT_WIDTH = 1100;
+    const toolAndPosWidth = e.clientX + tooltip.clientWidth;
     if (parent) {
-      const width_diff = e.clientX - parent.clientWidth;
-      const counter = e.clientX > MAX_CLIENT_WIDTH ? RIGHT_MARGIN_ADJ : 0;
-      if (width_diff > POSITION_ADJ && width_diff < tooltip.clientWidth) {
-        ttContent.style.right =
-          (parent as HTMLElement).offsetLeft + counter + 'px';
+      if (toolAndPosWidth > MAX_CLIENT_WIDTH) {
+        const right = toolAndPosWidth - MAX_CLIENT_WIDTH;
+        ttContent.style.right = right + 'px';
       }
     }
   }

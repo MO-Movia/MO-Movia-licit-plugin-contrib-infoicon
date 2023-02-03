@@ -18,7 +18,7 @@ import { SELECTEDINFOICON } from './constants';
 
 
 type InfoDialogProps = {
-  infoIcon: string;
+  infoIcon: { name, unicode };
   description: string;
   editorView: EditorView,
   mode: number,
@@ -67,7 +67,11 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
         ),
         plugins: plugins,
         schema: mySchema
-      })
+      }), dispatchTransaction: (tr) => {
+        this.view.updateState(this.view.state.apply(tr));
+        const docJson = this.view.state.tr.doc.toJSON();
+        this.insertButtonEnble(docJson);
+      }
     });
     this.setState(
       {
@@ -78,7 +82,6 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
   }
 
   render(): React.ReactNode {
-    // const [visible, setVisible] = React.useState(false);
     return (
       <div className="molinfo-infoContainer" id="infoPopup">
         <div className="molinfo-info-head">
@@ -90,14 +93,16 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
         <div className='molinfo-divider'></div>
         <div className="molinfo-info-body">
           <div>
-            <span>Select Icons</span>
+            <span>{this.state.infoIcon ? (<span>Current Selection (<span className={this.state.infoIcon?.name}></span>)</span>) : <span>Select Icon</span>}</span>
+            {/* {this.props.mode == 2 ? <span> | Current Selection (<span className={this.state.infoIcon.name}></span>)</span> : ''} */}
           </div>
           <div className='molinfo-icon-container'>
             <div className='molinfo-icon-list'>
               {this.state.faIcons.map((icon, index) => {
                 if (index < 10)
                   return <div className='molinfo-icon-list-div'>
-                    <i className={icon.name + (this.state.infoIcon === icon.unicode ? ' molinfo-icon-active' : '')} id={`infoIcon ${index}`} onClick={() => this.selectInfoIcon(icon.unicode)}></i>
+                    {/* <i className={icon.name + (this.state.infoIcon?.unicode === icon.unicode ? ' molinfo-icon-active' : '')} id={`infoIcon ${index}`} onClick={() => this.selectInfoIcon(icon)}></i> */}
+                    <i className={icon.name} id={`infoIcon ${index}`} onClick={() => this.selectInfoIcon(icon)}></i>
                   </div>;
                 else
                   return null;
@@ -116,7 +121,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
           <div className='molinfo-display-t'>
             <span>Display Text</span>
           </div>
-          <div className='molinfo-editor-container' id="editor" onInput={(event) => this.editorOnChange(event)}></div>
+          <div className='molinfo-editor-container' id="editor"></div>
           <div hidden id="content">
           </div>
           <div className='molinfo-insert-container'>
@@ -130,11 +135,11 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     this.props.close();
   };
 
-  selectInfoIcon = (iName: string): void => {
-    if (iName === this.state.infoIcon) {
-      this.setState({ infoIcon: '' });
+  selectInfoIcon = (clickedIcon): void => {
+    if (clickedIcon.unicode === this.state.infoIcon?.unicode) {
+      this.setState({ infoIcon: null });
     } else {
-      this.setState({ infoIcon: iName });
+      this.setState({ infoIcon: clickedIcon });
     }
 
   }
@@ -143,12 +148,8 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     this.props.close(this.state);
   };
 
-  editorOnChange = (event): void => {
-    event.currentTarget.textContent == '' ? this.setState({ isEditorEmpty: false }) : this.setState({ isEditorEmpty: true });
-  };
-
   validateInsert = (): boolean => {
-    return this.state.infoIcon !== '' && this.state.isEditorEmpty === true;
+    return this.state.infoIcon && this.state.isEditorEmpty === true;
   }
 
   _onAdd(_event: React.SyntheticEvent): void {
@@ -177,7 +178,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     return this.state.faIcons.filter((obj) => obj.selected === true).length;
   }
   _onRemove() {
-    const iconName = this.state.infoIcon;
+    const iconName = this.state.infoIcon?.unicode;
     const lcList = localStorage.getItem(SELECTEDINFOICON);
     const lcListItem = JSON.parse(lcList);
     lcListItem.forEach((element, i) => {
@@ -208,6 +209,14 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
       const fq = FONTAWESOMEICONS.slice(0, 10);
       localStorage.setItem(SELECTEDINFOICON, JSON.stringify(fq));
       return fq;
+    }
+  }
+
+  insertButtonEnble(docJson) {
+    if (docJson.content.length > 1) {
+      this.setState({ isEditorEmpty: true });
+    } else if (docJson.content.length == 1) {
+      docJson.content[0].content == undefined ? this.setState({ isEditorEmpty: false }) : this.setState({ isEditorEmpty: true });
     }
   }
 }
