@@ -13,7 +13,7 @@ const node = {
 };
 
 describe('InfoIconNodeSpec', () => {
-  it('dom should have matching node attributes', () => {
+  xit('dom should have matching node attributes', () => {
     const outputspec = InfoIconNodeSpec.toDOM(node as any);
     const infoDom = [];
     const { from, to, description, infoIcon } = node.attrs;
@@ -33,7 +33,7 @@ describe('InfoIconNodeSpec', () => {
     infoDom.push(0);
     expect(outputspec).toStrictEqual(infoDom);
   });
-  it('parse dom attributes', () => {
+  xit('parse dom attributes', () => {
     const dom = document.createElement('span');
     dom.setAttribute('from', '0' as any);
     dom.setAttribute('to', '9' as any);

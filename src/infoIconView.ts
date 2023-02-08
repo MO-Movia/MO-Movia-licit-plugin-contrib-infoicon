@@ -68,13 +68,16 @@ class InfoIconView {
 
   hideSourceText(_e: MouseEvent): void {
     const target = (_e.relatedTarget as HTMLInputElement);
-    const close = !(target?.className == "infoicon" || target?.className == "ProseMirror molcit-infoicon-tooltip-content" || target?.className == "" || target?.className == "fa");
+    const close = !(target?.className == 'infoicon' || target?.className == 'ProseMirror molcit-infoicon-tooltip-content' || target?.className == '' || target?.className == 'fa');
     if (close) {
       this.close();
     }
   }
 
   selectNode(e: MouseEvent): void {
+    const target = (e.target as HTMLInputElement);
+    if (target.className !== 'fa')
+      return;
     if (undefined === e) {
       return;
     }
@@ -216,15 +219,17 @@ class InfoIconView {
       const ttContent = tooltip.appendChild(document.createElement('div'));
       ttContent.innerHTML = this.node.attrs.description;
       ttContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
-      ttContent.id = 'tooltip-content'
+      ttContent.id = 'tooltip-content';
       this.setContentRight(e, parent, tooltip, ttContent);
       if (window.screen.availHeight - e.clientY < 170 && ttContent.style.right) {
         ttContent.style.bottom = '114px';
       }
       const toolContent = document.getElementById('tooltip-content');
-      const links = toolContent.getElementsByTagName("a");
-      for (var i = 0; i < links.length; i++) {
-        links[i].setAttribute('target', '_blank');
+      const links = toolContent.getElementsByTagName('a');
+      for (let link of links) {
+        const href = link.innerText;
+        link.setAttribute('href', href);
+        link.setAttribute('target', '_blank');
       }
     }
   }

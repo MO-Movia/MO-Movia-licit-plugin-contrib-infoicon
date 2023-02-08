@@ -26,7 +26,10 @@ function getAttrs(dom: HTMLElement): Record<string, unknown> {
   const to = dom.getAttribute('to') || null;
 
   const description = dom.getAttribute('description') || null;
-  const infoIcon = dom.getAttribute('infoIcon') || null;
+  let infoIcon = dom.getAttribute('infoIcon') || null;
+  if (infoIcon) {
+    infoIcon = JSON.parse(infoIcon);
+  }
   return {
     from,
     to,
@@ -48,7 +51,7 @@ function toDOM(node: Node): DOMOutputSpec {
   attrs.from = from;
   attrs.to = to;
   attrs.description = description;
-  attrs.infoIcon = infoIcon;
+  attrs.infoIcon = JSON.stringify(infoIcon);
   return ['infoicon', attrs, 0];
 }
 export default InfoIconNodeSpec;
