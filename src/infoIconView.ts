@@ -190,9 +190,9 @@ class InfoIconView {
   }
 
   onInfoRemove = (view: EditorView): void => {
-    const iconObj = this.node.attrs;
     const { tr } = view.state;
-    tr.delete(iconObj.from, iconObj.from + 2);
+    const from = view.state.selection.$head.pos;
+    tr.delete(from, from + 2);
     view.dispatch(tr);
   }
 
