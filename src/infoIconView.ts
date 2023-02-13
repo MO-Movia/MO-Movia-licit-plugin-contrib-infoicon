@@ -75,6 +75,7 @@ class InfoIconView {
   }
 
   selectNode(e: MouseEvent): void {
+    this.destroyPopup();
     const target = (e.target as HTMLInputElement);
     if (target.className !== 'fa')
       return;
@@ -120,6 +121,12 @@ class InfoIconView {
   destroyPopup(): void {
     this._popUp && this._popUp.close('');
     this._popUp_subMenu && this._popUp_subMenu.close('');
+    if (null === this._popUp_subMenu) {
+      const subMenu = document.getElementsByClassName('molcit-infoicon-submenu');
+      if (subMenu.length > 0) {
+        subMenu[0].remove();
+      }
+    }
   }
 
   onInfoSubMenuMouseOut = (): void => {
@@ -182,7 +189,7 @@ class InfoIconView {
     newattrs['description'] = desc;
     newattrs['infoIcon'] = infoIcon.infoIcon;
     tr = tr.setNodeMarkup(
-      infoIcon.from,
+      this.outerView.state.selection.$head.pos,
       undefined,
       newattrs
     );
@@ -226,7 +233,7 @@ class InfoIconView {
       }
       const toolContent = document.getElementById('tooltip-content');
       const links = toolContent.getElementsByTagName('a');
-      for (let link of links) {
+      for (const link of links) {
         const href = link.innerText;
         link.setAttribute('href', href);
         link.setAttribute('target', '_blank');
