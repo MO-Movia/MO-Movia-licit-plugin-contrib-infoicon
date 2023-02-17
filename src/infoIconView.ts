@@ -1,4 +1,4 @@
-import { DOMSerializer, Node, ResolvedPos } from 'prosemirror-model';
+import { DOMSerializer, Node } from 'prosemirror-model';
 import { Transaction } from 'prosemirror-state';
 import { Transform } from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
@@ -28,7 +28,7 @@ class InfoIconView {
   _popUp_subMenu: PopUpHandle | null = null;
   dom: globalThis.Node = null;
   offsetLeft: Element;
-  nodePosition: number = 0;
+  nodePosition = 0;
   constructor(node: Node, view: EditorView, getPos: CBFn) {
     // We'll need these later
     this.node = node;
