@@ -9,6 +9,7 @@ import {
 } from './constants';
 import './ui/infoicon-note.css';
 import InfoIconDialog from './infoIconDialog';
+import { findParentNodeOfTypeClosestToPos } from 'prosemirror-utils';
 
 type CBFn = () => void;
 
@@ -27,6 +28,7 @@ class InfoIconView {
   _popUp_subMenu: PopUpHandle | null = null;
   dom: globalThis.Node = null;
   offsetLeft: Element;
+  nodePosition = 0;
   constructor(node: Node, view: EditorView, getPos: CBFn) {
     // We'll need these later
     this.node = node;
@@ -68,13 +70,14 @@ class InfoIconView {
 
   hideSourceText(_e: MouseEvent): void {
     const target = (_e.relatedTarget as HTMLInputElement);
-    const close = !(target?.className == 'infoicon' || target?.className == 'ProseMirror molcit-infoicon-tooltip-content' || target?.className == '' || target?.className == 'fa');
+    const close = !(target?.className == 'infoicon' || target?.className == 'ProseMirror molcit-infoicon-tooltip-content' || (target?.className == '' && target?.offsetParent?.className == 'ProseMirror molcit-infoicon-tooltip-content') || target?.className == 'fa');
     if (close) {
       this.close();
     }
   }
 
   selectNode(e: MouseEvent): void {
+    this.destroyPopup();
     const target = (e.target as HTMLInputElement);
     if (target.className !== 'fa')
       return;
@@ -89,6 +92,7 @@ class InfoIconView {
       this.destroyPopup();
       return;
     }
+    this.nodePosition = this.getNodePosition(e);
     const popup = this._popUp_subMenu;
     popup && popup.close('');
     const viewPops = {
@@ -107,6 +111,48 @@ class InfoIconView {
       position: atAnchorTopCenter,
     });
   }
+  isPNodeNull(pNode) {
+    return null === pNode ? true : false;
+  }
+
+  parentNodeType(pNode) {
+    return pNode && pNode.type.name === INFO_ICON ? true : false;
+  }
+
+  getNodePosition(e: MouseEvent) {
+    let clientY = 0;
+    clientY = e.clientY;
+
+    if (e.offsetY < 1) {
+      clientY = clientY + Math.abs(e.offsetY);
+    }
+
+    const pos = this.getNodePosEx(e.clientX, clientY);
+    let parentNode = this.outerView.state.tr.doc.nodeAt(pos);
+    let themarkPos = pos;
+    if (parentNode && parentNode.type.name !== INFO_ICON) {
+      const resp = this.outerView.state.tr.doc.resolve(pos);
+      const nodeAtPos = findParentNodeOfTypeClosestToPos(
+        resp,
+        this.outerView.state.schema.nodes[INFO_ICON]
+      );
+      parentNode = nodeAtPos.node;
+      themarkPos = nodeAtPos.pos;
+    }
+    if (this.isPNodeNull(parentNode)) {
+      for (let index = pos; index > 0; index--) {
+        parentNode = this.outerView.state.tr.doc.nodeAt(index);
+
+        if (this.parentNodeType(parentNode)) {
+          const newRes = this.outerView.state.tr.doc.resolve(index);
+          parentNode = newRes.parent;
+          themarkPos = newRes.pos;
+          break;
+        }
+      }
+    }
+    return themarkPos;
+  }
 
   _onClose = (): void => {
     this._popUp_subMenu = null;
@@ -120,6 +166,12 @@ class InfoIconView {
   destroyPopup(): void {
     this._popUp && this._popUp.close('');
     this._popUp_subMenu && this._popUp_subMenu.close('');
+    if (null === this._popUp_subMenu) {
+      const subMenu = document.getElementsByClassName('molcit-infoicon-submenu');
+      if (subMenu.length > 0) {
+        subMenu[0].remove();
+      }
+    }
   }
 
   onInfoSubMenuMouseOut = (): void => {
@@ -181,18 +233,36 @@ class InfoIconView {
     const desc = div.innerHTML;
     newattrs['description'] = desc;
     newattrs['infoIcon'] = infoIcon.infoIcon;
-    tr = tr.setNodeMarkup(
-      infoIcon.from,
-      undefined,
-      newattrs
-    );
+    if (this.isInfoIconNode(this.outerView.state.selection.$head.pos)) {
+      tr = tr.setNodeMarkup(
+        this.outerView.state.selection.$head.pos,
+        undefined,
+        newattrs
+      );
+    }
+    else {
+      tr = tr.setNodeMarkup(
+        this.nodePosition,
+        undefined,
+        newattrs
+      );
+    }
+
     return tr;
   }
 
+  isInfoIconNode(position: number) {
+    const node = this.outerView.state.doc.nodeAt(position);
+    if (node) {
+      return 'infoicon' === node.type.name;
+    }
+    return false;
+  }
+
   onInfoRemove = (view: EditorView): void => {
-    const iconObj = this.node.attrs;
     const { tr } = view.state;
-    tr.delete(iconObj.from, iconObj.from + 2);
+    const from = view.state.selection.$head.pos;
+    tr.delete(from, from + 2);
     view.dispatch(tr);
   }
 
@@ -226,7 +296,7 @@ class InfoIconView {
       }
       const toolContent = document.getElementById('tooltip-content');
       const links = toolContent.getElementsByTagName('a');
-      for (let link of links) {
+      for (const link of links) {
         const href = link.innerText;
         link.setAttribute('href', href);
         link.setAttribute('target', '_blank');
