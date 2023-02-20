@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-info-icon",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "MO's Info Icon ProseMirror Plugin",
   "main": "dist/index.js",
   "typings": "./index.d.ts",
@@ -15,9 +15,10 @@
     }
   ],
   "dependencies": {
-    "@modusoperandi/licit-ui-commands": "^0.1.13",
+    "@modusoperandi/licit-ui-commands": "^0.1.15",
     "font-awesome": "^4.7.0",
     "prosemirror-example-setup": "^1.2.1",
+    "prosemirror-schema-basic": "<1.2.0",
     "terser-webpack-plugin": "^5.3.6"
   },
   "devDependencies": {
