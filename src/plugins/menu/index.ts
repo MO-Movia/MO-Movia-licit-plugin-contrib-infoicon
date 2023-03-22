@@ -9,13 +9,13 @@ import { MarkType } from 'prosemirror-model';
 
 
 
-function markActive(state: EditorState, type: MarkType) {
+export function markActive(state: EditorState, type: MarkType) {
     const { from, $from, to, empty } = state.selection;
     if (empty) return !!type.isInSet(state.storedMarks || $from.marks());
     else return state.doc.rangeHasMark(from, to, type);
 }
 
-function getLink(view: EditorView) {
+export function getLink(view: EditorView) {
     return view.state.doc.cut(view.state.selection.from, view.state.selection.to).textContent.trim();
 }
 

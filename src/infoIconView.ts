@@ -77,13 +77,14 @@ class InfoIconView {
   }
 
   selectNode(e: MouseEvent): void {
-    this.destroyPopup();
-    const target = (e.target as HTMLInputElement);
-    if (target.className !== 'fa')
-      return;
     if (undefined === e) {
       return;
     }
+    this.destroyPopup();
+    const target = (e?.target as HTMLInputElement);
+    if (target?.className !== 'fa')
+      return;
+
     let anchorEl = this.dom;
     if (e && e.currentTarget) {
       anchorEl = e.currentTarget as globalThis.Node;
@@ -225,28 +226,31 @@ class InfoIconView {
   }
 
   updateInfoObject(tr: Transform, infoIcon): Transform {
-    const newattrs = {};
-    Object.assign(newattrs, this.node.attrs);
-    const div = document.createElement('div');
-    const fragm = DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(infoIcon.editorView.state.doc.content);
-    div.appendChild(fragm);
-    const desc = div.innerHTML;
-    newattrs['description'] = desc;
-    newattrs['infoIcon'] = infoIcon.infoIcon;
-    if (this.isInfoIconNode(this.outerView.state.selection.$head.pos)) {
-      tr = tr.setNodeMarkup(
-        this.outerView.state.selection.$head.pos,
-        undefined,
-        newattrs
-      );
+    if (infoIcon) {
+      const newattrs = {};
+      Object.assign(newattrs, this.node.attrs);
+      const div = document.createElement('div');
+      const fragm = DOMSerializer.fromSchema(infoIcon.editorView?.state?.schema).serializeFragment(infoIcon.editorView?.state?.doc?.content);
+      div.appendChild(fragm);
+      const desc = div.innerHTML;
+      newattrs['description'] = desc;
+      newattrs['infoIcon'] = infoIcon.infoIcon;
+      if (this.isInfoIconNode(this.outerView.state.selection.$head.pos)) {
+        tr = tr.setNodeMarkup(
+          this.outerView.state.selection.$head.pos,
+          undefined,
+          newattrs
+        );
+      }
+      else {
+        tr = tr.setNodeMarkup(
+          this.nodePosition,
+          undefined,
+          newattrs
+        );
+      }
     }
-    else {
-      tr = tr.setNodeMarkup(
-        this.nodePosition,
-        undefined,
-        newattrs
-      );
-    }
+
 
     return tr;
   }
@@ -295,12 +299,15 @@ class InfoIconView {
         ttContent.style.bottom = '114px';
       }
       const toolContent = document.getElementById('tooltip-content');
-      const links = toolContent.getElementsByTagName('a');
-      for (const link of links) {
-        const href = link.innerText;
-        link.setAttribute('href', href);
-        link.setAttribute('target', '_blank');
+      const links = toolContent?.getElementsByTagName('a');
+      if (links) {
+        for (const link of links) {
+          const href = link.innerText;
+          link.setAttribute('href', href);
+          link.setAttribute('target', '_blank');
+        }
       }
+
     }
   }
 

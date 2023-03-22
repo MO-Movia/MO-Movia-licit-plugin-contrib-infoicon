@@ -8,6 +8,7 @@ import {
 import InfoIconNodeSpec from './infoIconNodeSpec';
 import InfoIconView from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
 export const INFO_ICON = 'infoicon';
 export const KEY_INFO_ICON = makeKeyMapWithCommon(
@@ -19,7 +20,7 @@ const INFO_ICON_CMD = new InfoIconCommand();
 
 function createInfoIconKeyMap() {
   return {
-    [KEY_INFO_ICON.common]: INFO_ICON_CMD.waitForUserInput,
+    [KEY_INFO_ICON.common]: (INFO_ICON_CMD as UICommand).execute,
   };
 }
 
