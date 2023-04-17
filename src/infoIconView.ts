@@ -137,8 +137,8 @@ class InfoIconView {
         resp,
         this.outerView.state.schema.nodes[INFO_ICON]
       );
-      parentNode = nodeAtPos.node;
-      themarkPos = nodeAtPos.pos;
+      parentNode = nodeAtPos?.node;
+      themarkPos = nodeAtPos?.pos;
     }
     if (this.isPNodeNull(parentNode)) {
       for (let index = pos; index > 0; index--) {
@@ -250,8 +250,6 @@ class InfoIconView {
         );
       }
     }
-
-
     return tr;
   }
 

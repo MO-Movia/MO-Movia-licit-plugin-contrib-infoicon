@@ -31,7 +31,7 @@ export class InfoIconCommand extends UICommand {
       description: '',
       mode: mode, //0 = new , 1- modify, 2- delete
       editorView: editorView,
-      selectedIconName:''
+      selectedIconName: ''
     };
   }
   waitForUserInput = (
@@ -77,7 +77,7 @@ export class InfoIconCommand extends UICommand {
       const node = getNode(from, to, tr);
       if (node && infoIcon) {
         const div = document.createElement('div');
-        const fragm = DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(this.getDocContent(infoIcon));
+        const fragm = this.getFragm(infoIcon);
         div.appendChild(fragm);
         const desc = div.innerHTML;
         const infoicon = state.schema.nodes['infoicon'];
@@ -121,14 +121,16 @@ export class InfoIconCommand extends UICommand {
 
   createInfoIconAttrs(from, to, desc, infoIcon) {
     const newAttrs = {};
-    // Object.assign(newAttrs, infoicon['attrs']);
-    newAttrs['id'] = '';
+     Object.assign(newAttrs, infoIcon['attrs']);
     newAttrs['from'] = from;
     newAttrs['to'] = to;
     newAttrs['description'] = desc;
     newAttrs['infoIcon'] = infoIcon.infoIcon;
-    newAttrs['infoIcon'] = infoIcon.infoIcon;
     return newAttrs;
+  }
+
+  getFragm(infoIcon) {
+    return DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(this.getDocContent(infoIcon));
   }
 
   getDocContent(infoIcon) {

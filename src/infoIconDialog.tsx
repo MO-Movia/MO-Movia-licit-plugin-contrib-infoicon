@@ -161,7 +161,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
       const fragm = DOMSerializer.fromSchema(this.state.editorView?.state?.schema).serializeFragment(this.state.editorView?.state?.doc?.content);
       div.appendChild(fragm);
       const desc = div.innerHTML;
-      if (this.state.infoIcon && (desc !== this.state.description || this.state.selectedIconName !== this.state.infoIcon.name)) {
+      if (this.state.infoIcon && (this.state.selectedIconName !== this.state.infoIcon.name || desc !== this.state.description)) {
         this.setState({ isButtonEnabled: true });
       }
       else {
@@ -213,12 +213,12 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
   }
 
   disableInfoWIndow(isEditable: boolean): void {
-    const citationForm: HTMLElement = document.getElementById('infoPopup');
-    if (citationForm && citationForm.style) {
+    const infoIconForm: HTMLElement = document.getElementById('infoPopup');
+    if (infoIconForm && infoIconForm.style) {
       if (isEditable) {
-        citationForm.style.pointerEvents = 'unset';
+        infoIconForm.style.pointerEvents = 'unset';
       } else {
-        citationForm.style.pointerEvents = 'none';
+        infoIconForm.style.pointerEvents = 'none';
       }
     }
   }

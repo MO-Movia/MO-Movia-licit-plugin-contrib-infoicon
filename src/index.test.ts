@@ -2,7 +2,7 @@
 
 import { InfoIconPlugin } from './index';
 import MenuPlugin, { markActive, getLink } from './plugins/menu/index';
-import {Transform} from 'prosemirror-transform';
+import { Transform } from 'prosemirror-transform';
 import { schema, builders } from 'prosemirror-test-builder';
 import { Plugin, PluginKey, EditorState, TextSelection } from 'prosemirror-state';
 import { addListNodes } from 'prosemirror-schema-list';
@@ -14,6 +14,9 @@ import {
 import InfoIconView from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
 import { node } from 'webpack';
+import { createEditor } from 'jest-prosemirror';
+import { createPopUp } from '@modusoperandi/licit-ui-commands';
+import InfoIconDialog from './infoIconDialog';
 
 class TestPlugin extends Plugin {
     constructor() {
@@ -31,8 +34,6 @@ describe('Info Plugin Extended', () => {
         infoIcon: 'faIcon'
     }
 
-    const before = 'hello';
-    const after = ' world';
     const mySchema = new Schema({
         nodes: schema.spec.nodes,
         marks: schema.spec.marks
@@ -45,9 +46,9 @@ describe('Info Plugin Extended', () => {
         info
     );
     plugin.initButtonCommands();
-    const { doc, p } = builders(mySchema, { p: { nodeType: 'paragraph' } });   
+    const { doc, p } = builders(mySchema, { p: { nodeType: 'paragraph' } });
 
-    
+
     it('Infoiconview call createInfoIconTooltip', () => {
         const before = 'hello';
         const after = ' world';
@@ -80,12 +81,12 @@ describe('Info Plugin Extended', () => {
 
 
         const clickEvent = new MouseEvent('mouseclick', {
-            clientX: 281,
+            clientX: 1120,
             clientY: 125,
         });
 
         cView.setContentRight(clickEvent, errorinfodiv, tooltip, ttContent);
-         
+
     });
 });
 
@@ -97,8 +98,6 @@ describe('Info Plugin', () => {
         infoIcon: 'faIcon'
     }
 
-    const before = 'hello';
-    const after = ' world';
     const mySchema = new Schema({
         nodes: schema.spec.nodes,
         marks: schema.spec.marks
@@ -127,11 +126,6 @@ describe('Info Plugin', () => {
             {
                 state: state,
             }
-        );
-        const cView = new InfoIconView(
-            view.state.doc.nodeAt(0),
-            view,
-            undefined
         );
         plugin.getState(state)
         expect(state.doc.nodeAt(0));
@@ -169,8 +163,33 @@ describe('Info Plugin', () => {
         infoIconCommand.getParentNodeSize(state);
         infoIconCommand.getDocContent(infoIcon);
     });
+    it('isList should return ', () => {
+        const before = 'hello';
 
-    xit('Infoiconview getNodePosition ', () => {
+        const infoIconObj = {
+            from: '1',
+            to: '3',
+            description: 'test description',
+            mode: 0,
+            infoIcon: ''
+        };
+        const infoiconnode = effSchema.node(
+            effSchema.nodes.infoicon,
+            infoIconObj
+        );
+        const plugin = new InfoIconPlugin();
+        const after = ' world';
+        const state = EditorState.create({
+            doc: doc(p(before, infoiconnode, after)),
+            schema: effSchema,
+            plugins: [plugin],
+        });
+        const infoIconCommand = new InfoIconCommand('');
+        infoIconCommand.isList(state.selection.$head, 1)
+
+    });
+
+    it('Infoiconview getNodePosition ', () => {
         const before = 'hello';
         const after = ' world';
         const state = EditorState.create({
@@ -187,14 +206,6 @@ describe('Info Plugin', () => {
                 state: state,
             }
         );
-        const infoIcon = {
-            from: '1',
-            to: '3',
-            description: 'test description',
-            mode: 0,
-            editorView: view,
-            infoIcon: ''
-        };
         const cView = new InfoIconView(
             view.state.doc.nodeAt(6),
             view,
@@ -202,11 +213,20 @@ describe('Info Plugin', () => {
         );
         // plugin.getState(state)
         // expect(state.doc.nodeAt(0));
-        const clickEvent = new MouseEvent('mouseclick', {
+        // const clickEvent = new MouseEvent('mouseclick', {
+        //     clientX: 358,
+        //     clientY: 115,
+        //     offsetY:0
+        // });
+
+        const mockEvent = {
             clientX: 358,
             clientY: 115,
-        });
-        cView.getNodePosition(clickEvent);
+            offsetY: -10,
+        } as MouseEvent;
+        const spyImgNodView = jest.spyOn(cView, 'getNodePosEx');
+        spyImgNodView.mockReturnValue(1);
+        cView.getNodePosition(mockEvent);
         cView.parentNodeType(view.state.doc.nodeAt(6));
     });
 
@@ -217,7 +237,6 @@ describe('Info Plugin', () => {
             from: '1',
             to: '3',
             description: 'test description',
-            mode: 0,
             infoIcon: ''
         };
         const infoiconnode = effSchema.node(
@@ -259,37 +278,29 @@ describe('Info Plugin', () => {
     });
 
     it('should executeWithUserInput', () => {
-        const mySchema = new Schema({
+        const modSchema = new Schema({
             nodes: schema.spec.nodes,
-            marks: schema.spec.marks
+            marks: schema.spec.marks,
         });
+        const infoIconObj = {
+            from: '1',
+            to: '1',
+            description: 'test description',
+            infoIcon: ''
+        };
         const plugin = new InfoIconPlugin();
-        const effSchema = plugin.getEffectiveSchema(mySchema);
+        const effSchema = plugin.getEffectiveSchema(modSchema);
+        // plugin.initButtonCommands();
+        const { doc, p } = builders(effSchema, { p: { nodeType: 'paragraph' } });
+
+        const state = EditorState.create({
+            doc: doc(p(infoIconObj)),
+            schema: effSchema,
+        });
         const dom = document.createElement('div');
         document.body.appendChild(dom);
         // Set up our document body
         document.body.innerHTML = '<div></div>';
-        const before = 'hello';
-
-        const after = ' world';
-        const infoIconObj = {
-            from: '1',
-            to: '3',
-            description: 'test description',
-            mode: 0,
-            infoIcon: ''
-        };
-        const infoiconnode = effSchema.node(
-            effSchema.nodes.infoicon,
-            infoIconObj
-        );
-
-        const state = EditorState.create({
-            doc: doc(p(before, infoiconnode, after)),
-            schema: effSchema,
-            plugins: [plugin],
-        });
-
         const view = new EditorView(
             { mount: dom },
             {
@@ -301,33 +312,110 @@ describe('Info Plugin', () => {
             from: '1',
             to: '3',
             description: 'test description',
-            mode: 0,
             editorView: view,
             infoIcon: ''
         };
-       
-        const selection = TextSelection.create(view.state.doc, 1, 5);
+
+        const selection = TextSelection.create(view.state.doc, 1, 2);
         const tr = view.state.tr.setSelection(selection);
         view.updateState(
             view.state.reconfigure({ plugins: [plugin, new TestPlugin()] })
         );
 
         view.dispatch(tr);
-        const addCitationcmd = new InfoIconCommand();
+        const addInfoIconcmd = new InfoIconCommand();
 
-        addCitationcmd.createInfoIconAttrs(1, 1, "test", infoIcon);
-        addCitationcmd._isEnabled(view.state);
-        // const bok = addCitationcmd.executeWithUserInput(
-        //     state,
-        //     // view.dispatch,
-        //     view.dispatch as (tr: Transform) => void,
-        //     view,
-        //     infoIcon as any
-        // );
+        addInfoIconcmd.createInfoIconAttrs(1, 3, "test description", infoIcon);
+        addInfoIconcmd._isEnabled(view.state);
 
-        // expect(bok).toBeFalsy();
+        const getNodePosEx = jest.spyOn(addInfoIconcmd, 'getFragm');
+        const getFragm = document.createElement('div');
+        getFragm.innerHTML = '<p>Test Doc</p>';
+        getNodePosEx.mockReturnValue(getFragm);
+        const spyiSNVMock = jest.spyOn(addInfoIconcmd, 'isList');
+        spyiSNVMock.mockReturnValue(true);
+        const bok = addInfoIconcmd.executeWithUserInput(
+            state,
+            // view.dispatch,
+            view.dispatch as (tr: Transform) => void,
+            view,
+            infoIcon as any
+        );
+        expect(bok).toBeFalsy();
     });
 
+    it('should Wait For User Input', () => {
+        const before = 'Hello World!!!';
+        const modSchema = new Schema({
+            nodes: schema.spec.nodes,
+            marks: schema.spec.marks,
+        });
+        const infoIconObj = {
+            from: '1',
+            to: '1',
+            description: 'test description',
+            infoIcon: ''
+        };
+        const plugin = new InfoIconPlugin();
+        const effSchema = plugin.getEffectiveSchema(modSchema);
+        const state = EditorState.create({
+            doc: doc(p(infoIconObj)),
+            schema: effSchema,
+        });
+
+        const dom = document.createElement('div');
+        document.body.appendChild(dom);
+        const view = new EditorView(
+            { mount: dom },
+            {
+                state: state,
+            }
+        );
+        const editor = createEditor(doc('<cursor>', p('Hello')));
+        const AddInfoICmd = new InfoIconCommand();
+        AddInfoICmd.waitForUserInput(editor.state, undefined, view);
+    });
+
+    it('should Wait For User Input', () => {
+        const before = 'Hello World!!!';
+        const modSchema = new Schema({
+            nodes: schema.spec.nodes,
+            marks: schema.spec.marks,
+        });
+        const infoIconObj = {
+            from: '1',
+            to: '1',
+            description: 'test description',
+            infoIcon: ''
+        };
+        const plugin = new InfoIconPlugin();
+        const effSchema = plugin.getEffectiveSchema(modSchema);
+        const state = EditorState.create({
+            doc: doc(p(infoIconObj)),
+            schema: effSchema,
+        });
+
+        const dom = document.createElement('div');
+        document.body.appendChild(dom);
+        const view = new EditorView(
+            { mount: dom },
+            {
+                state: state,
+            }
+        );
+        const editor = createEditor(doc('<cursor>', p('Hello')));
+        const AddInfoICmd = new InfoIconCommand();
+        AddInfoICmd._popUp = createPopUp(
+            InfoIconDialog,
+            AddInfoICmd.createInfoObject(view, 1),
+            {
+                modal: true,
+                IsChildDialog: false,
+                autoDismiss: false,
+            }
+        );
+        AddInfoICmd.waitForUserInput(editor.state, undefined, view);
+    });
     it('should call initKeyCommands', () => {
         expect(plugin.initKeyCommands());
     });
@@ -358,6 +446,15 @@ describe('Info Plugin', () => {
             clientY: 125,
         });
         cView.parentNodeType(view.state.doc.nodeAt(0));
+
+        let divEl = document.createElement('div');
+        let aTag = document.createElement('a');
+        aTag.href = 'test.com';
+        aTag.innerHTML ="Test Link";
+        divEl.id = 'tooltip-content';
+        divEl.style.right = 'auto';
+        divEl.appendChild(aTag);
+        document.body.appendChild(divEl);
         cView.open(clickEvent);
     });
 
@@ -404,15 +501,37 @@ describe('Info Plugin', () => {
         cView.stopEvent(e);
         cView.ignoreMutation();
         cView.onInfoRemove(view);
+        cView._popUp_subMenu = createPopUp(
+            InfoIconDialog,
+            cView.createInfoObject(view, 1),
+            {
+                modal: true,
+                IsChildDialog: false,
+                autoDismiss: false,
+            }
+        );
         cView.onEditInfo(view);
         cView.isPNodeNull(null);
 
         cView._onClose();
         // cView.getNodePosEx(359, 116);
         cView.updateInfoIcon(view, infoIcon);
+        cView._popUp_subMenu = createPopUp(
+            InfoIconDialog,
+            cView.createInfoObject(view, 1),
+            {
+                modal: true,
+                IsChildDialog: false,
+                autoDismiss: false,
+            }
+        );
+
+        const custDiv = document.createElement('div');
+        custDiv.className = 'molcit-infoicon-submenu';
+        document.body.appendChild(custDiv);
         cView.destroyPopup();
         cView.onCancel(view);
-       
+
         cView.selectNode(clickEvent);
         // cView.getNodePosition(clickEvent);      
         cView.onInfoSubMenuMouseOut();
@@ -446,7 +565,7 @@ describe('Info Plugin', () => {
         );
         const ttContent = document.createElement('div');
         ttContent.id = 'tooltip-content';
-        ttContent.innerHTML = '"<p>test <a href="ingo" title="ingo">ingo</a> icon</p>"';
+        ttContent.innerHTML = "<a href='www.google.com'></a><p>test <a href='ingo' title='ingo'>ingo</a> icon</p>";
         const errorinfodiv = document.createElement('div');
         errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
         const tooltip = document.createElement('div');;
@@ -459,6 +578,7 @@ describe('Info Plugin', () => {
         });
 
         cView.setContentRight(clickEvent, errorinfodiv, tooltip, ttContent);
+
         // cView.setLink();
         // const tooltip = cView.createInfoIconTooltip();
         // cView.createTooltipContent(tooltip);
@@ -479,14 +599,6 @@ describe('Info Plugin', () => {
                 state: state,
             }
         );
-        const infoIcon = {
-            from: '10',
-            to: '13',
-            description: 'test description',
-            mode: 0,
-            editorView: view,
-            infoIcon: ''
-        };
 
         const cView = new InfoIconView(
             view.state.doc.nodeAt(12),
@@ -500,7 +612,7 @@ describe('Info Plugin', () => {
         );
         view.dispatch(tr);
         cView.parentNodeType(view.state.doc.nodeAt(0));
-       
+
         cView.isInfoIconNode(6);
         cView.isPNodeNull(view.state.doc.nodeAt(0));
         //cView.getNodePosEx(359, 116);
@@ -520,14 +632,6 @@ describe('Info Plugin', () => {
                 state: state,
             }
         );
-        const infoIcon = {
-            from: '1',
-            to: '3',
-            description: 'test description',
-            mode: 0,
-            editorView: view,
-            infoIcon: ''
-        };
 
         const cView = new InfoIconView(
             view.state.doc.nodeAt(0),
@@ -561,6 +665,7 @@ describe('Info Plugin', () => {
             view,
             undefined as any
         );
+
         cView.selectNode(undefined as any);
     });
 
@@ -579,14 +684,6 @@ describe('Info Plugin', () => {
                 state: state,
             }
         );
-        const infoIcon = {
-            from: '1',
-            to: '3',
-            description: 'test description',
-            mode: 0,
-            editorView: view,
-            infoIcon: ''
-        };
 
         const cView = new InfoIconView(
             view.state.doc.nodeAt(0),
@@ -647,14 +744,6 @@ describe('Info Plugin', () => {
                 state: state,
             }
         );
-        const infoIcon = {
-            from: '1',
-            to: '3',
-            description: 'test description',
-            mode: 0,
-            editorView: view,
-            infoIcon: ''
-        };
 
         const selection = TextSelection.create(view.state.doc, 6, 10);
         const tr = view.state.tr.setSelection(selection);
@@ -677,8 +766,6 @@ describe('Info Plugin', () => {
         getLink(view);
 
     });
-
-
 
     // it("returns false if a marked range is not empty but there are no relevant marks", () => {
     //     const state = {
