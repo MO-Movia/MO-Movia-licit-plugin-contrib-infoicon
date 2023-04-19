@@ -31,6 +31,7 @@ export class InfoIconCommand extends UICommand {
       description: '',
       mode: mode, //0 = new , 1- modify, 2- delete
       editorView: editorView,
+      selectedIconName: ''
     };
   }
   waitForUserInput = (
@@ -76,17 +77,18 @@ export class InfoIconCommand extends UICommand {
       const node = getNode(from, to, tr);
       if (node && infoIcon) {
         const div = document.createElement('div');
-        const fragm = DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(infoIcon.editorView.state.doc.content);
+        const fragm = this.getFragm(infoIcon);
         div.appendChild(fragm);
         const desc = div.innerHTML;
         const infoicon = state.schema.nodes['infoicon'];
-        const newAttrs = {};
+        let newAttrs = {};
         Object.assign(newAttrs, infoicon['attrs']);
-        newAttrs['id'] = '';
-        newAttrs['from'] = from;
-        newAttrs['to'] = to;
-        newAttrs['description'] = desc;
-        newAttrs['infoIcon'] = infoIcon.infoIcon;
+        newAttrs = this.createInfoIconAttrs(from, to, desc, infoIcon);
+        // newAttrs['id'] = '';
+        // newAttrs['from'] = from;
+        // newAttrs['to'] = to;
+        // newAttrs['description'] = desc;
+        // newAttrs['infoIcon'] = infoIcon.infoIcon;
         const infoiconNode = infoicon.create(null);
         const $head = state.selection.$head;
         let listNodeAttr = null;
@@ -116,6 +118,24 @@ export class InfoIconCommand extends UICommand {
 
     return false;
   };
+
+  createInfoIconAttrs(from, to, desc, infoIcon) {
+    const newAttrs = {};
+     Object.assign(newAttrs, infoIcon['attrs']);
+    newAttrs['from'] = from;
+    newAttrs['to'] = to;
+    newAttrs['description'] = desc;
+    newAttrs['infoIcon'] = infoIcon.infoIcon;
+    return newAttrs;
+  }
+
+  getFragm(infoIcon) {
+    return DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(this.getDocContent(infoIcon));
+  }
+
+  getDocContent(infoIcon) {
+    return infoIcon.editorView.state.doc.content;
+  }
 
   isList($head, d) {
     return $head.node(d).type.name === 'ordered_list' || $head.node(d).type.name === 'bullet_list' ?

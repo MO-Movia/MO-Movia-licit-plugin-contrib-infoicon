@@ -3,12 +3,12 @@ import * as React from 'react';
 import './ui/infoIconDialog.css';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import { Schema, DOMParser } from 'prosemirror-model';
+import { DOMSerializer, Schema, DOMParser } from 'prosemirror-model';
 import { schema } from 'prosemirror-schema-basic';
 import { addListNodes } from 'prosemirror-schema-list';
 import 'font-awesome/css/font-awesome.min.css';
 import 'prosemirror-menu/style/menu.css';
-import SearchInfoIcon from './SearchInfoIcon';
+import SearchInfoIcon from './searchInfoIcon';
 import {
   createPopUp
 } from '@modusoperandi/licit-ui-commands';
@@ -25,8 +25,10 @@ type InfoDialogProps = {
   from: number,
   to: number,
   faIcons,
+  selectedIconName: string
   isOpen: boolean,
   isEditorEmpty: boolean,
+  isButtonEnabled: boolean,
   close: (val?) => void;
 };
 
@@ -41,6 +43,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
       infoIcon: null,
       faIcons: this.getCacheIcons(),
       isOpen: false,
+      isButtonEnabled: false,
       isEditorEmpty: false,
       ...props,
     };
@@ -54,7 +57,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     // Mix the nodes from prosemirror-schema-list into the basic schema to
     // create a schema with list support.
     const mySchema = new Schema({
-      nodes: addListNodes(schema.spec.nodes, '', ''),
+      nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
       marks: schema.spec.marks
     });
 
@@ -94,14 +97,12 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
         <div className="molinfo-info-body">
           <div>
             <span>{this.state.infoIcon ? (<span>Current Selection (<span className={this.state.infoIcon?.name}></span>)</span>) : <span>Select Icon</span>}</span>
-            {/* {this.props.mode == 2 ? <span> | Current Selection (<span className={this.state.infoIcon.name}></span>)</span> : ''} */}
           </div>
           <div className='molinfo-icon-container'>
             <div className='molinfo-icon-list'>
               {this.state.faIcons.map((icon, index) => {
                 if (index < 10)
                   return <div className='molinfo-icon-list-div'>
-                    {/* <i className={icon.name + (this.state.infoIcon?.unicode === icon.unicode ? ' molinfo-icon-active' : '')} id={`infoIcon ${index}`} onClick={() => this.selectInfoIcon(icon)}></i> */}
                     <i className={icon.name} id={`infoIcon ${index}`} onClick={() => this.selectInfoIcon(icon)}></i>
                   </div>;
                 else
@@ -125,7 +126,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
           <div hidden id="content">
           </div>
           <div className='molinfo-insert-container'>
-            <button className='molinfo-insert-btn' disabled={!this.validateInsert()} onClick={this._insert.bind(this)}>{this.props.mode === 1 ? 'Insert' : 'Update'}</button>
+            <button className='molinfo-insert-btn' disabled={!this.state.isButtonEnabled} onClick={this._insert.bind(this)}>{this.props.mode === 1 ? 'Insert' : 'Update'}</button>
           </div>
         </div>
       </div >
@@ -137,19 +138,40 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
 
   selectInfoIcon = (clickedIcon): void => {
     if (clickedIcon.unicode === this.state.infoIcon?.unicode) {
-      this.setState({ infoIcon: null });
+      this.setState({ infoIcon: null },
+        () => {
+          this.validateInsert();
+        });
     } else {
-      this.setState({ infoIcon: clickedIcon });
+      this.setState({ infoIcon: clickedIcon },
+        () => {
+          this.validateInsert();
+        });
     }
-
   }
 
   _insert = (): void => {
     this.props.close(this.state);
   };
 
-  validateInsert = (): boolean => {
-    return this.state.infoIcon && this.state.isEditorEmpty === true;
+  validateInsert() {
+    //edit mode
+    if (2 === this.props.mode) {
+      const div = document.createElement('div');
+      const fragm = DOMSerializer.fromSchema(this.state.editorView?.state?.schema).serializeFragment(this.state.editorView?.state?.doc?.content);
+      div.appendChild(fragm);
+      const desc = div.innerHTML;
+      if (this.state.infoIcon && (this.state.selectedIconName !== this.state.infoIcon.name || desc !== this.state.description)) {
+        this.setState({ isButtonEnabled: true });
+      }
+      else {
+        this.setState({ isButtonEnabled: false });
+      }
+
+    }
+    else {
+      this.setState({ isButtonEnabled: this.state.infoIcon && !this.state.isEditorEmpty });
+    }
   }
 
   _onAdd(_event: React.SyntheticEvent): void {
@@ -191,12 +213,12 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
   }
 
   disableInfoWIndow(isEditable: boolean): void {
-    const citationForm: HTMLElement = document.getElementById('infoPopup');
-    if (citationForm && citationForm.style) {
+    const infoIconForm: HTMLElement = document.getElementById('infoPopup');
+    if (infoIconForm && infoIconForm.style) {
       if (isEditable) {
-        citationForm.style.pointerEvents = 'unset';
+        infoIconForm.style.pointerEvents = 'unset';
       } else {
-        citationForm.style.pointerEvents = 'none';
+        infoIconForm.style.pointerEvents = 'none';
       }
     }
   }
@@ -214,9 +236,18 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
 
   insertButtonEnble(docJson) {
     if (docJson.content.length > 1) {
-      this.setState({ isEditorEmpty: true });
+      this.setState({ isEditorEmpty: false },
+        () => {
+          this.validateInsert();
+        });
     } else if (docJson.content.length == 1) {
-      docJson.content[0].content == undefined ? this.setState({ isEditorEmpty: false }) : this.setState({ isEditorEmpty: true });
+      docJson.content[0].content == undefined ? this.setState({ isEditorEmpty: true },
+        () => {
+          this.validateInsert();
+        }) : this.setState({ isEditorEmpty: false },
+          () => {
+            this.validateInsert();
+          });
     }
   }
 }

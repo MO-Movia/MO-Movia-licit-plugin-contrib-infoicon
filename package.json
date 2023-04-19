@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-info-icon",
-  "version": "0.0.4",
+  "version": "0.0.6",
   "description": "MO's Info Icon ProseMirror Plugin",
   "main": "dist/index.js",
   "typings": "./index.d.ts",
@@ -15,8 +15,11 @@
     }
   ],
   "dependencies": {
+    "@cfaester/enzyme-adapter-react-18": "^0.7.0",
     "@modusoperandi/licit-ui-commands": "^0.1.15",
+    "enzyme": "^3.11.0",
     "font-awesome": "^4.7.0",
+    "jest-mock-extended": "^3.0.4",
     "prosemirror-example-setup": "^1.2.1",
     "prosemirror-schema-basic": "<1.2.0",
     "terser-webpack-plugin": "^5.3.6"
@@ -98,7 +101,7 @@
     "lint:css": "stylelint \"**/*.css\"",
     "test:unit": "jest",
     "test:coverage": "jest --coverage",
-    "test": "jest --passWithNoTests",
+    "test": "jest --coverage",
     "prepare": "npm run build:dist",
     "publish:dist": "npm publish"
   },

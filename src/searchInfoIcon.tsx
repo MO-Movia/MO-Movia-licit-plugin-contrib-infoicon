@@ -13,7 +13,7 @@ type SearchInfoProps = {
   close: (val?) => void;
 };
 
-class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchInfoProps> {
+export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchInfoProps> {
   _unmounted = false;
   _popUp = null;
   constructor(props: SearchInfoProps) {
@@ -82,9 +82,9 @@ class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchInfoProp
   };
 
   enableInfoWIndow(): void {
-    const citationForm: HTMLElement = document.getElementById('infoPopup');
-    if (citationForm && citationForm.style) {
-      citationForm.style.pointerEvents = 'unset';
+    const infoIconForm: HTMLElement = document.getElementById('infoPopup');
+    if (infoIconForm && infoIconForm.style) {
+      infoIconForm.style.pointerEvents = 'unset';
     }
   }
 
