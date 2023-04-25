@@ -314,19 +314,22 @@ class InfoIconView {
     }
   }
 
-  setContentRight(
-    e: MouseEvent,
-    parent: Element,
-    tooltip: HTMLDivElement,
-    ttContent: HTMLDivElement
-  ) {
+  setContentRight(e, parent, tooltip, ttContent) {
     // Append a tooltip to the outer node
-    const MAX_CLIENT_WIDTH = 1100;
-    const toolAndPosWidth = e.clientX + tooltip.clientWidth;
+
+
+    // const MAX_CLIENT_WIDTH = 1100;
+    //fix [25-04-2023]
+    const MAX_CLIENT_WIDTH = parent?.clientWidth;
+
+    const leftPanelWidth = (document.getElementsByTagName('maw-left-panel')[0] as HTMLElement)?.offsetWidth;
+    const toolAndPosWidth = (e.clientX - leftPanelWidth) + tooltip.clientWidth;
     if (parent) {
       if (toolAndPosWidth > MAX_CLIENT_WIDTH) {
         const right = toolAndPosWidth - MAX_CLIENT_WIDTH;
-        ttContent.style.right = right + 'px';
+        // ttContent.style.right = right + 'px';
+        //fix [25-04-2023]
+        tooltip.style.right = 0 + 'px';
       }
     }
   }
