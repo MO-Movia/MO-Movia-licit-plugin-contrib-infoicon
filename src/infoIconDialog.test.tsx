@@ -143,6 +143,14 @@ describe('InfoIconDialog ', () => {
         expect(instance.state.isEditorEmpty).toEqual(false);
     });
 
+    it('should call insertButtonEnble with null content', () => {
+        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
+        const instance = wrapper.instance() as InfoIconDialog;
+        const mockJson = { 'type': 'doc', 'content': [] };
+        instance.insertButtonEnble(mockJson);
+        expect(instance.state.isEditorEmpty).toEqual(false);
+    });
+
 
     it('should render the InfoIconDialog in mode 2(edit)', () => {
         const infoIconProps = {
