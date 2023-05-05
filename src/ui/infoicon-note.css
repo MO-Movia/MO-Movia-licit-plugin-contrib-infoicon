@@ -75,7 +75,7 @@
   font-weight: 100;
   line-height: 138%;
   max-width: max-content;
-  padding: 5px;
+  padding: 5px !important;
   text-align: left;
   text-decoration: none;
   width: 400px;
