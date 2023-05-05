@@ -305,7 +305,7 @@ class InfoIconView {
       const links = toolContent?.getElementsByTagName('a');
       if (links) {
         for (const link of links) {
-          const href = link.innerText;
+          const href = link.href;
           link.setAttribute('href', href);
           link.setAttribute('target', '_blank');
         }
