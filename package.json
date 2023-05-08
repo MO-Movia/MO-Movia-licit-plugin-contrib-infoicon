@@ -94,7 +94,7 @@
     "webpack": "webpack",
     "build:ts": "tsc -p tsconfig.json",
     "build:babel": "babel src --out-dir dist --extensions .ts,.tsx",
-    "build:css": "mkdirp ./dist/ui && cp src/ui/*.css dist/ui",
+    "build:css": "mkdirp ./dist/ui && cp src/ui/*.css dist/ui && cp src/plugins/menu/*.css dist/plugins/menu",
     "build:dist": "npm run clean && npm run build:ts && npm run webpack && npm run build:babel && npm run build:css",
     "lint": "npm run lint:css & npm run lint:ts",
     "lint:ts": "eslint src --ext .ts,.tsx --fix",

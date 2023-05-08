@@ -314,7 +314,7 @@ class InfoIconView {
     }
   }
 
-  setContentRight(e, parent, tooltip, ttContent) {
+  setContentRight(e, parent, tooltip, _ttContent) {
     // Append a tooltip to the outer node
 
 
@@ -326,7 +326,7 @@ class InfoIconView {
     const toolAndPosWidth = (e.clientX - leftPanelWidth) + tooltip.clientWidth;
     if (parent) {
       if (toolAndPosWidth > MAX_CLIENT_WIDTH) {
-        const right = toolAndPosWidth - MAX_CLIENT_WIDTH;
+        // const right = toolAndPosWidth - MAX_CLIENT_WIDTH;
         // ttContent.style.right = right + 'px';
         //fix [25-04-2023]
         tooltip.style.right = 0 + 'px';
