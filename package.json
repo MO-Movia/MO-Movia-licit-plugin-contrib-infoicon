@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-info-icon",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "MO's Info Icon ProseMirror Plugin",
   "main": "dist/index.js",
   "typings": "./index.d.ts",
@@ -89,7 +89,7 @@
     "webpack": "webpack",
     "build:ts": "tsc -p tsconfig.json",
     "build:babel": "babel src --out-dir dist --extensions .ts,.tsx",
-    "build:css": "mkdirp ./dist/ui && cp src/ui/*.css dist/ui",
+    "build:css": "mkdirp ./dist/ui && cp src/ui/*.css dist/ui && cp src/plugins/menu/*.css dist/plugins/menu",
     "build:dist": "npm run clean && npm run build:ts && npm run webpack && npm run build:babel && npm run build:css",
     "ci:bom": "cyclonedx-npm --ignore-npm-errors --short-PURLs --output-format XML --output-file dist/bom.xml",
     "ci:build": "npm run clean && npm run build:ts && npm run webpack && npm run build:babel && npm run build:css",

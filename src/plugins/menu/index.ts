@@ -6,7 +6,8 @@ import {
 import { EditorView } from 'prosemirror-view';
 import { toggleMark } from 'prosemirror-commands';
 import { MarkType } from 'prosemirror-model';
-
+import { createPopUp } from '@modusoperandi/licit-ui-commands';
+import LinkURLEditor from './LinkURLEditor';
 
 
 export function markActive(state: EditorState, type: MarkType) {
@@ -28,6 +29,22 @@ export default () =>
 
             const { marks } = view.state.schema;
 
+            const linkMenuItem = new MenuItem({
+                title: 'Link',
+                icon: icons.link,
+                enable: () => view.state.tr.selection.empty ? false : true,
+                active(state) { return markActive(state, marks.link); },
+                run: (state, dispatch, view) => {
+                    const isActive = linkMenuItem.spec.active(state);
+                    if (isActive) {
+                        toggleMark(marks.link)(state, dispatch);
+                        return true;
+                    } else {
+                        addLinkCommand(view);
+                    }
+                },
+            });
+
             const content = [
                 [
                     new MenuItem({
@@ -44,25 +61,30 @@ export default () =>
                         active(state) { return markActive(state, marks.em); },
                         run: toggleMark(marks.em),
                     }),
-                    new MenuItem({
-                        title: 'Link',
-                        icon: icons.link,
-                        enable: () => true,
-                        active(state) { return markActive(state, marks.link); },
-                        run(state, dispatch) {
-                            if (markActive(state, marks.link)) {
-                                toggleMark(marks.link)(state, dispatch);
-                                return true;
-                            }
-                            toggleMark(marks.link, {
-                                href: getLink(view), title: getLink(view),
-                            })(view.state, view.dispatch);
-                            view.focus();
-                            return false;
-                        }
-                    }),
+                    // For custom link
+                    linkMenuItem
                 ]
             ];
+
+            const addLinkCommand = (view) => {
+                let _popUp = null;
+                const href = '';
+                return new Promise((resolve) => {
+                    _popUp = createPopUp(
+                        LinkURLEditor,
+                        { href, view },
+                        {
+                            modal: true,
+                            onClose: (val) => {
+                                if (_popUp) {
+                                    _popUp = null;
+                                    resolve(val);
+                                }
+                            },
+                        }
+                    );
+                });
+            };
 
             const { dom, update } = renderGrouped(view, content);
 
