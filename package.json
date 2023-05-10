@@ -9,11 +9,6 @@
     "type": "git",
     "url": ""
   },
-  "maintainers": [
-    {
-      "name": "Firmusoft Solutions"
-    }
-  ],
   "dependencies": {
     "@cfaester/enzyme-adapter-react-18": "^0.7.0",
     "@modusoperandi/licit-ui-commands": "^0.1.16",
@@ -96,6 +91,8 @@
     "build:babel": "babel src --out-dir dist --extensions .ts,.tsx",
     "build:css": "mkdirp ./dist/ui && cp src/ui/*.css dist/ui && cp src/plugins/menu/*.css dist/plugins/menu",
     "build:dist": "npm run clean && npm run build:ts && npm run webpack && npm run build:babel && npm run build:css",
+    "ci:bom": "cyclonedx-npm --ignore-npm-errors --short-PURLs --output-format XML --output-file dist/bom.xml",
+    "ci:build": "npm run clean && npm run build:ts && npm run webpack && npm run build:babel && npm run build:css",
     "lint": "npm run lint:css & npm run lint:ts",
     "lint:ts": "eslint src --ext .ts,.tsx --fix",
     "lint:css": "stylelint \"**/*.css\"",
