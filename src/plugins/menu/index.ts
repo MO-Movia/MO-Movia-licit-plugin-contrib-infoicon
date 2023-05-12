@@ -39,9 +39,10 @@ export default () =>
                     if (isActive) {
                         toggleMark(marks.link)(state, dispatch);
                         return true;
-                    } else {
-                        addLinkCommand(view);
                     }
+
+                    addLinkCommand(view);
+                    return false;
                 },
             });
 
