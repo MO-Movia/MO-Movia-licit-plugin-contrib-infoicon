@@ -96,7 +96,7 @@
     "lint": "npm run lint:css & npm run lint:ts",
     "lint:ts": "eslint src --ext .ts,.tsx --fix",
     "lint:css": "stylelint \"**/*.css\"",
-    "test:unit": "jest",
+    "test:unit": "jest --collectCoverage=false",
     "test:coverage": "jest --coverage",
     "test": "jest --coverage",
     "prepare": "npm run build:dist",
