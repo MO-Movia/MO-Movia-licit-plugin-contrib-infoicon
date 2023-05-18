@@ -29,11 +29,8 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
     const { url } = this.state;
 
     const error = url ? BAD_CHARACTER_PATTER.test(url) : false;
-
-    // let label = 'Apply';
     let disabled = !!error;
     if (href) {
-      // label = url ? 'Apply' : 'Remove';
       disabled = error;
     } else {
       disabled = error || !url;
@@ -90,8 +87,7 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
     const { url } = this.state;
     toggleMark(this.props.view.state.schema.marks.link, {
       href: url,
-    })
-      (this.props.view.state, this.props.view.dispatch);
+    })(this.props.view.state, this.props.view.dispatch);
     this.props.view.focus();
     this.props.close(sanitizeURL(url));
     return false;

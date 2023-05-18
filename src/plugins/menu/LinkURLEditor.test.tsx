@@ -7,7 +7,6 @@ import { EditorState } from 'prosemirror-state';
 import { schema, builders } from 'prosemirror-test-builder';
 import {
   Schema,
-  MarkType,
 } from 'prosemirror-model';
 Enzyme.configure({ adapter: new Adapter() });
 
@@ -61,7 +60,7 @@ describe('LinkURLEditor', () => {
   it('create with null url', () => {
     wrapper = shallow(<LinkURLEditor {...props1} />);
     wrapper.setState({ url: null });
-  })
+  });
   it('calls the close function when cancel button is clicked', () => {
     wrapper.find('CustomButton[label="Cancel"]').simulate('click');
     expect(props.close).toHaveBeenCalled();
