@@ -11,12 +11,12 @@ import {
     Schema,
     MarkType,
 } from 'prosemirror-model';
-import InfoIconView from './infoIconView';
+import {InfoIconView} from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
 import { node } from 'webpack';
 import { createEditor } from 'jest-prosemirror';
 import { createPopUp } from '@modusoperandi/licit-ui-commands';
-import InfoIconDialog from './infoIconDialog';
+import {InfoIconDialog} from './infoIconDialog';
 
 class TestPlugin extends Plugin {
     constructor() {

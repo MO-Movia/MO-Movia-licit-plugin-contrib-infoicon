@@ -1,6 +1,6 @@
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
-import InfoIconDialog from './infoIconDialog';
+import {InfoIconDialog} from './infoIconDialog';
 import {
     Schema
 } from 'prosemirror-model';

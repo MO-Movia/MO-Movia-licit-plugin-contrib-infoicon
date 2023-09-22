@@ -1,38 +1,37 @@
-
 import * as React from 'react';
 import './ui/infoIconDialog.css';
-import { EditorState } from 'prosemirror-state';
-import { EditorView } from 'prosemirror-view';
-import { DOMSerializer, Schema, DOMParser } from 'prosemirror-model';
-import { schema } from 'prosemirror-schema-basic';
-import { addListNodes } from 'prosemirror-schema-list';
+import {EditorState} from 'prosemirror-state';
+import {EditorView} from 'prosemirror-view';
+import {DOMSerializer, Schema, DOMParser} from 'prosemirror-model';
+import {schema} from 'prosemirror-schema-basic';
+import {addListNodes} from 'prosemirror-schema-list';
 import 'font-awesome/css/font-awesome.min.css';
 import 'prosemirror-menu/style/menu.css';
-import SearchInfoIcon from './searchInfoIcon';
-import {
-  createPopUp
-} from '@modusoperandi/licit-ui-commands';
-import { plugins } from './plugins';
-import { FaIcons, FONTAWESOMEICONS } from './ui/FaIcon';
-import { SELECTEDINFOICON } from './constants';
-
+import {SearchInfoIcon} from './searchInfoIcon';
+import {createPopUp} from '@modusoperandi/licit-ui-commands';
+import {plugins} from './plugins';
+import {FaIcons, FONTAWESOMEICONS} from './ui/FaIcon';
+import {SELECTEDINFOICON} from './constants';
 
 type InfoDialogProps = {
-  infoIcon: { name, unicode };
+  infoIcon: {name; unicode};
   description: string;
-  editorView: EditorView,
-  mode: number,
-  from: number,
-  to: number,
-  faIcons,
-  selectedIconName: string
-  isOpen: boolean,
-  isEditorEmpty: boolean,
-  isButtonEnabled: boolean,
+  editorView: EditorView;
+  mode: number;
+  from: number;
+  to: number;
+  faIcons;
+  selectedIconName: string;
+  isOpen: boolean;
+  isEditorEmpty: boolean;
+  isButtonEnabled: boolean;
   close: (val?) => void;
 };
 
-class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProps> {
+export class InfoIconDialog extends React.PureComponent<
+  InfoDialogProps,
+  InfoDialogProps
+> {
   _popUp = null;
   _anchorEl = null;
   count: number;
@@ -50,7 +49,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
   }
 
   togglePopover = () => {
-    this.setState({ isOpen: !this.state.isOpen });
+    this.setState({isOpen: !this.state.isOpen});
   };
 
   componentDidMount() {
@@ -58,7 +57,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     // create a schema with list support.
     const mySchema = new Schema({
       nodes: addListNodes(schema.spec.nodes, 'paragraph block*', 'block'),
-      marks: schema.spec.marks
+      marks: schema.spec.marks,
     });
 
     const content = document.getElementById('content');
@@ -69,19 +68,18 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
           document.querySelector('#content')
         ),
         plugins: plugins,
-        schema: mySchema
-      }), dispatchTransaction: (tr) => {
+        schema: mySchema,
+      }),
+      dispatchTransaction: (tr) => {
         this.view.updateState(this.view.state.apply(tr));
         const docJson = this.view.state.tr.doc.toJSON();
         this.insertButtonEnble(docJson);
-      }
-    });
-    this.setState(
-      {
-        editorView: this.view,
-        isEditorEmpty: this.view.state.doc.textContent === '' ? false : true
       },
-    );
+    });
+    this.setState({
+      editorView: this.view,
+      isEditorEmpty: this.view.state.doc.textContent === '' ? false : true,
+    });
   }
 
   render(): React.ReactNode {
@@ -89,47 +87,78 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
       <div className="molinfo-infoContainer" id="infoPopup">
         <div className="molinfo-info-head">
           <span>Info Icon</span>
-          <button className='molinfo-info-close' onClick={this._cancel} type="button">
+          <button
+            className="molinfo-info-close"
+            onClick={this._cancel}
+            type="button"
+          >
             <span>X</span>
           </button>
         </div>
-        <div className='molinfo-divider'></div>
+        <div className="molinfo-divider"></div>
         <div className="molinfo-info-body">
           <div>
-            <span>{this.state.infoIcon ? (<span>Current Selection (<span className={this.state.infoIcon?.name}></span>)</span>) : <span>Select Icon</span>}</span>
+            <span>
+              {this.state.infoIcon ? (
+                <span>
+                  Current Selection (
+                  <span className={this.state.infoIcon?.name}></span>)
+                </span>
+              ) : (
+                <span>Select Icon</span>
+              )}
+            </span>
           </div>
-          <div className='molinfo-icon-container'>
-            <div className='molinfo-icon-list'>
+          <div className="molinfo-icon-container">
+            <div className="molinfo-icon-list">
               {this.state.faIcons.map((icon, index) => {
                 if (index < 10)
-                  return <div className='molinfo-icon-list-div'>
-                    <i className={icon.name} id={`infoIcon ${index}`} onClick={() => this.selectInfoIcon(icon)}></i>
-                  </div>;
-                else
-                  return null;
+                  return (
+                    <div className="molinfo-icon-list-div">
+                      <i
+                        className={icon.name}
+                        id={`infoIcon ${index}`}
+                        onClick={() => this.selectInfoIcon(icon)}
+                      ></i>
+                    </div>
+                  );
+                else return null;
               })}
             </div>
-            <div className='molinfo-dot-container'>
-              <i className="fa fa-ellipsis-v" onClick={() => this.setVisible(!this.state.isOpen)}></i>
-              {this.state.isOpen &&
-                <div className='icon-control-cont'>
-                  <button onClick={this._onAdd.bind(this)} >Add</button>
-                  <button disabled={!this.state.infoIcon} onClick={this._onRemove.bind(this)}>Remove</button>
-                </div>}
-
+            <div className="molinfo-dot-container">
+              <i
+                className="fa fa-ellipsis-v"
+                onClick={() => this.setVisible(!this.state.isOpen)}
+              ></i>
+              {this.state.isOpen && (
+                <div className="icon-control-cont">
+                  <button onClick={this._onAdd.bind(this)}>Add</button>
+                  <button
+                    disabled={!this.state.infoIcon}
+                    onClick={this._onRemove.bind(this)}
+                  >
+                    Remove
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-          <div className='molinfo-display-t'>
+          <div className="molinfo-display-t">
             <span>Display Text</span>
           </div>
-          <div className='molinfo-editor-container' id="editor"></div>
-          <div hidden id="content">
-          </div>
-          <div className='molinfo-insert-container'>
-            <button className='molinfo-insert-btn' disabled={!this.state.isButtonEnabled} onClick={this._insert.bind(this)}>{this.props.mode === 1 ? 'Insert' : 'Update'}</button>
+          <div className="molinfo-editor-container" id="editor"></div>
+          <div hidden id="content"></div>
+          <div className="molinfo-insert-container">
+            <button
+              className="molinfo-insert-btn"
+              disabled={!this.state.isButtonEnabled}
+              onClick={this._insert.bind(this)}
+            >
+              {this.props.mode === 1 ? 'Insert' : 'Update'}
+            </button>
           </div>
         </div>
-      </div >
+      </div>
     );
   }
   _cancel = (): void => {
@@ -138,17 +167,15 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
 
   selectInfoIcon = (clickedIcon): void => {
     if (clickedIcon.unicode === this.state.infoIcon?.unicode) {
-      this.setState({ infoIcon: null },
-        () => {
-          this.validateInsert();
-        });
+      this.setState({infoIcon: null}, () => {
+        this.validateInsert();
+      });
     } else {
-      this.setState({ infoIcon: clickedIcon },
-        () => {
-          this.validateInsert();
-        });
+      this.setState({infoIcon: clickedIcon}, () => {
+        this.validateInsert();
+      });
     }
-  }
+  };
 
   _insert = (): void => {
     this.props.close(this.state);
@@ -158,42 +185,45 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
     //edit mode
     if (2 === this.props.mode) {
       const div = document.createElement('div');
-      const fragm = DOMSerializer.fromSchema(this.state.editorView?.state?.schema).serializeFragment(this.state.editorView?.state?.doc?.content);
+      const fragm = DOMSerializer.fromSchema(
+        this.state.editorView?.state?.schema
+      ).serializeFragment(this.state.editorView?.state?.doc?.content);
       div.appendChild(fragm);
       const desc = div.innerHTML;
-      if (this.state.infoIcon && (this.state.selectedIconName !== this.state.infoIcon.name || desc !== this.state.description)) {
-        this.setState({ isButtonEnabled: true });
+      if (
+        this.state.infoIcon &&
+        (this.state.selectedIconName !== this.state.infoIcon.name ||
+          desc !== this.state.description)
+      ) {
+        this.setState({isButtonEnabled: true});
+      } else {
+        this.setState({isButtonEnabled: false});
       }
-      else {
-        this.setState({ isButtonEnabled: false });
-      }
-
-    }
-    else {
-      this.setState({ isButtonEnabled: this.state.infoIcon && !this.state.isEditorEmpty });
+    } else {
+      this.setState({
+        isButtonEnabled: this.state.infoIcon && !this.state.isEditorEmpty,
+      });
     }
   }
 
   _onAdd(_event: React.SyntheticEvent): void {
     this.disableInfoWIndow(false);
-    this._popUp = createPopUp(
-      SearchInfoIcon, null, {
+    this._popUp = createPopUp(SearchInfoIcon, null, {
       autoDismiss: false,
       onClose: (val) => {
         if (this._popUp) {
           this._popUp.close();
           this._popUp = null;
           if (undefined !== val) {
-            this.setState({ faIcons: this.getCacheIcons() });
+            this.setState({faIcons: this.getCacheIcons()});
           }
         }
       },
-    }
-    );
+    });
   }
 
   setVisible(isOpen) {
-    this.setState({ isOpen: isOpen });
+    this.setState({isOpen: isOpen});
   }
 
   getFaIconCount(): number {
@@ -207,7 +237,7 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
       if (element.unicode === iconName) {
         lcListItem.splice(i, 1);
         localStorage.setItem(SELECTEDINFOICON, JSON.stringify(lcListItem));
-        this.setState({ faIcons: this.getCacheIcons(), infoIcon: null });
+        this.setState({faIcons: this.getCacheIcons(), infoIcon: null});
       }
     });
   }
@@ -236,20 +266,17 @@ class InfoIconDialog extends React.PureComponent<InfoDialogProps, InfoDialogProp
 
   insertButtonEnble(docJson) {
     if (docJson.content.length > 1) {
-      this.setState({ isEditorEmpty: false },
-        () => {
-          this.validateInsert();
-        });
+      this.setState({isEditorEmpty: false}, () => {
+        this.validateInsert();
+      });
     } else if (docJson.content.length == 1) {
-      docJson.content[0].content == undefined ? this.setState({ isEditorEmpty: true },
-        () => {
-          this.validateInsert();
-        }) : this.setState({ isEditorEmpty: false },
-          () => {
+      docJson.content[0].content == undefined
+        ? this.setState({isEditorEmpty: true}, () => {
+            this.validateInsert();
+          })
+        : this.setState({isEditorEmpty: false}, () => {
             this.validateInsert();
           });
     }
   }
 }
-
-export default InfoIconDialog;

@@ -1,15 +1,16 @@
 import * as React from 'react';
 import cx from 'classnames';
-import type { PointerSurfaceProps } from '@modusoperandi/licit-ui-commands';
-
+import type {PointerSurfaceProps} from '@modusoperandi/licit-ui-commands';
 import {TooltipSurface} from '@modusoperandi/licit-ui-commands';
-import { PointerSurface } from '@modusoperandi/licit-ui-commands';
+import {PointerSurface} from '@modusoperandi/licit-ui-commands';
+
+type InfoToolButtonProps = PointerSurfaceProps & {
+  icon?: string | React.ReactNode | null;
+  label?: string | React.ReactNode | null;
+};
 
 export class InfoToolButton extends React.PureComponent {
-  props: PointerSurfaceProps & {
-    icon?: string | React.ReactNode | null;
-    label?: string | React.ReactNode | null;
-  };
+  declare props: InfoToolButtonProps;
 
   render() {
     const {icon, label, className, title, ...pointerProps} = this.props;
@@ -26,5 +27,3 @@ export class InfoToolButton extends React.PureComponent {
     );
   }
 }
-
-export default InfoToolButton;

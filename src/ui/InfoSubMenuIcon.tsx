@@ -3,7 +3,13 @@ import * as React from 'react';
 const VALID_CHARS = /[a-z_]+/;
 const cached = {};
 
-class InfoSubMenuIcon extends React.PureComponent {
+type InfoSubMenuProps = {
+  type: string;
+  title?: string;
+};
+
+export class InfoSubMenuIcon extends React.PureComponent {
+  declare props: InfoSubMenuProps;
   // Get the static Icon.
   static get(type: string, title?: string): React.ReactNode {
     const key = `${type || ''}-${title || ''}`;
@@ -11,11 +17,6 @@ class InfoSubMenuIcon extends React.PureComponent {
     cached[key] = icon;
     return icon;
   }
-
-  props: {
-    type: string;
-    title?: string;
-  };
 
   render() {
     const {type, title} = this.props;
@@ -31,5 +32,3 @@ class InfoSubMenuIcon extends React.PureComponent {
     return <span className={className}>{children}</span>;
   }
 }
-
-export default InfoSubMenuIcon;

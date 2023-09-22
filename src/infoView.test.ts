@@ -11,11 +11,11 @@ import {
     Schema,
     MarkType,
 } from 'prosemirror-model';
-import InfoIconView from './infoIconView';
+import {InfoIconView} from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
 import { node } from 'webpack';
 import { createPopUp } from '@modusoperandi/licit-ui-commands';
-import InfoIconDialog from './infoIconDialog';
+import {InfoIconDialog} from './infoIconDialog';
 
 class TestPlugin extends Plugin {
     constructor() {
@@ -125,8 +125,6 @@ describe('Info Plugin Extended', () => {
         const event = new MouseEvent('click', {
             bubbles: true,
             cancelable: true,
-            currentTarget: targetElement,
-            target: targetElement,
         });
         targetElement.dispatchEvent(event);
         cView._popUp_subMenu = createPopUp(
