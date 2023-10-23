@@ -8,11 +8,14 @@ import { EditorState } from 'prosemirror-state';
 import { schema, builders } from 'prosemirror-test-builder';
 import * as React from 'react';
 import { InfoIconPlugin } from './index';
+import {EditorView} from 'prosemirror-view';
+import { SyntheticEvent } from 'react';
+
 Enzyme.configure({ adapter: new Adapter() });
 const infoIconProps = {
     infoIcon: { name: 'fa-facebook', unicode: '#12fc3' },
     description: 'test Des',
-    editorView: '' as any,
+    editorView: {} as unknown as EditorView,
     mode: 1,
     from: 0,
     to: 1,
@@ -104,7 +107,7 @@ describe('InfoIconDialog ', () => {
         const infoIconProps = {
             infoIcon: { name: '', unicode: '' },
             description: '',
-            editorView: '' as any,
+            editorView: {} as unknown as EditorView,
             mode: 2,
             from: 0,
             to: 1,
@@ -156,7 +159,7 @@ describe('InfoIconDialog ', () => {
         const infoIconProps = {
             infoIcon: { name: 'fa fa-500px', unicode: '&#xf26e;' },
             description: '',
-            editorView: '' as any,
+            editorView: {} as unknown as EditorView,
             mode: 2,
             from: 0,
             to: 1,
@@ -171,7 +174,7 @@ describe('InfoIconDialog ', () => {
         };
         const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
         const instance = wrapper.instance() as InfoIconDialog;
-        instance._onAdd('' as any);
+        instance._onAdd({} as unknown as SyntheticEvent<Element, Event>);
         instance._onRemove();
         expect(instance).toBeDefined();
     });
