@@ -107,8 +107,10 @@
     "test:unit": "jest --collectCoverage=false",
     "test:coverage": "jest --coverage",
     "test": "jest --coverage",
-    "prepare": "npm run build:dist",
     "publish:dist": "npm publish"
+  },
+  "overrides": {
+    "semver": "^7.5.2"
   },
   "importSort": {
     ".js": {
