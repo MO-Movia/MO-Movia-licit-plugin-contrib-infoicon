@@ -119,6 +119,11 @@ export class InfoIconCommand extends UICommand {
     return false;
   };
 
+  cancel(): void {
+    return null;
+  }
+
+
   createInfoIconAttrs(from, to, desc, infoIcon) {
     const newAttrs = {};
      Object.assign(newAttrs, infoIcon['attrs']);
