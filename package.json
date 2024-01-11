@@ -11,9 +11,10 @@
     "url": ""
   },
   "dependencies": {
-    "@modusoperandi/licit-doc-attrs-step": "^0.1.6",
+    "font-awesome": "^4.7.0"
+  },
+  "peerDependencies": {
     "@modusoperandi/licit-ui-commands": "^0.1.18",
-    "font-awesome": "^4.7.0",
     "prosemirror-menu": "^1.2.2",
     "prosemirror-schema-basic": "^1.2.0",
     "prosemirror-utils":"^1.0.0"
