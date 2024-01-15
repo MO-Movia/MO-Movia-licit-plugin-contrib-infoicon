@@ -8,8 +8,8 @@ export default () =>
     ...baseKeymap,
     'Mod-z': undo,
     'Shift-Mod-z': redo,
-    'Mod-b': toggleMark(marks.strong),
-    'Mod-i': toggleMark(marks.em),
+    'Mod-b': toggleMark(marks.strong as any),
+    'Mod-i': toggleMark(marks.em as any),
   });
 
 export type Marks = 'em' | 'strong'
