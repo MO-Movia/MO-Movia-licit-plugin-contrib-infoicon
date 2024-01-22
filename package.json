@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-info-icon",
-  "version": "0.0.9",
+  "version": "1.0.0",
   "type": "module",
   "description": "MO's Info Icon ProseMirror Plugin",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "font-awesome": "^4.7.0"
   },
   "peerDependencies": {
-    "@modusoperandi/licit-ui-commands": "0.1.17",
+    "@modusoperandi/licit-ui-commands": "^1.0.0",
     "prosemirror-menu": "^1.2.2",
     "prosemirror-schema-basic": "^1.2.0",
     "prosemirror-utils": "^1.0.0"
