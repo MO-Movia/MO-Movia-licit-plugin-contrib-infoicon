@@ -80,18 +80,13 @@ export class InfoIconCommand extends UICommand {
         let newAttrs = {};
         Object.assign(newAttrs, infoicon['attrs']);
         newAttrs = this.createInfoIconAttrs(from, to, desc, infoIcon);
-        // newAttrs['id'] = '';
-        // newAttrs['from'] = from;
-        // newAttrs['to'] = to;
-        // newAttrs['description'] = desc;
-        // newAttrs['infoIcon'] = infoIcon.infoIcon;
         const infoiconNode = infoicon.create(null);
         const $head = state.selection.$head;
         let listNodeAttr = null;
         let listPos = 0;
         for (let d = $head.depth; d > 0; d--) {
           if (this.isList($head, d)) {
-            listNodeAttr = Object.assign({}, $head.node(d).attrs);
+            listNodeAttr = {...$head.node(d).attrs};
             listPos = $head['path'][d + 4];
             break;
           }
@@ -111,7 +106,6 @@ export class InfoIconCommand extends UICommand {
   cancel(): void {
     return null;
   }
-
 
   createInfoIconAttrs(from, to, desc, infoIcon) {
     const newAttrs = {};
@@ -134,10 +128,10 @@ export class InfoIconCommand extends UICommand {
   }
 
   isList($head, d) {
-    return $head.node(d).type.name === 'ordered_list' ||
+    return !!(
+      $head.node(d).type.name === 'ordered_list' ||
       $head.node(d).type.name === 'bullet_list'
-      ? true
-      : false;
+    );
   }
 
   getParentNodeSize(state: EditorState): number {
@@ -155,4 +149,14 @@ export class InfoIconCommand extends UICommand {
     }
     return true;
   };
+
+  renderLabel() {
+    return;
+  }
+  isActive(): boolean {
+    return true;
+  }
+  executeCustom(_state: EditorState, tr: Transform): Transform {
+    return tr;
+  }
 }
