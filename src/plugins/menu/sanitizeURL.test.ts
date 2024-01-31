@@ -1,5 +1,5 @@
 
-import sanitizeURL from './sanitizeURL';
+import {sanitizeURL} from './sanitizeURL';
 
 describe('sanitizeURL', () => {
     it('should return "http://" when no URL is provided', () => {

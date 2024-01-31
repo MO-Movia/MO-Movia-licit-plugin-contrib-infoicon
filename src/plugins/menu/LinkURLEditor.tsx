@@ -1,11 +1,11 @@
 // @flow
 
 import * as React from 'react';
-import { EditorView } from 'prosemirror-view';
-import sanitizeURL from './sanitizeURL';
-import { CustomButton } from '@modusoperandi/licit-ui-commands';
-import { toggleMark } from 'prosemirror-commands';
-import { preventEventDefault } from '@modusoperandi/licit-ui-commands';
+import {EditorView} from 'prosemirror-view';
+import {sanitizeURL} from './sanitizeURL';
+import {CustomButton} from '@modusoperandi/licit-ui-commands';
+import {toggleMark} from 'prosemirror-commands';
+import {preventEventDefault} from '@modusoperandi/licit-ui-commands';
 
 import './czi-form.css';
 import './czi-image-url-editor.css';
@@ -14,19 +14,18 @@ export const ENTER = 13;
 const BAD_CHARACTER_PATTER = /\s/;
 
 type LinkProps = {
-  href: string,
-  view: EditorView,
-  close: ((url?) => string),
-}
-class LinkURLEditor extends React.PureComponent<LinkProps> {
-
+  href: string;
+  view: EditorView;
+  close: (url?) => string;
+};
+export class LinkURLEditor extends React.PureComponent<LinkProps> {
   state = {
     url: this.props.href,
   };
 
   render() {
-    const { href } = this.props;
-    const { url } = this.state;
+    const {href} = this.props;
+    const {url} = this.state;
 
     const error = url ? BAD_CHARACTER_PATTER.test(url) : false;
     let disabled = !!error;
@@ -56,7 +55,7 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
             <CustomButton
               active={true}
               disabled={disabled}
-              label='Apply'
+              label="Apply"
               onClick={this._apply}
             />
           </div>
@@ -84,7 +83,7 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
   };
 
   _apply = () => {
-    const { url } = this.state;
+    const {url} = this.state;
     toggleMark(this.props.view.state.schema.marks.link, {
       href: url,
     })(this.props.view.state, this.props.view.dispatch);
@@ -93,5 +92,3 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
     return false;
   };
 }
-
-export default LinkURLEditor;

@@ -5,7 +5,7 @@
   border-width: 2px;
   box-sizing: border-box !important;
   color: white;
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   height: 438px;
   overflow: hidden;
   position: relative;
@@ -14,7 +14,7 @@
 
 .czi-editor-frameset .molinfo-info-head {
   box-sizing: unset !important;
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
   font-size: 20px;
   font-weight: 500;
   height: 27px;

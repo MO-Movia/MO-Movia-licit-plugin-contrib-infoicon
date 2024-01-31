@@ -1,9 +1,10 @@
 {
   "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
-    "target": "es6",
-    "module": "commonjs",
+    "target": "ES2022",
+    "module": "esnext",
     "moduleResolution": "node",
     "lib": [
       "es2017",
@@ -20,7 +21,6 @@
     ],
     // Ensure that .d.ts files are created by tsc, but not .js files
     "declaration": true,
-    "emitDeclarationOnly": true,
     // Ensure that Babel can safely transpile files in the TypeScript project
     "isolatedModules": true
   },

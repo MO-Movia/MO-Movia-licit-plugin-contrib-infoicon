@@ -1,5 +1,5 @@
 .czi-editor-frameset .molcit-context-menu {
-  font-family: 'calibri', serif;
+  font-family: calibri, serif;
   font-size: 16px;
   background: white;
   border: 1px solid #a9a5a5;
@@ -43,11 +43,10 @@
 }
 
 .czi-editor-frameset .molcit-context-menu hr {
-  /* width:184px; */
   width: auto;
   margin-top: 1px;
   margin-bottom: 1px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  border-top: 1px solid rgba(0 0 0 10%);
 }
 
 .czi-editor-frameset .molcit-context-menu li div.context-menu {

@@ -1,6 +1,6 @@
 import Enzyme, { shallow } from 'enzyme';
 import Adapter from '@cfaester/enzyme-adapter-react-18';
-import LinkURLEditor from './LinkURLEditor';
+import {LinkURLEditor} from './LinkURLEditor';
 import React from 'react';
 import { EditorView } from 'prosemirror-view';
 import { EditorState } from 'prosemirror-state';

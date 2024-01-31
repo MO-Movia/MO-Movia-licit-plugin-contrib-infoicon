@@ -1,17 +1,19 @@
 import * as React from 'react';
 import {EditorView} from 'prosemirror-view';
-import InfoToolButton from './ui/InfoToolButton';
-import InfoSubMenuIcon from './ui/InfoSubMenuIcon';
+import {InfoToolButton} from './ui/InfoToolButton';
+import {InfoSubMenuIcon} from './ui/InfoSubMenuIcon';
 import './ui/infoicon-note.css';
 
-export class InfoIconSubMenu extends React.PureComponent{
-  props: {
-    editorView: EditorView;
-    onCancel: (view: EditorView) => void;
-    onEdit: (view: EditorView) => void;
-    onRemove: (view: EditorView) => void;
-    onMouseOut: () => void;
-  };
+type CustomButtonProps = {
+  editorView: EditorView;
+  onCancel: (view: EditorView) => void;
+  onEdit: (view: EditorView) => void;
+  onRemove: (view: EditorView) => void;
+  onMouseOut: () => void;
+};
+
+export class InfoIconSubMenu extends React.PureComponent {
+  declare props: CustomButtonProps;
 
   _unmounted = false;
 
@@ -20,7 +22,7 @@ export class InfoIconSubMenu extends React.PureComponent{
   };
 
   render() {
-    const { onEdit, onRemove, editorView, onMouseOut} = this.props;
+    const {onEdit, onRemove, editorView, onMouseOut} = this.props;
     const disabled = editorView['readOnly'];
 
     return (
@@ -45,5 +47,3 @@ export class InfoIconSubMenu extends React.PureComponent{
     );
   }
 }
-
-export default InfoIconSubMenu;
