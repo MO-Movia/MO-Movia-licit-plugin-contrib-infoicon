@@ -1,7 +1,7 @@
-import { baseKeymap, toggleMark } from 'prosemirror-commands';
-import { undo, redo } from 'prosemirror-history';
-import { keymap } from 'prosemirror-keymap';
-import { MarkSpec } from 'prosemirror-model';
+import {baseKeymap, toggleMark} from 'prosemirror-commands';
+import {undo, redo} from 'prosemirror-history';
+import {keymap} from 'prosemirror-keymap';
+import {MarkSpec} from 'prosemirror-model';
 
 export default () =>
   keymap({
@@ -12,16 +12,16 @@ export default () =>
     'Mod-i': toggleMark(marks.em as any),
   });
 
-export type Marks = 'em' | 'strong'
+export type Marks = 'em' | 'strong';
 
-export const marks: { [key in Marks]: MarkSpec } = {
+export const marks: {[key in Marks]: MarkSpec} = {
   em: {
-    parseDOM: [{ tag: 'em' }, { tag: 'i' }, { style: 'font-style=italic' }],
+    parseDOM: [{tag: 'em'}, {tag: 'i'}, {style: 'font-style=italic'}],
     toDOM: () => ['em', 0],
   },
 
   strong: {
-    parseDOM: [{ tag: 'strong' }, { tag: 'b' }, { style: 'font-weight=bold' }],
+    parseDOM: [{tag: 'strong'}, {tag: 'b'}, {style: 'font-weight=bold'}],
     toDOM: () => ['strong', 0],
   },
 };

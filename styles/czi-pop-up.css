@@ -1,6 +1,6 @@
 .czi-editor-frameset .molcit-czi-pop-up-modal-mask,
 .czi-editor-frameset .molcit-czi-pop-up-element {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0 0 0 50%);
   height: 100vh;
   left: 0;
   position: fixed;
@@ -18,7 +18,7 @@
 .czi-editor-frameset .molcit-czi-pop-up-element a:visited,
 .czi-editor-frameset .molcit-czi-pop-up-element a:hover,
 .czi-editor-frameset .molcit-czi-pop-up-element a:active {
-  color: rgb(0, 0, 238);
+  color: rgb(0 0 238);
 }
 
 .czi-editor-frameset .molcit-capco-pop-up-element {
@@ -34,7 +34,7 @@
   min-width: 390px;
   background-color: #fff;
   background-clip: padding-box;
-  border: 1px solid rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(0 0 0 20%);
   border-radius: 0.3rem;
   outline: 0;
 }
