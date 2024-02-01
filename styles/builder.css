@@ -69,10 +69,7 @@
 .czi-editor-frameset .molcit-btn-dslash {
   box-sizing: border-box;
   height: calc(1.5em + 0.75rem + 1px);
-  padding-top: 0.375rem;
-  padding-bottom: 0.375rem;
-  padding-right: 0.75rem;
-  padding-left: 0.75rem;
+  padding: 0.375rem 0.75rem;
   line-height: 1.4;
   color: #495057;
   background-color: #fff;
@@ -118,23 +115,18 @@
   background-clip: padding-box;
   border: 1px solid #ced4da;
   border-radius: 0.25rem;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  margin-left: 2px;
-  margin-right: 2px;
+  margin: 2px;
 }
 
 .czi-editor-frameset .molcit-builder-card {
   position: relative;
-  display: -ms-flexbox;
   display: flex;
-  -ms-flex-direction: column;
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
   background-color: #fff;
   background-clip: border-box;
-  border: 1px solid rgba(0, 0, 0, 0.125);
+  border: 1px solid rgba(0 0 0 12.5%);
   border-radius: 0.25rem;
 }
 
@@ -163,7 +155,7 @@
   padding: 0 !important;
   margin-bottom: 0;
   background-color: #eaeaea !important;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  border-bottom: 1px solid rgba(0 0 0 12.5%);
 }
 
 .czi-editor-frameset .molcit-builder-card-header h6 {
@@ -184,7 +176,6 @@
 }
 
 .czi-editor-frameset .molcit-builder-card-body {
-  -ms-flex: 1 1 auto;
   flex: 1 1 auto;
   min-height: 1px;
   width: 365px;
@@ -203,13 +194,13 @@
   z-index: 10;
   width: 99.5%;
   border-top: 1px solid lightgray;
-  color: rgb(255, 206, 191);
+  color: rgb(255 206 191);
 }
 
 .czi-editor-frameset .molcit-default-marker-value {
   width: 100%;
   float: left;
-  font-family: 'calibri', serif;
+  font-family: calibri, serif;
   font-size: 13px;
 }
 
@@ -226,10 +217,12 @@
   overflow: auto;
 }
 
-.czi-editor-frameset #builderBody {
+/* id from czi */
+.czi-editor-frameset #builderBody { /* stylelint-disable-line */
   min-height: 300px;
 }
 
-.czi-editor-frameset #DisseminationMarkingsCompartment {
+/* id from czi */
+.czi-editor-frameset #DisseminationMarkingsCompartment { /* stylelint-disable-line */
   height: 205px;
 }

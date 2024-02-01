@@ -8,7 +8,7 @@ type AlertProps = {
   close: () => void;
 };
 
-class AlertInfo extends React.PureComponent<AlertProps, AlertProps> {
+export class AlertInfo extends React.PureComponent<AlertProps, AlertProps> {
   _unmounted = false;
 
   constructor(props: AlertProps) {
@@ -37,4 +37,4 @@ class AlertInfo extends React.PureComponent<AlertProps, AlertProps> {
   };
 }
 
-export default AlertInfo;
+

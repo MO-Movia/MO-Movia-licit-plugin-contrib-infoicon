@@ -1,16 +1,16 @@
-import { DOMOutputSpec, Node, NodeSpec } from 'prosemirror-model';
+import {DOMOutputSpec, Node, NodeSpec} from 'prosemirror-model';
 
-const InfoIconNodeSpec: NodeSpec = {
+export const InfoIconNodeSpec: NodeSpec = {
   group: 'inline',
   content: 'text*',
   inline: true,
   selectable: false,
   // added new attributes to this spec.
   attrs: {
-    from: { default: null },
-    to: { default: null },
-    description: { default: null },
-    infoIcon: { default: null }
+    from: {default: null},
+    to: {default: null},
+    description: {default: null},
+    infoIcon: {default: null},
   },
   toDOM,
   parseDOM: [
@@ -34,19 +34,17 @@ function getAttrs(dom: HTMLElement): Record<string, unknown> {
     from,
     to,
     description,
-    infoIcon
+    infoIcon,
   };
 }
 
 function toDOM(node: Node): DOMOutputSpec {
-  const { from, to, description,
-    infoIcon
-  } = node.attrs;
+  const {from, to, description, infoIcon} = node.attrs;
   const attrs = {
     from,
     to,
     description,
-    infoIcon
+    infoIcon,
   };
   attrs.from = from;
   attrs.to = to;
@@ -54,4 +52,3 @@ function toDOM(node: Node): DOMOutputSpec {
   attrs.infoIcon = JSON.stringify(infoIcon);
   return ['infoicon', attrs, 0];
 }
-export default InfoIconNodeSpec;

@@ -1,6 +1,6 @@
 /* eslint-disable */
 
-import InfoIconNodeSpec from './infoIconNodeSpec';
+import {InfoIconNodeSpec} from './infoIconNodeSpec';
 
 
 const node = {

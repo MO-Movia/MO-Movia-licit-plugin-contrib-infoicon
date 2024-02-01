@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
-import { EditorState } from 'prosemirror-state';
-import { Transform } from 'prosemirror-transform';
-import { EditorView } from 'prosemirror-view';
-import InfoIconDialog from './infoIconDialog';
-import { createPopUp } from '@modusoperandi/licit-ui-commands';
-import type { PopUpHandle } from '@modusoperandi/licit-ui-commands';
-import { getNode } from './constants';
-import { DOMSerializer, Fragment } from 'prosemirror-model';
-
+import {UICommand} from '@modusoperandi/licit-doc-attrs-step';
+import {EditorState} from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
+import {EditorView} from 'prosemirror-view';
+import {InfoIconDialog} from './infoIconDialog';
+import {createPopUp} from '@modusoperandi/licit-ui-commands';
+import type {PopUpHandle} from '@modusoperandi/licit-ui-commands';
+import {getNode} from './constants';
+import {DOMSerializer, Fragment} from 'prosemirror-model';
 
 export class InfoIconCommand extends UICommand {
   _popUp: PopUpHandle | null = null;
@@ -22,16 +21,13 @@ export class InfoIconCommand extends UICommand {
   isEnabled = (state: EditorState): boolean => {
     return this._isEnabled(state);
   };
-  createInfoObject(
-    editorView: EditorView,
-    mode: number
-  ) {
+  createInfoObject(editorView: EditorView, mode: number) {
     return {
       infoIcon: '',
       description: '',
       mode: mode, //0 = new , 1- modify, 2- delete
       editorView: editorView,
-      selectedIconName: ''
+      selectedIconName: '',
     };
   }
   waitForUserInput = (
@@ -69,8 +65,8 @@ export class InfoIconCommand extends UICommand {
     infoIcon
   ): boolean => {
     if (dispatch) {
-      const { selection } = state;
-      let { tr } = state;
+      const {selection} = state;
+      let {tr} = state;
       tr = tr.setSelection(selection);
       const from = state.selection.from;
       const to = state.selection.to;
@@ -84,31 +80,19 @@ export class InfoIconCommand extends UICommand {
         let newAttrs = {};
         Object.assign(newAttrs, infoicon['attrs']);
         newAttrs = this.createInfoIconAttrs(from, to, desc, infoIcon);
-        // newAttrs['id'] = '';
-        // newAttrs['from'] = from;
-        // newAttrs['to'] = to;
-        // newAttrs['description'] = desc;
-        // newAttrs['infoIcon'] = infoIcon.infoIcon;
         const infoiconNode = infoicon.create(null);
         const $head = state.selection.$head;
         let listNodeAttr = null;
         let listPos = 0;
         for (let d = $head.depth; d > 0; d--) {
           if (this.isList($head, d)) {
-            listNodeAttr = Object.assign({}, $head.node(d).attrs);
+            listNodeAttr = {...$head.node(d).attrs};
             listPos = $head['path'][d + 4];
             break;
           }
         }
-        tr = tr.insert(
-          to,
-          Fragment.from(infoiconNode),
-        );
-        tr = tr.setNodeMarkup(
-          to,
-          undefined,
-          newAttrs
-        );
+        tr = tr.insert(to, Fragment.from(infoiconNode));
+        tr = tr.setNodeMarkup(to, undefined, newAttrs);
         if (listNodeAttr) {
           tr = tr.setNodeMarkup(listPos, undefined, listNodeAttr);
         }
@@ -119,9 +103,13 @@ export class InfoIconCommand extends UICommand {
     return false;
   };
 
+  cancel(): void {
+    return null;
+  }
+
   createInfoIconAttrs(from, to, desc, infoIcon) {
     const newAttrs = {};
-     Object.assign(newAttrs, infoIcon['attrs']);
+    Object.assign(newAttrs, infoIcon['attrs']);
     newAttrs['from'] = from;
     newAttrs['to'] = to;
     newAttrs['description'] = desc;
@@ -130,7 +118,9 @@ export class InfoIconCommand extends UICommand {
   }
 
   getFragm(infoIcon) {
-    return DOMSerializer.fromSchema(infoIcon.editorView.state.schema).serializeFragment(this.getDocContent(infoIcon));
+    return DOMSerializer.fromSchema(
+      infoIcon.editorView.state.schema
+    ).serializeFragment(this.getDocContent(infoIcon));
   }
 
   getDocContent(infoIcon) {
@@ -138,8 +128,10 @@ export class InfoIconCommand extends UICommand {
   }
 
   isList($head, d) {
-    return $head.node(d).type.name === 'ordered_list' || $head.node(d).type.name === 'bullet_list' ?
-      true : false;
+    return !!(
+      $head.node(d).type.name === 'ordered_list' ||
+      $head.node(d).type.name === 'bullet_list'
+    );
   }
 
   getParentNodeSize(state: EditorState): number {
@@ -157,5 +149,14 @@ export class InfoIconCommand extends UICommand {
     }
     return true;
   };
-}
 
+  renderLabel() {
+    return;
+  }
+  isActive(): boolean {
+    return true;
+  }
+  executeCustom(_state: EditorState, tr: Transform): Transform {
+    return tr;
+  }
+}

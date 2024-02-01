@@ -1,12 +1,11 @@
 // @flow
 
 import * as React from 'react';
-import PropTypes from 'prop-types';
-import { EditorView } from 'prosemirror-view';
-import sanitizeURL from './sanitizeURL';
-import { CustomButton } from '@modusoperandi/licit-ui-commands';
-import { toggleMark } from 'prosemirror-commands';
-import { preventEventDefault } from '@modusoperandi/licit-ui-commands';
+import {EditorView} from 'prosemirror-view';
+import {sanitizeURL} from './sanitizeURL';
+import {CustomButton} from '@modusoperandi/licit-ui-commands';
+import {toggleMark} from 'prosemirror-commands';
+import {preventEventDefault} from '@modusoperandi/licit-ui-commands';
 
 import './czi-form.css';
 import './czi-image-url-editor.css';
@@ -15,45 +14,22 @@ export const ENTER = 13;
 const BAD_CHARACTER_PATTER = /\s/;
 
 type LinkProps = {
-  href: string,
-  view: EditorView,
-  close: ((url?) => string),
-}
-class LinkURLEditor extends React.PureComponent<LinkProps> {
-  // [FS] IRAD-1005 2020-07-07
-  // Upgrade outdated packages.
-  // To take care of the property type declaration.
-  static propsTypes = {
-    href: PropTypes.string,
-    close: function (props, propName) {
-      const fn = props[propName];
-      if (
-        !fn.prototype ||
-        (typeof fn.prototype.constructor !== 'function' &&
-          fn.prototype.constructor.length !== 1)
-      ) {
-        return new Error(
-          propName + 'must be a function with 1 arg of type string'
-        );
-      }
-      return null;
-    },
-  };
-
+  href: string;
+  view: EditorView;
+  close: (url?) => string;
+};
+export class LinkURLEditor extends React.PureComponent<LinkProps> {
   state = {
     url: this.props.href,
   };
 
   render() {
-    const { href } = this.props;
-    const { url } = this.state;
+    const {href} = this.props;
+    const {url} = this.state;
 
     const error = url ? BAD_CHARACTER_PATTER.test(url) : false;
-
-    let label = 'Apply';
     let disabled = !!error;
     if (href) {
-      label = url ? 'Apply' : 'Remove';
       disabled = error;
     } else {
       disabled = error || !url;
@@ -79,7 +55,7 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
             <CustomButton
               active={true}
               disabled={disabled}
-              label={label}
+              label="Apply"
               onClick={this._apply}
             />
           </div>
@@ -107,7 +83,7 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
   };
 
   _apply = () => {
-    const { url } = this.state;
+    const {url} = this.state;
     toggleMark(this.props.view.state.schema.marks.link, {
       href: url,
     })(this.props.view.state, this.props.view.dispatch);
@@ -116,5 +92,3 @@ class LinkURLEditor extends React.PureComponent<LinkProps> {
     return false;
   };
 }
-
-export default LinkURLEditor;
