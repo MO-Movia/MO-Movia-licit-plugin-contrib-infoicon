@@ -1,15 +1,15 @@
 import {baseKeymap, toggleMark} from 'prosemirror-commands';
 import {undo, redo} from 'prosemirror-history';
 import {keymap} from 'prosemirror-keymap';
-import {MarkSpec} from 'prosemirror-model';
+import {MarkSpec, MarkType} from 'prosemirror-model';
 
 export default () =>
   keymap({
     ...baseKeymap,
     'Mod-z': undo,
     'Shift-Mod-z': redo,
-    'Mod-b': toggleMark(marks.strong as any),
-    'Mod-i': toggleMark(marks.em as any),
+    'Mod-b': toggleMark(marks.strong as unknown as MarkType),
+    'Mod-i': toggleMark(marks.em as unknown as MarkType),
   });
 
 export type Marks = 'em' | 'strong';

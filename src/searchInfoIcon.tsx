@@ -112,7 +112,7 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
     // this.icons = {};
     const searchRes = FONTAWESOMEICONS.filter(d => d?.name?.toLowerCase().includes(e.target.value.toLowerCase()));
     this.setState({ icons: searchRes });
-  }
+  };
 
   selectInfoIcon = (icon: FaIcons): void => {
     if (icon.name === this.state.selectedIcon.name) {
@@ -120,7 +120,7 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
     } else {
       this.setState({ selectedIcon: icon });
     }
-  }
+  };
 
   getCacheIcons(): FaIcons[] {
     const ccList = localStorage.getItem(SELECTEDINFOICON);
