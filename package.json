@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-info-icon",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "type": "module",
   "description": "MO's Info Icon ProseMirror Plugin",
   "main": "dist/index.js",
