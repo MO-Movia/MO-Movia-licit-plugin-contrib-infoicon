@@ -17,6 +17,7 @@
     "@modusoperandi/licit-ui-commands": "^1.0.0",
     "prosemirror-menu": "^1.2.2",
     "prosemirror-schema-basic": "^1.2.0",
+    "prosemirror-schema-list": "^1.2.0",
     "prosemirror-utils": "^1.0.0"
   },
   "devDependencies": {
