@@ -116,9 +116,9 @@
   width: 340px;
 }
 
-.czi-editor-frameset .ProseMirror {
+/* .czi-editor-frameset .ProseMirror {
   counter-reset: prosemirror-infoicon;
-}
+} */
 
 .czi-editor-frameset .molcit-infoicon-submenu {
   display: flex;
