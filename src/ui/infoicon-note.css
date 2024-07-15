@@ -37,13 +37,6 @@
   padding-right: 1px;
 }
 
-/* .czi-editor-frameset .infoicon::after {
-  content: "[" counter(prosemirror-infoicon) "]";
-  counter-increment: prosemirror-infoicon;
-  font-size: 56%;
-  vertical-align: super;
-}  */
-
 .czi-editor-frameset .molinfo-editor-container .ProseMirror {
   padding-left: 7px;
   padding-right: 7px;
@@ -115,10 +108,6 @@
   padding: 20px;
   width: 340px;
 }
-
-/* .czi-editor-frameset .ProseMirror {
-  counter-reset: prosemirror-infoicon;
-} */
 
 .czi-editor-frameset .molcit-infoicon-submenu {
   display: flex;
