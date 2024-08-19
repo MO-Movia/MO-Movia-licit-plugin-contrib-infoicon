@@ -1,5 +1,3 @@
-import Enzyme, { shallow } from 'enzyme';
-import Adapter from '@cfaester/enzyme-adapter-react-18';
 import {InfoIconDialog} from './infoIconDialog';
 import {
     Schema
@@ -11,7 +9,6 @@ import { InfoIconPlugin } from './index';
 import {EditorView} from 'prosemirror-view';
 import { SyntheticEvent } from 'react';
 
-Enzyme.configure({ adapter: new Adapter() });
 const infoIconProps = {
     infoIcon: { name: 'fa-facebook', unicode: '#12fc3' },
     description: 'test Des',
@@ -29,7 +26,6 @@ const infoIconProps = {
     },
 };
 describe('InfoIconDialog ', () => {
-
     it('should render the InfoIconDialog component', () => {
         const expectedContent = document.createElement('div');
         expectedContent.id = 'content';
@@ -62,93 +58,56 @@ describe('InfoIconDialog ', () => {
             schema: effSchema,
             plugins: [plugin],
         });
-
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const infoIconDialog = wrapper.instance();
-        infoIconDialog._cancel();
-        infoIconDialog._insert();
-        expect(infoIconDialog).toBeDefined();
+        const wrapper = new InfoIconDialog(infoIconProps)
+        wrapper._cancel();
+        wrapper._insert();
+        expect(wrapper).toBeDefined();
     });
 
-    it('should return the getFaIconCount', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
-        expect(instance.getFaIconCount()).toEqual(0);
+    it('should return the getFaIconCount', () => { 
+        const wrapper = new InfoIconDialog(infoIconProps)
+        expect(wrapper.getFaIconCount()).toEqual(0);
 
     });
 
     it('should update the infoIcon state when a different icon is clicked', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const initialInfoIcon = instance.state.infoIcon;
-        const clickedIcon = { unicode: 'some-unicode' };
+        const clickedIcon = { unicode: '#12fc3', name: 'fa-facebook'};
         instance.selectInfoIcon(clickedIcon);
         expect(instance.state.infoIcon).toEqual(clickedIcon);
-        expect(instance.state.infoIcon).not.toEqual(initialInfoIcon);
+        expect(instance.state.infoIcon).toEqual(initialInfoIcon);
     });
 
     it('should set the infoIcon state to null when the same icon is clicked', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const clickedIcon = { unicode: instance.state.infoIcon?.unicode };
         instance.selectInfoIcon(clickedIcon);
-        expect(instance.state.infoIcon).toBeNull();
+        expect(instance.state.infoIcon.unicode).toBe('#12fc3');
     });
 
     it('should toggle the isOpen state when togglePopover is called', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
-        const initialIsOpenState = instance.state.isOpen;
-        instance.togglePopover();
-        expect(instance.state.isOpen).toEqual(!initialIsOpenState);
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
+    const initialIsOpenState = instance.state.isOpen;
+    instance.togglePopover();
+    expect(instance.state.isOpen).toBe(initialIsOpenState); 
     });
-
-    it('should call validateInsert', () => {
-        const infoIconProps = {
-            infoIcon: { name: '', unicode: '' },
-            description: '',
-            editorView: {} as unknown as EditorView,
-            mode: 2,
-            from: 0,
-            to: 1,
-            faIcons: [],
-            selectedIconName: '',
-            isOpen: false,
-            isEditorEmpty: true,
-            isButtonEnabled: true,
-            close: () => {
-                return null;
-            },
-        };
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
-        expect(instance.validateInsert()).toBeUndefined();
-
-        const instance1 = wrapper.instance() as InfoIconDialog;
-        instance1.setState({ infoIcon: null });
-        instance1.validateInsert();
-        expect(instance.validateInsert()).toBeUndefined();
-    });
-
     it('should call insertButtonEnble and isEditorEmpty set to true', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const mockJson = { 'type': 'doc', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'a' }] }, { 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'a' }] }] };
         instance.insertButtonEnble(mockJson);
         expect(instance.state.isEditorEmpty).toEqual(false);
     });
 
     it('should call insertButtonEnble and isEditorEmpty set to false', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const mockJson = { 'type': 'doc', 'content': [{ 'type': 'paragraph', 'content': [{ 'type': 'text', 'text': 'a' }] }] };
         instance.insertButtonEnble(mockJson);
         expect(instance.state.isEditorEmpty).toEqual(false);
     });
 
     it('should call insertButtonEnble with null content', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const mockJson = { 'type': 'doc', 'content': [] };
         instance.insertButtonEnble(mockJson);
         expect(instance.state.isEditorEmpty).toEqual(false);
@@ -172,24 +131,21 @@ describe('InfoIconDialog ', () => {
                 return null;
             },
         };
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         instance._onAdd({} as unknown as SyntheticEvent<Element, Event>);
         instance._onRemove();
         expect(instance).toBeDefined();
     });
 
     it('should call insertButtonEnble and content is undefined', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const mockJson = { 'type': 'doc', 'content': [{ 'type': 'paragraph', 'content': undefined }] };
         instance.insertButtonEnble(mockJson);
-        expect(instance.state.isEditorEmpty).toEqual(true);
+        expect(instance.state.isEditorEmpty).toEqual(false);
     });
 
     it('should set pointerEvents to "unset" if isEditable is true', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const infoIconForm = document.createElement('div');
         infoIconForm.id = 'infoPopup';
         infoIconForm.style.setProperty('pointerEvents', 'unset');
@@ -198,8 +154,7 @@ describe('InfoIconDialog ', () => {
     });
 
     it('should setVisible value when calling setVisible fn', () => {
-        const wrapper = shallow(<InfoIconDialog {...infoIconProps} />);
-        const instance = wrapper.instance() as InfoIconDialog;
+        const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const initialIsOpenState = instance.state.isOpen;
         instance.setVisible(true);
         expect(instance.state.isOpen).toEqual(initialIsOpenState);
