@@ -25,3 +25,4 @@ export const marks: {[key in Marks]: MarkSpec} = {
     toDOM: () => ['strong', 0],
   },
 };
+

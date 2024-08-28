@@ -33,24 +33,22 @@ export class InfoIconDialog extends React.PureComponent<
   InfoDialogProps
 > {
   _popUp = null;
-  _anchorEl = null;
-  count: number;
   view: EditorView;
   constructor(props: InfoDialogProps) {
     super(props);
     this.state = {
-      infoIcon: null,
-      faIcons: this.getCacheIcons(),
-      isOpen: false,
-      isButtonEnabled: false,
-      isEditorEmpty: false,
+      editorView: props.editorView,
+      from: props.from,
+      to: props.to,
+      infoIcon: props.infoIcon || null,
+      faIcons: (this.getCacheIcons().length > 0 ? this.getCacheIcons() : props.faIcons),
+      isOpen: props.isOpen || false,
+      isButtonEnabled: props.isButtonEnabled || false,
+      isEditorEmpty: props.isEditorEmpty || false,
+      selectedIconName: props.selectedIconName,
       ...props,
     };
   }
-
-  togglePopover = () => {
-    this.setState({isOpen: !this.state.isOpen});
-  };
 
   componentDidMount() {
     // Mix the nodes from prosemirror-schema-list into the basic schema to
@@ -78,11 +76,13 @@ export class InfoIconDialog extends React.PureComponent<
     });
     this.setState({
       editorView: this.view,
-      isEditorEmpty: this.view.state.doc.textContent === '' ? false : true,
+      isEditorEmpty: this.view.state.doc.textContent !== '',
     });
   }
 
   render(): React.ReactNode {
+    const selectedIconCount = this.getFaIconCount(); 
+    console.log("selectedIconCount",selectedIconCount)
     return (
       <div className="molinfo-infoContainer" id="infoPopup">
         <div className="molinfo-info-head">
@@ -101,8 +101,7 @@ export class InfoIconDialog extends React.PureComponent<
             <span>
               {this.state.infoIcon ? (
                 <span>
-                  Current Selection (
-                  <span className={this.state.infoIcon?.name}></span>)
+                  Current Selection (<span className={this.state.infoIcon?.name}></span>)
                 </span>
               ) : (
                 <span>Select Icon</span>
@@ -114,11 +113,18 @@ export class InfoIconDialog extends React.PureComponent<
               {this.state.faIcons.map((icon, index) => {
                 if (index < 10)
                   return (
-                    <div className="molinfo-icon-list-div">
+                    <div className="molinfo-icon-list-div"  key={icon.id}>
                       <i
                         className={icon.name}
+                        role='menu'
+                        tabIndex={0}
                         id={`infoIcon ${index}`}
                         onClick={() => this.selectInfoIcon(icon)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            this.selectInfoIcon(icon);
+                          }
+                        }}
                       ></i>
                     </div>
                   );
@@ -127,8 +133,15 @@ export class InfoIconDialog extends React.PureComponent<
             </div>
             <div className="molinfo-dot-container">
               <i
+                role='menu'
+                tabIndex={0}
                 className="fa fa-ellipsis-v"
                 onClick={() => this.setVisible(!this.state.isOpen)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    this.setVisible(!this.state.isOpen);
+                  }
+                }}
               ></i>
               {this.state.isOpen && (
                 <div className="icon-control-cont">
@@ -200,9 +213,9 @@ export class InfoIconDialog extends React.PureComponent<
         this.setState({isButtonEnabled: false});
       }
     } else {
-      this.setState({
-        isButtonEnabled: this.state.infoIcon && !this.state.isEditorEmpty,
-      });
+      this.setState((prevState) => ({
+        isButtonEnabled: prevState.infoIcon && !prevState.isEditorEmpty,
+      }));
     }
   }
 
@@ -244,7 +257,7 @@ export class InfoIconDialog extends React.PureComponent<
 
   disableInfoWIndow(isEditable: boolean): void {
     const infoIconForm: HTMLElement = document.getElementById('infoPopup');
-    if (infoIconForm && infoIconForm.style) {
+    if (infoIconForm?.style) {
       if (isEditable) {
         infoIconForm.style.pointerEvents = 'unset';
       } else {

@@ -94,7 +94,7 @@ export class InfoIconView {
     if (target?.className !== 'fa') return;
 
     let anchorEl = this.dom;
-    if (e && e.currentTarget) {
+    if (e?.currentTarget) {
       anchorEl = e.currentTarget as globalThis.Node;
     }
     if (!anchorEl) {
@@ -120,12 +120,12 @@ export class InfoIconView {
       position: atAnchorTopCenter,
     });
   }
-  isPNodeNull(pNode) {
-    return null === pNode ? true : false;
+  isPNodeNull(pNode) { 
+     return pNode === null;
   }
 
   parentNodeType(pNode) {
-    return pNode && pNode.type.name === INFO_ICON ? true : false;
+    return pNode && pNode.type.name === INFO_ICON;
   }
 
   getNodePosition(e: MouseEvent) {
@@ -154,7 +154,6 @@ export class InfoIconView {
 
         if (this.parentNodeType(parentNode)) {
           const newRes = this.outerView.state.tr.doc.resolve(index);
-          parentNode = newRes.parent;
           themarkPos = newRes.pos;
           break;
         }

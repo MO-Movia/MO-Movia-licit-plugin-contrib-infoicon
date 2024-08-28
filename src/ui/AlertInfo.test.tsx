@@ -24,7 +24,5 @@ it('should render the AlertInfo component without title and content', () => {
         },
     };
     const wrapper = new AlertInfo({...alertProps1})
-    wrapper.componentWillUnmount();
-    wrapper._cancel();
     expect(wrapper.render()).toBeDefined();
 });

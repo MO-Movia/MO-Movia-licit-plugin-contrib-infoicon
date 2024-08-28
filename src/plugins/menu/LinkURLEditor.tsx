@@ -3,9 +3,8 @@
 import * as React from 'react';
 import {EditorView} from 'prosemirror-view';
 import {sanitizeURL} from './sanitizeURL';
-import {CustomButton} from '@modusoperandi/licit-ui-commands';
 import {toggleMark} from 'prosemirror-commands';
-import {preventEventDefault} from '@modusoperandi/licit-ui-commands';
+import {preventEventDefault,CustomButton} from '@modusoperandi/licit-ui-commands';
 
 import './czi-form.css';
 import './czi-image-url-editor.css';
@@ -28,12 +27,6 @@ export class LinkURLEditor extends React.PureComponent<LinkProps> {
     const {url} = this.state;
 
     const error = url ? BAD_CHARACTER_PATTER.test(url) : false;
-    let disabled = !!error;
-    if (href) {
-      disabled = error;
-    } else {
-      disabled = error || !url;
-    }
 
     return (
       <div className="czi-image-url-editor">
@@ -54,7 +47,7 @@ export class LinkURLEditor extends React.PureComponent<LinkProps> {
             <CustomButton label="Cancel" onClick={this._cancel} />
             <CustomButton
               active={true}
-              disabled={disabled}
+              disabled={(href ? error : (error || !url))}
               label="Apply"
               onClick={this._apply}
             />

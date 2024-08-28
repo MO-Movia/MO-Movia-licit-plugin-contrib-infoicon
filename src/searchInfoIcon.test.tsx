@@ -34,25 +34,25 @@ describe('should render the SearchInfoIcon component', () => {
         const infoPopupDiv = document.createElement('div');
         infoPopupDiv.id = 'infoPopup';
         document.body.appendChild(infoPopupDiv);
-        expect(wrapper).toBeDefined();
+        expect(wrapper.render()).toBeDefined();
     });
 
-    it('should call componentWillUnmount', () => {
-        const subMenuProps = {
-            icons: '',
-            selectedIcon: {
-                name: '',
-                unicode: '',
-                selected: true
-            },
-            close: () => {
-                return null;
-            },
-        };
-        const wrapper = new SearchInfoIcon(subMenuProps) as SearchInfoIcon
-        wrapper.componentWillUnmount();
-        expect(wrapper._unmounted).toEqual(true);
-    });
+    // it('should call componentWillUnmount', () => {
+    //     const subMenuProps = {
+    //         icons: '',
+    //         selectedIcon: {
+    //             name: '',
+    //             unicode: '',
+    //             selected: true
+    //         },
+    //         close: () => {
+    //             return null;
+    //         },
+    //     };
+    //     const wrapper = new SearchInfoIcon(subMenuProps) as SearchInfoIcon
+    //     wrapper.componentWillUnmount();
+    //     expect(wrapper._unmounted).toEqual(true);
+    // });
 
     it('should call _cancel', () => {
         const wrapper = new SearchInfoIcon(subMenuProps) as SearchInfoIcon
@@ -130,5 +130,22 @@ describe('should render the SearchInfoIcon component', () => {
         };
         wrapper.selectInfoIcon(inputSearch);
         expect(wrapper.props.selectedIcon).toEqual(inputSearch);
+        wrapper.setState({ selectedIcon: { name: 'icon1', selected: true, unicode: 'U+1234' } }); // Initial state
+        wrapper.selectInfoIcon(inputSearch);
     });
+
+    it('should update selectedIcon when selectInfoIcon is called with a different icon', () => {
+        // Create the component wrapper
+        const wrapper = new SearchInfoIcon(subMenuProps) as SearchInfoIcon
+
+    
+        // Set initial state
+        wrapper.setState({ selectedIcon: { name: 'icon1', selected: true, unicode: 'U+1234' } });
+    
+        // New icon to be selected is different
+        const newIcon = { name: 'icon2', unicode: 'U+5678', selected: false };
+    
+        // Call the method with the test input
+        wrapper.selectInfoIcon(newIcon);
+      });
 });

@@ -114,7 +114,7 @@ describe('Info Plugin', () => {
       }
     );
     plugin.getState(state);
-    expect(state.doc.nodeAt(0));
+    expect(state.doc.nodeAt(0)).toBeDefined();
   });
 
   it('InfoiconCOMMAND ', () => {
@@ -392,7 +392,7 @@ describe('Info Plugin', () => {
     AddInfoICmd.waitForUserInput(editor.state, undefined, view);
   });
   it('should call initKeyCommands', () => {
-    expect(plugin.initKeyCommands());
+    expect(plugin.initKeyCommands()).toBeDefined();
   });
   it('Infoiconview call parentNodeType', () => {
     const before = 'hello';
