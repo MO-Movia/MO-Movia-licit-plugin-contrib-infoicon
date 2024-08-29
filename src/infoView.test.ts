@@ -183,6 +183,35 @@ describe('Info Plugin Extended', () => {
       undefined as any
     );
     const node = new Node();
+    
     expect(cView.update(node)).toBe(false);
   });
+  it('should return true if sameMarkup returns true', () => {
+    const before = 'hello';
+    const after = ' world';
+  
+    const state = EditorState.create({
+      doc: doc(p(before, newInfoIconNode, after)),
+      schema: effSchema,
+      plugins: [plugin],
+    });
+    const dom = document.createElement('div');
+    document.body.appendChild(dom);
+    const view = new EditorView(
+      {mount: dom},
+      {
+        state: state,
+      }
+    );
+    const cView = new InfoIconView(
+      view.state.doc.nodeAt(6),
+      view,
+      undefined as any
+    );
+    
+    // Simulate a node with the same markup
+    const node = cView.node.copy(); // This creates a new node with the same markup
+    expect(cView.update(node)).toBe(true);
+  });
+  
 });

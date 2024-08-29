@@ -23,6 +23,6 @@ it('should render the AlertInfo component without title and content', () => {
             return null;
         },
     };
-    const wrapper = new AlertInfo({...alertProps1})
+    const wrapper = new AlertInfo({...alertProps1});
     expect(wrapper.render()).toBeDefined();
 });

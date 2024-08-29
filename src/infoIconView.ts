@@ -103,7 +103,9 @@ export class InfoIconView {
     }
     this.nodePosition = this.getNodePosition(e);
     const popup = this._popUp_subMenu;
-    popup && popup.close('');
+    if(popup){
+      popup.close('');
+    }
     const viewPops = {
       editorState: this.outerView.state,
       editorView: this.outerView,
@@ -120,7 +122,7 @@ export class InfoIconView {
       position: atAnchorTopCenter,
     });
   }
-  isPNodeNull(pNode) { 
+  isPNodeNull(pNode) {
      return pNode === null;
   }
 
@@ -172,12 +174,14 @@ export class InfoIconView {
   };
 
   destroyPopup(): void {
-    this._popUp && this._popUp.close('');
-    this._popUp_subMenu && this._popUp_subMenu.close('');
-    if (null === this._popUp_subMenu) {
-      const subMenu = document.getElementsByClassName(
-        'molcit-infoicon-submenu'
-      );
+    if (this._popUp) {
+      this._popUp.close('');
+    }
+    if (this._popUp_subMenu) {
+      this._popUp_subMenu.close('');
+    }
+    if (this._popUp_subMenu === null) {
+      const subMenu = document.getElementsByClassName('molcit-infoicon-submenu');
       if (subMenu.length > 0) {
         subMenu[0].remove();
       }
@@ -189,7 +193,9 @@ export class InfoIconView {
   };
 
   onEditInfo = (view: EditorView): void => {
-    this._popUp_subMenu && this._popUp_subMenu.close('');
+    if(this._popUp_subMenu){
+      this._popUp_subMenu.close('');
+    }
 
     this._popUp = createPopUp(InfoIconDialog, this.createInfoObject(view, 2), {
       modal: true,

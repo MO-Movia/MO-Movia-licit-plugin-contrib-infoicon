@@ -42,14 +42,20 @@ const createLinkMenuItem = (view, marks) => {
 
 // Create a function to handle add link command
 export const addLinkCommand = (view) => {
+    let _popUp = null;
     return new Promise((resolve) => {
         const href = '';
-        const _popUp = createPopUp(
+        _popUp = createPopUp(
             LinkURLEditor,
             { href, view },
             {
                 modal: true,
-                onClose: (val) => resolve(val),
+                onClose: (val) => {
+                    if (_popUp) {
+                        _popUp = null;
+                        resolve(val);
+                    }
+                },
             }
         );
     });

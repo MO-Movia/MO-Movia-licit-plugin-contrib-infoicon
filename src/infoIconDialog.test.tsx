@@ -1,10 +1,9 @@
 import {InfoIconDialog} from './infoIconDialog';
 import {
-    Schema
+    Schema,Mark
 } from 'prosemirror-model';
 import { EditorState } from 'prosemirror-state';
 import { schema, builders } from 'prosemirror-test-builder';
-import * as React from 'react';
 import { InfoIconPlugin } from './index';
 import {EditorView} from 'prosemirror-view';
 import { SyntheticEvent } from 'react';
@@ -58,14 +57,14 @@ describe('InfoIconDialog ', () => {
             schema: effSchema,
             plugins: [plugin],
         });
-        const wrapper = new InfoIconDialog(infoIconProps)
+        const wrapper = new InfoIconDialog(infoIconProps);
         wrapper._cancel();
         wrapper._insert();
         expect(wrapper).toBeDefined();
     });
 
-    it('should return the getFaIconCount', () => { 
-        const wrapper = new InfoIconDialog(infoIconProps)
+    it('should return the getFaIconCount', () => {
+        const wrapper = new InfoIconDialog(infoIconProps);
         expect(wrapper.getFaIconCount()).toEqual(0);
 
     });
@@ -90,7 +89,7 @@ describe('InfoIconDialog ', () => {
         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
     const initialIsOpenState = instance.state.isOpen;
     // instance.togglePopover();
-    expect(instance.state.isOpen).toBe(initialIsOpenState); 
+    expect(instance.state.isOpen).toBe(initialIsOpenState);
     });
     it('should call insertButtonEnble and isEditorEmpty set to true', () => {
         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
@@ -164,26 +163,95 @@ describe('InfoIconDialog ', () => {
         it('should call selectInfoIcon with the correct icon when button is clicked', () => {
             const icon = { name: 'fa-icon', unicode: 'unicode' };
             const instance = new InfoIconDialog(infoIconProps);
-        
+
             // Spy on the selectInfoIcon method
             const spy = jest.spyOn(instance, 'selectInfoIcon');
-        
+
             // Call selectInfoIcon directly
             instance.selectInfoIcon(icon);
-        
+
             // Verify that selectInfoIcon was called with the correct argument
             expect(spy).toHaveBeenCalledWith(icon);
       });
 
 
-      
+
 
       it('should call setVisible with the correct icon when button is clicked', () => {
         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
-        expect(instance.state.isOpen).toBe(true)
+        expect(instance.state.isOpen).toBe(true);
       });
 
     it('should call validateInsert method',() => {
+        const linkmark = new Mark();
+        const mockschema = new Schema({
+          nodes: {
+            doc: {
+              content: 'paragraph+',
+            },
+            paragraph: {
+              content: 'text*',
+              attrs: {
+                styleName: { default: 'test' },
+              },
+              toDOM() {
+                return ['p', 0];
+              },
+            },
+            heading: {
+              attrs: { level: { default: 1 }, styleName: { default: '' } },
+              content: 'inline*',
+              marks: '',
+              toDOM(node) {
+                return [
+                  'h' + node.attrs.level,
+                  { 'data-style-name': node.attrs.styleName },
+                  0,
+                ];
+              },
+            },
+            text: {
+              group: 'inline',
+            },
+          },
+          marks: {
+            link: linkmark,
+          },
+        });
+        const mockdoc = mockschema.nodeFromJSON({
+          type: 'doc',
+          content: [
+            {
+              type: 'heading',
+              attrs: { level: 1, styleName: 'Normal' },
+              content: [
+                {
+                  type: 'text',
+                  text: 'Hello, ProseMirror!',
+                },
+              ],
+              marks: [
+                { type: 'link', attrs: { ['overridden']: true } },
+              ],
+            },
+          ],
+        });
+        const infoIconProps = {
+            infoIcon: { name: 'fa-facebook', unicode: '#12fc3' },
+            description: 'test Des',
+            editorView: {state:{schema:mockschema,doc:mockdoc}} as unknown as EditorView,
+            mode: 2,
+            from: 0,
+            to: 1,
+            faIcons: [{ name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }, { name: 'fa-facebook-1', unicode: '#15dss4' }],
+            selectedIconName: 'fa-facebook',
+            isOpen: true,
+            isEditorEmpty: false,
+            isButtonEnabled: false,
+            close: () => {
+                return null;
+            },
+        };
         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         expect(instance.validateInsert()).toBeUndefined();
     });

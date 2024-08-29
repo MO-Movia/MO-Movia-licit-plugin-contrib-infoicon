@@ -81,8 +81,8 @@ export class InfoIconDialog extends React.PureComponent<
   }
 
   render(): React.ReactNode {
-    const selectedIconCount = this.getFaIconCount(); 
-    console.log("selectedIconCount",selectedIconCount)
+    const selectedIconCount = this.getFaIconCount();
+    console.log('selectedIconCount',selectedIconCount);
     return (
       <div className="molinfo-infoContainer" id="infoPopup">
         <div className="molinfo-info-head">
@@ -116,8 +116,6 @@ export class InfoIconDialog extends React.PureComponent<
                     <div className="molinfo-icon-list-div"  key={icon.id}>
                       <i
                         className={icon.name}
-                        role='menu'
-                        tabIndex={0}
                         id={`infoIcon ${index}`}
                         onClick={() => this.selectInfoIcon(icon)}
                         onKeyDown={(e) => {
@@ -125,6 +123,8 @@ export class InfoIconDialog extends React.PureComponent<
                             this.selectInfoIcon(icon);
                           }
                         }}
+                        role='menu'
+                        tabIndex={0}
                       ></i>
                     </div>
                   );
@@ -133,8 +133,6 @@ export class InfoIconDialog extends React.PureComponent<
             </div>
             <div className="molinfo-dot-container">
               <i
-                role='menu'
-                tabIndex={0}
                 className="fa fa-ellipsis-v"
                 onClick={() => this.setVisible(!this.state.isOpen)}
                 onKeyDown={(e) => {
@@ -142,6 +140,8 @@ export class InfoIconDialog extends React.PureComponent<
                     this.setVisible(!this.state.isOpen);
                   }
                 }}
+                role='menu'
+                tabIndex={0}
               ></i>
               {this.state.isOpen && (
                 <div className="icon-control-cont">
@@ -279,17 +279,22 @@ export class InfoIconDialog extends React.PureComponent<
 
   insertButtonEnble(docJson) {
     if (docJson.content.length > 1) {
-      this.setState({isEditorEmpty: false}, () => {
+      this.setState({ isEditorEmpty: false }, () => {
         this.validateInsert();
       });
     } else if (docJson.content.length == 1) {
-      docJson.content[0].content == undefined
-        ? this.setState({isEditorEmpty: true}, () => {
-            this.validateInsert();
-          })
-        : this.setState({isEditorEmpty: false}, () => {
-            this.validateInsert();
-          });
+      if (docJson.content[0].content === undefined) {
+        this.setState({ isEditorEmpty: true }, () => {
+          this.validateInsert();
+        });
+      } else {
+        this.setState({ isEditorEmpty: false }, () => {
+          this.validateInsert();
+        });
+      }
     }
   }
+
+
+
 }

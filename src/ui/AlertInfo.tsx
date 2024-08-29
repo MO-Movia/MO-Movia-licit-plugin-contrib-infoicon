@@ -12,7 +12,7 @@ export class AlertInfo extends React.PureComponent<AlertProps, AlertProps> {
 
   constructor(props: AlertProps) {
     super(props);
-    
+
     this.state = {
       initialValue: props.initialValue,
       title:props.title,
