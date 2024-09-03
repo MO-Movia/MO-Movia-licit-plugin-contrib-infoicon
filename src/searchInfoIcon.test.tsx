@@ -37,23 +37,6 @@ describe('should render the SearchInfoIcon component', () => {
         expect(wrapper.render()).toBeDefined();
     });
 
-    // it('should call componentWillUnmount', () => {
-    //     const subMenuProps = {
-    //         icons: '',
-    //         selectedIcon: {
-    //             name: '',
-    //             unicode: '',
-    //             selected: true
-    //         },
-    //         close: () => {
-    //             return null;
-    //         },
-    //     };
-    //     const wrapper = new SearchInfoIcon(subMenuProps) as SearchInfoIcon
-    //     wrapper.componentWillUnmount();
-    //     expect(wrapper._unmounted).toEqual(true);
-    // });
-
     it('should call _cancel', () => {
         const wrapper = new SearchInfoIcon(subMenuProps) as SearchInfoIcon;
         const enableInfoWindowMock = jest.spyOn(SearchInfoIcon.prototype, 'enableInfoWIndow');

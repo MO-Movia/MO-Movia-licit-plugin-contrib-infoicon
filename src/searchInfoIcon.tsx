@@ -44,15 +44,15 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
           </div>
           <div className='icons' style={{ height: '16rem', overflowY: 'scroll', width: '255px' }}>
             {this.state.icons.map((icon) => {
-              return <div className='molinfo-icon-list-div' style={{ display: 'contents', float: 'left' }}
-              key={icon.id}>
+              return <div className='molinfo-icon-list-div' key={icon.id}
+              style={{ display: 'contents', float: 'left' }}>
                 <i className={icon.name + (this.state.selectedIcon?.name === icon.name ? ' molinfo-icon-active' : '')}
-                tabIndex={0} role='menu' onClick={() => this.selectInfoIcon(icon)}
-                onKeyDown={(e) => {
+                onClick={() => this.selectInfoIcon(icon)} onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     this.selectInfoIcon(icon);
                   }
-                }}></i>
+                }} role='menu'
+                tabIndex={0}></i>
               </div>;
             })}
           </div>

@@ -140,7 +140,6 @@ describe('Info Plugin Extended', () => {
       undefined as any
     );
     const destroyPopupSpy = jest.spyOn(cView, 'destroyPopup');
-    //const el = document.createElement('div');
     const mockEvent = new MouseEvent('click', {
       bubbles: true,
       cancelable: true,

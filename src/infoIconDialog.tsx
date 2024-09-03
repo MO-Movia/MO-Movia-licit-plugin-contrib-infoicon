@@ -81,8 +81,6 @@ export class InfoIconDialog extends React.PureComponent<
   }
 
   render(): React.ReactNode {
-    const selectedIconCount = this.getFaIconCount();
-    console.log('selectedIconCount',selectedIconCount);
     return (
       <div className="molinfo-infoContainer" id="infoPopup">
         <div className="molinfo-info-head">
@@ -239,9 +237,6 @@ export class InfoIconDialog extends React.PureComponent<
     this.setState({isOpen: isOpen});
   }
 
-  getFaIconCount(): number {
-    return this.state.faIcons.filter((obj) => obj.selected === true).length;
-  }
   _onRemove() {
     const iconName = this.state.infoIcon?.unicode;
     const lcList = localStorage.getItem(SELECTEDINFOICON);

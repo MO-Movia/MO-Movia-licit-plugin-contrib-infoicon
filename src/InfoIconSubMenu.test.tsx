@@ -9,7 +9,6 @@ describe('InfoIconSubMenu', () => {
     it('should render the InfoIconSubMenu component', () => {
         const subMenuProps = {
             editorView: {} as unknown as EditorView,
-            // onCancel: myVoidFunction,
             onEdit: myVoidFunction,
             onRemove: myVoidFunction,
             onMouseOut: myVoidFunction

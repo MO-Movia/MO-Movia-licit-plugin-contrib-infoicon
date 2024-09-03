@@ -6,7 +6,6 @@ import './ui/infoicon-note.css';
 
 type CustomButtonProps = {
   editorView: EditorView;
-  // onCancel: (view: EditorView) => void;
   onEdit: (view: EditorView) => void;
   onRemove: (view: EditorView) => void;
   onMouseOut: () => void;

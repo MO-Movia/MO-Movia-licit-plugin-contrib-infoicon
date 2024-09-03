@@ -63,12 +63,6 @@ describe('InfoIconDialog ', () => {
         expect(wrapper).toBeDefined();
     });
 
-    it('should return the getFaIconCount', () => {
-        const wrapper = new InfoIconDialog(infoIconProps);
-        expect(wrapper.getFaIconCount()).toEqual(0);
-
-    });
-
     it('should update the infoIcon state when a different icon is clicked', () => {
          const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
         const initialInfoIcon = instance.state.infoIcon;
@@ -88,7 +82,6 @@ describe('InfoIconDialog ', () => {
     it('should toggle the isOpen state when togglePopover is called', () => {
         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
     const initialIsOpenState = instance.state.isOpen;
-    // instance.togglePopover();
     expect(instance.state.isOpen).toBe(initialIsOpenState);
     });
     it('should call insertButtonEnble and isEditorEmpty set to true', () => {
@@ -163,19 +156,10 @@ describe('InfoIconDialog ', () => {
         it('should call selectInfoIcon with the correct icon when button is clicked', () => {
             const icon = { name: 'fa-icon', unicode: 'unicode' };
             const instance = new InfoIconDialog(infoIconProps);
-
-            // Spy on the selectInfoIcon method
             const spy = jest.spyOn(instance, 'selectInfoIcon');
-
-            // Call selectInfoIcon directly
             instance.selectInfoIcon(icon);
-
-            // Verify that selectInfoIcon was called with the correct argument
             expect(spy).toHaveBeenCalledWith(icon);
       });
-
-
-
 
       it('should call setVisible with the correct icon when button is clicked', () => {
         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
