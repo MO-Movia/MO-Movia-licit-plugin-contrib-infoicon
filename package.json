@@ -65,8 +65,7 @@
     "test": "jest --coverage"
   },
   "overrides": {
-    "semver": "^7.5.2",
-    "@typescript-eslint/parser": "^7.0.2"
+    "libxmljs2": "^1.0.0"
   },
   "importSort": {
     ".js": {
