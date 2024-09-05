@@ -4,11 +4,11 @@ import { EditorView } from 'prosemirror-view';
 import {
   makeKeyMapWithCommon,
   createKeyMapPlugin,
+  UICommand
 } from '@modusoperandi/licit-doc-attrs-step';
 import { InfoIconNodeSpec } from './infoIconNodeSpec';
 import { InfoIconView } from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
 export const INFO_ICON = 'infoicon';
 export const KEY_INFO_ICON = makeKeyMapWithCommon(
