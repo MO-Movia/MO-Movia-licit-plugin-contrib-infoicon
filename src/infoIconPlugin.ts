@@ -4,11 +4,12 @@ import { EditorView } from 'prosemirror-view';
 import {
   makeKeyMapWithCommon,
   createKeyMapPlugin,
-  UICommand
 } from '@modusoperandi/licit-doc-attrs-step';
 import { InfoIconNodeSpec } from './infoIconNodeSpec';
 import { InfoIconView } from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {DarkThemeIcon, LightThemeIcon} from './images';
 
 export const INFO_ICON = 'infoicon';
 export const KEY_INFO_ICON = makeKeyMapWithCommon(
@@ -55,11 +56,20 @@ export class InfoIconPlugin extends Plugin {
     );
   }
 
-  initButtonCommands(): unknown {
-    return {
-      '[info_outline] Add Info Icon': INFO_ICON_CMD,
-    };
-  }
+  initButtonCommands(theme: string): unknown {
+    
+      let image = null;
+      if ('light' == theme) {
+        image = LightThemeIcon;
+      } else {
+        image = DarkThemeIcon;
+      }
+
+      return {
+        [`[${image}] Add Info Icon`]: INFO_ICON_CMD,
+      };
+    } 
+  
 }
 
 export function bindInfoIconView(

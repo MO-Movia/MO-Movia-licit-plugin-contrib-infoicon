@@ -33,22 +33,24 @@ export class InfoIconDialog extends React.PureComponent<
   InfoDialogProps
 > {
   _popUp = null;
+  _anchorEl = null;
+  count: number;
   view: EditorView;
   constructor(props: InfoDialogProps) {
     super(props);
     this.state = {
-      editorView: props.editorView,
-      from: props.from,
-      to: props.to,
-      infoIcon: props.infoIcon || null,
-      faIcons: (this.getCacheIcons().length > 0 ? this.getCacheIcons() : props.faIcons),
-      isOpen: props.isOpen || false,
-      isButtonEnabled: props.isButtonEnabled || false,
-      isEditorEmpty: props.isEditorEmpty || false,
-      selectedIconName: props.selectedIconName,
+      infoIcon: null,
+      faIcons: this.getCacheIcons(),
+      isOpen: false,
+      isButtonEnabled: false,
+      isEditorEmpty: false,
       ...props,
     };
   }
+
+  togglePopover = () => {
+    this.setState({isOpen: !this.state.isOpen});
+  };
 
   componentDidMount() {
     // Mix the nodes from prosemirror-schema-list into the basic schema to
@@ -76,7 +78,7 @@ export class InfoIconDialog extends React.PureComponent<
     });
     this.setState({
       editorView: this.view,
-      isEditorEmpty: this.view.state.doc.textContent !== '',
+      isEditorEmpty: this.view.state.doc.textContent === '' ? false : true,
     });
   }
 
@@ -99,7 +101,8 @@ export class InfoIconDialog extends React.PureComponent<
             <span>
               {this.state.infoIcon ? (
                 <span>
-                  Current Selection (<span className={this.state.infoIcon?.name}></span>)
+                  Current Selection (
+                  <span className={this.state.infoIcon?.name}></span>)
                 </span>
               ) : (
                 <span>Select Icon</span>
@@ -111,18 +114,11 @@ export class InfoIconDialog extends React.PureComponent<
               {this.state.faIcons.map((icon, index) => {
                 if (index < 10)
                   return (
-                    <div className="molinfo-icon-list-div"  key={icon.id}>
+                    <div className="molinfo-icon-list-div">
                       <i
                         className={icon.name}
                         id={`infoIcon ${index}`}
                         onClick={() => this.selectInfoIcon(icon)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            this.selectInfoIcon(icon);
-                          }
-                        }}
-                        role='menu'
-                        tabIndex={0}
                       ></i>
                     </div>
                   );
@@ -133,13 +129,6 @@ export class InfoIconDialog extends React.PureComponent<
               <i
                 className="fa fa-ellipsis-v"
                 onClick={() => this.setVisible(!this.state.isOpen)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    this.setVisible(!this.state.isOpen);
-                  }
-                }}
-                role='menu'
-                tabIndex={0}
               ></i>
               {this.state.isOpen && (
                 <div className="icon-control-cont">
@@ -211,9 +200,9 @@ export class InfoIconDialog extends React.PureComponent<
         this.setState({isButtonEnabled: false});
       }
     } else {
-      this.setState((prevState) => ({
-        isButtonEnabled: prevState.infoIcon && !prevState.isEditorEmpty,
-      }));
+      this.setState({
+        isButtonEnabled: this.state.infoIcon && !this.state.isEditorEmpty,
+      });
     }
   }
 
@@ -237,6 +226,9 @@ export class InfoIconDialog extends React.PureComponent<
     this.setState({isOpen: isOpen});
   }
 
+  getFaIconCount(): number {
+    return this.state.faIcons.filter((obj) => obj.selected === true).length;
+  }
   _onRemove() {
     const iconName = this.state.infoIcon?.unicode;
     const lcList = localStorage.getItem(SELECTEDINFOICON);
@@ -252,7 +244,7 @@ export class InfoIconDialog extends React.PureComponent<
 
   disableInfoWIndow(isEditable: boolean): void {
     const infoIconForm: HTMLElement = document.getElementById('infoPopup');
-    if (infoIconForm?.style) {
+    if (infoIconForm && infoIconForm.style) {
       if (isEditable) {
         infoIconForm.style.pointerEvents = 'unset';
       } else {
@@ -274,22 +266,17 @@ export class InfoIconDialog extends React.PureComponent<
 
   insertButtonEnble(docJson) {
     if (docJson.content.length > 1) {
-      this.setState({ isEditorEmpty: false }, () => {
+      this.setState({isEditorEmpty: false}, () => {
         this.validateInsert();
       });
     } else if (docJson.content.length == 1) {
-      if (docJson.content[0].content === undefined) {
-        this.setState({ isEditorEmpty: true }, () => {
-          this.validateInsert();
-        });
-      } else {
-        this.setState({ isEditorEmpty: false }, () => {
-          this.validateInsert();
-        });
-      }
+      docJson.content[0].content == undefined
+        ? this.setState({isEditorEmpty: true}, () => {
+            this.validateInsert();
+          })
+        : this.setState({isEditorEmpty: false}, () => {
+            this.validateInsert();
+          });
     }
   }
-
-
-
 }
