@@ -2,7 +2,6 @@ import * as React from 'react';
 import {EditorView} from 'prosemirror-view';
 import {InfoToolButton} from './ui/InfoToolButton';
 import {InfoSubMenuIcon} from './ui/InfoSubMenuIcon';
-import './ui/infoicon-note.css';
 
 type CustomButtonProps = {
   editorView: EditorView;
@@ -23,7 +22,7 @@ export class InfoIconSubMenu extends React.PureComponent {
     const disabled = editorView['readOnly'];
 
     return (
-      <div className="molcit-infoicon-submenu" role='menu' tabIndex={0} onMouseLeave={onMouseOut}>
+      <div className="molcit-infoicon-submenu" onMouseLeave={onMouseOut} role='menu' tabIndex={0}>
         <div className="molcit-infoicon-submenu-body">
           <div className="molcit-infoicon-submenu-row">
             <InfoToolButton
