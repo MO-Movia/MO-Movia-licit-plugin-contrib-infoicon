@@ -4,7 +4,6 @@ import { createPopUp, atViewportCenter } from '@modusoperandi/licit-ui-commands'
 import * as React from 'react';
 import { SELECTEDINFOICON } from './constants';
 import { FaIcons, FONTAWESOMEICONS } from './ui/FaIcon';
-import './ui/infoicon-note.css';
 import { AlertInfo } from './ui/AlertInfo';
 
 type SearchInfoProps = {
@@ -14,19 +13,14 @@ type SearchInfoProps = {
 };
 
 export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchInfoProps> {
-  _unmounted = false;
   _popUp = null;
   constructor(props: SearchInfoProps) {
     super(props);
     this.state = {
       ...props,
-      icons: FONTAWESOMEICONS,
-      selectedIcon: { name: '', selected: false, unicode: '' }
+      icons: props.icons || FONTAWESOMEICONS,
+      selectedIcon: props.selectedIcon || { name: '', selected: false, unicode: '' }
     };
-  }
-
-  componentWillUnmount(): void {
-    this._unmounted = true;
   }
 
   render(): React.ReactNode {
@@ -49,8 +43,15 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
           </div>
           <div className='icons' style={{ height: '16rem', overflowY: 'scroll', width: '255px' }}>
             {this.state.icons.map((icon) => {
-              return <div className='molinfo-icon-list-div' style={{ display: 'contents', float: 'left' }}>
-                <i className={icon.name + (this.state.selectedIcon?.name === icon.name ? ' molinfo-icon-active' : '')} onClick={() => this.selectInfoIcon(icon)}></i>
+              return <div className='molinfo-icon-list-div' key={icon.id}
+              style={{ display: 'contents', float: 'left' }}>
+                <i className={icon.name + (this.state.selectedIcon?.name === icon.name ? ' molinfo-icon-active' : '')}
+                onClick={() => this.selectInfoIcon(icon)} onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    this.selectInfoIcon(icon);
+                  }
+                }} role='menu'
+                tabIndex={0}></i>
               </div>;
             })}
           </div>
@@ -83,7 +84,7 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
 
   enableInfoWIndow(): void {
     const infoIconForm: HTMLElement = document.getElementById('infoPopup');
-    if (infoIconForm && infoIconForm.style) {
+    if (infoIconForm?.style) {
       infoIconForm.style.pointerEvents = 'unset';
     }
   }
@@ -109,7 +110,6 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
   }
 
   searchIcon = (e) => {
-    // this.icons = {};
     const searchRes = FONTAWESOMEICONS.filter(d => d?.name?.toLowerCase().includes(e.target.value.toLowerCase()));
     this.setState({ icons: searchRes });
   };

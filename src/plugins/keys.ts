@@ -14,7 +14,7 @@ export default () =>
 
 export type Marks = 'em' | 'strong';
 
-export const marks: {[key in Marks]: MarkSpec} = {
+export const marks: {em: MarkSpec; strong: MarkSpec } = {
   em: {
     parseDOM: [{tag: 'em'}, {tag: 'i'}, {style: 'font-style=italic'}],
     toDOM: () => ['em', 0],
@@ -25,3 +25,4 @@ export const marks: {[key in Marks]: MarkSpec} = {
     toDOM: () => ['strong', 0],
   },
 };
+

@@ -9,7 +9,6 @@ import {
 } from '@modusoperandi/licit-ui-commands';
 import {InfoIconSubMenu} from './InfoIconSubMenu';
 import {INFO_ICON} from './constants';
-import './ui/infoicon-note.css';
 import {InfoIconDialog} from './infoIconDialog';
 import {findParentNodeOfTypeClosestToPos} from 'prosemirror-utils';
 
@@ -94,7 +93,7 @@ export class InfoIconView {
     if (target?.className !== 'fa') return;
 
     let anchorEl = this.dom;
-    if (e && e.currentTarget) {
+    if (e?.currentTarget) {
       anchorEl = e.currentTarget as globalThis.Node;
     }
     if (!anchorEl) {
@@ -103,7 +102,9 @@ export class InfoIconView {
     }
     this.nodePosition = this.getNodePosition(e);
     const popup = this._popUp_subMenu;
-    popup && popup.close('');
+    if(popup){
+      popup.close('');
+    }
     const viewPops = {
       editorState: this.outerView.state,
       editorView: this.outerView,
@@ -121,11 +122,11 @@ export class InfoIconView {
     });
   }
   isPNodeNull(pNode) {
-    return null === pNode ? true : false;
+     return pNode === null;
   }
 
   parentNodeType(pNode) {
-    return pNode && pNode.type.name === INFO_ICON ? true : false;
+    return pNode && pNode.type.name === INFO_ICON;
   }
 
   getNodePosition(e: MouseEvent) {
@@ -154,7 +155,6 @@ export class InfoIconView {
 
         if (this.parentNodeType(parentNode)) {
           const newRes = this.outerView.state.tr.doc.resolve(index);
-          parentNode = newRes.parent;
           themarkPos = newRes.pos;
           break;
         }
@@ -173,12 +173,14 @@ export class InfoIconView {
   };
 
   destroyPopup(): void {
-    this._popUp && this._popUp.close('');
-    this._popUp_subMenu && this._popUp_subMenu.close('');
-    if (null === this._popUp_subMenu) {
-      const subMenu = document.getElementsByClassName(
-        'molcit-infoicon-submenu'
-      );
+    if (this._popUp) {
+      this._popUp.close('');
+    }
+    if (this._popUp_subMenu) {
+      this._popUp_subMenu.close('');
+    }
+    if (this._popUp_subMenu === null) {
+      const subMenu = document.getElementsByClassName('molcit-infoicon-submenu');
       if (subMenu.length > 0) {
         subMenu[0].remove();
       }
@@ -190,7 +192,9 @@ export class InfoIconView {
   };
 
   onEditInfo = (view: EditorView): void => {
-    this._popUp_subMenu && this._popUp_subMenu.close('');
+    if(this._popUp_subMenu){
+      this._popUp_subMenu.close('');
+    }
 
     this._popUp = createPopUp(InfoIconDialog, this.createInfoObject(view, 2), {
       modal: true,

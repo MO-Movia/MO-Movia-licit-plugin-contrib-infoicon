@@ -1,5 +1,4 @@
 import * as React from 'react';
-import './infoicon-note.css';
 
 type AlertProps = {
   initialValue: Record<string, never>;
@@ -9,14 +8,16 @@ type AlertProps = {
 };
 
 export class AlertInfo extends React.PureComponent<AlertProps, AlertProps> {
-  _unmounted = false;
 
   constructor(props: AlertProps) {
     super(props);
-  }
 
-  componentWillUnmount(): void {
-    this._unmounted = true;
+    this.state = {
+      initialValue: props.initialValue,
+      title:props.title,
+      content:props.content,
+      close:props.close
+    };
   }
 
   render(): React.ReactNode {
@@ -31,10 +32,6 @@ export class AlertInfo extends React.PureComponent<AlertProps, AlertProps> {
       </div>
     );
   }
-
-  _cancel = (): void => {
-    this.props.close();
-  };
 }
 
 
