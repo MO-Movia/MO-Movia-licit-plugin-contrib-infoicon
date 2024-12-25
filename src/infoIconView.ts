@@ -9,7 +9,6 @@ import {
 } from '@modusoperandi/licit-ui-commands';
 import {InfoIconSubMenu} from './InfoIconSubMenu';
 import {INFO_ICON} from './constants';
-import './ui/infoicon-note.css';
 import {InfoIconDialog} from './infoIconDialog';
 import {findParentNodeOfTypeClosestToPos} from 'prosemirror-utils';
 

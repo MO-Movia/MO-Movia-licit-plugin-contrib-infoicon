@@ -6,9 +6,6 @@ import {sanitizeURL} from './sanitizeURL';
 import {toggleMark} from 'prosemirror-commands';
 import {preventEventDefault,CustomButton} from '@modusoperandi/licit-ui-commands';
 
-import './czi-form.css';
-import './czi-image-url-editor.css';
-
 export const ENTER = 13;
 const BAD_CHARACTER_PATTER = /\s/;
 
