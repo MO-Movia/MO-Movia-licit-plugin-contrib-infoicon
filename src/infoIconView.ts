@@ -12,7 +12,7 @@ import {INFO_ICON} from './constants';
 import {InfoIconDialog} from './infoIconDialog';
 import {findParentNodeOfTypeClosestToPos} from 'prosemirror-utils';
 
-type CBFn = () => void;
+export type CBFn = () => void;
 
 export type Style = {
   styles?: {
@@ -301,18 +301,25 @@ export class InfoIconView {
       const parent = document.getElementsByClassName(
         'ProseMirror czi-prosemirror-editor'
       )[0];
+      const extraParentWidth = document.getElementsByClassName(
+        'prosemirror-editor-wrapper'
+      )[0];
       const tooltip = this.dom.appendChild(document.createElement('div'));
       tooltip.className = 'molcit-infoicon-tooltip';
       const ttContent = tooltip.appendChild(document.createElement('div'));
       ttContent.innerHTML = this.node.attrs.description;
       ttContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
       ttContent.id = 'tooltip-content';
-      this.setContentRight(e, parent, tooltip, ttContent);
+      this.setContentRight(e, parent,extraParentWidth, tooltip, ttContent);
+      this.adjustTooltipPosition(e,tooltip);
       if (
         window.screen.availHeight - e.clientY < 170 &&
         ttContent.style.right
       ) {
         ttContent.style.bottom = '114px';
+      }
+      else if( (window.innerHeight - e.clientY < tooltip.clientHeight + 50) && (e.clientY - 50> tooltip.clientHeight)){
+                ttContent.style.transform = `translateY(-${tooltip.clientHeight + 13}px)`;
       }
       const toolContent = document.getElementById('tooltip-content');
       const links = toolContent?.getElementsByTagName('a');
@@ -325,24 +332,40 @@ export class InfoIconView {
       }
     }
   }
+  adjustTooltipPosition(e,tooltip) {
 
-  setContentRight(e, parent, tooltip, _ttContent) {
+    const offsetParent = e.currentTarget?.offsetParent?.tagName;
+    if(offsetParent === 'TD'){
+      tooltip.style.top = e.clientY + 10 +'px'; // Keep it below the cursor
+    }
+  }
+  setContentRight(e, parent,extraParentWidth, tooltip, _ttContent) {
     // Append a tooltip to the outer node
 
     // const MAX_CLIENT_WIDTH = 1100;
     //fix [25-04-2023]
     const MAX_CLIENT_WIDTH = parent?.clientWidth;
+    const EXTRA_WIDTH = extraParentWidth?.clientWidth;
 
-    const leftPanelWidth = (
-      document.getElementsByTagName('maw-left-panel')[0] as HTMLElement
-    )?.offsetWidth;
+
+    const leftPanelWidth = (document.getElementsByTagName('maw-left-panel')[0] as HTMLElement)?.offsetWidth ?? 0;
+    const rightPanelWidth = (document.getElementsByTagName('maw-right-panel')[0] as HTMLElement)?.offsetWidth ?? 0;
     const toolAndPosWidth = e.clientX - leftPanelWidth + tooltip.clientWidth;
+    const remainWidth = MAX_CLIENT_WIDTH + leftPanelWidth + (EXTRA_WIDTH-MAX_CLIENT_WIDTH)/2 - e.clientX;
     if (parent) {
-      if (toolAndPosWidth > MAX_CLIENT_WIDTH) {
-        // const right = toolAndPosWidth - MAX_CLIENT_WIDTH;
-        // ttContent.style.right = right + 'px';
-        //fix [25-04-2023]
-        tooltip.style.right = 0 + 'px';
+           if(e.currentTarget?.offsetParent?.tagName === 'TD'){
+          tooltip.style.position = 'fixed';
+        }
+      if (toolAndPosWidth > (MAX_CLIENT_WIDTH+(EXTRA_WIDTH-MAX_CLIENT_WIDTH)/2)) {
+
+        if(e.currentTarget?.offsetParent?.tagName === 'TD'){
+          tooltip.style.right = remainWidth+ (EXTRA_WIDTH-MAX_CLIENT_WIDTH)/2 + rightPanelWidth + 'px';
+        }
+        else
+        {
+               //fix [25-04-2023]
+          tooltip.style.right = 0 + 'px';
+        }
       }
     }
   }

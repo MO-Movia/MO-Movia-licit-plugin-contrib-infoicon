@@ -67,6 +67,8 @@ describe('Info Plugin Extended', () => {
       '"<p>test <a href="ingo" title="ingo">ingo</a> icon</p>"';
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';   
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
 
@@ -75,7 +77,7 @@ describe('Info Plugin Extended', () => {
       clientY: 125,
     });
 
-    cView.setContentRight(clickEvent, errorinfodiv, tooltip, ttContent);
+    cView.setContentRight(clickEvent, errorinfodiv,extraerrorinfodiv, tooltip, ttContent);
   });
 });
 
@@ -521,6 +523,8 @@ describe('Info Plugin', () => {
       "<a href='www.google.com'></a><p>test <a href='ingo' title='ingo'>ingo</a> icon</p>";
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';   
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
 
@@ -529,7 +533,7 @@ describe('Info Plugin', () => {
       clientY: 125,
     });
 
-    cView.setContentRight(clickEvent, errorinfodiv, tooltip, ttContent);
+    cView.setContentRight(clickEvent, errorinfodiv,extraerrorinfodiv, tooltip, ttContent);
   });
 
   it('Infoiconview ', () => {
