@@ -77,7 +77,7 @@ describe('Info Plugin Extended', () => {
       clientY: 125,
     });
 
-    cView.setContentRight(clickEvent, errorinfodiv,extraerrorinfodiv, tooltip, ttContent);
+    cView.setContentRight(clickEvent, errorinfodiv, tooltip, ttContent);
   });
 });
 
@@ -533,7 +533,7 @@ describe('Info Plugin', () => {
       clientY: 125,
     });
 
-    cView.setContentRight(clickEvent, errorinfodiv,extraerrorinfodiv, tooltip, ttContent);
+    cView.setContentRight(clickEvent, errorinfodiv, tooltip, ttContent);
   });
 
   it('Infoiconview ', () => {

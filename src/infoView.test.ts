@@ -74,7 +74,7 @@ describe('Info Plugin Extended', () => {
     cView.getNodePosition(clickEvent);
     // Call the close function
     cView.close();
-    cView.setContentRight(clickEvent, errorinfodiv, extraerrorinfodiv, tooltip, ttContent);
+    cView.setContentRight(clickEvent, errorinfodiv, tooltip, ttContent);
   });
 
   it('Infoiconview call selectNode', () => {
