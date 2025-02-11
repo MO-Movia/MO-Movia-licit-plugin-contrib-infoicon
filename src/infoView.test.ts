@@ -9,6 +9,7 @@ import {Schema, Node} from 'prosemirror-model';
 import {InfoIconView} from './infoIconView';
 import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import {InfoIconDialog} from './infoIconDialog';
+import { sanitizeURL } from './plugins/menu/sanitizeURL';
 
 describe('Info Plugin Extended', () => {
   const info = {
@@ -212,5 +213,112 @@ describe('Info Plugin Extended', () => {
     const node = cView.node.copy(); // This creates a new node with the same markup
     expect(cView.update(node)).toBe(true);
   });
-  
+
+  describe('Info Plugin Extended', () => {
+    let currentNode: Node | undefined;
+
+    const updateNode = (node: Node): boolean => {
+      if (!currentNode || !node.sameMarkup(currentNode)) return false;
+      currentNode = node;
+      return true;
+    };
+
+    const mockNode = {
+      sameMarkup: jest.fn(),
+    };
+
+    beforeEach(() => {
+      mockNode.sameMarkup.mockReset();
+      currentNode = undefined;
+    });
+
+    it('should return false if currentNode is undefined', () => {
+      mockNode.sameMarkup.mockReturnValue(false);
+      currentNode = undefined; // Ensure currentNode is undefined
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(false);
+      expect(mockNode.sameMarkup).not.toHaveBeenCalled();
+    });
+
+    it('should return false if node has different markup', () => {
+      currentNode = mockNode as unknown as Node;
+      mockNode.sameMarkup.mockReturnValue(false);
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(false);
+      expect(mockNode.sameMarkup).toHaveBeenCalledWith(mockNode);
+    });
+
+    it('should return true and update node if node has the same markup', () => {
+      currentNode = mockNode as unknown as Node;
+      mockNode.sameMarkup.mockReturnValue(true);
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(true);
+      expect(mockNode.sameMarkup).toHaveBeenCalledWith(mockNode);
+      expect(currentNode).toBe(mockNode);
+    });
+  });
+
+  it('should not close when relatedTarget offsetParent has the expected class', () => {
+    const before = 'hello';
+    const after = ' world';
+
+    const state = EditorState.create({
+      doc: doc(p(before, newInfoIconNode, after)),
+      schema: effSchema,
+      plugins: [plugin],
+    });
+    const dom = document.createElement('div');
+    document.body.appendChild(dom);
+    const view = new EditorView({mount: dom}, {state});
+
+    const cView = new InfoIconView(
+      view.state.doc.nodeAt(6),
+      view,
+      undefined as any
+    );
+
+    const tooltipContent = document.createElement('div');
+    tooltipContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
+
+    const targetElement = document.createElement('div');
+    targetElement.className = '';
+    Object.defineProperty(targetElement, 'offsetParent', {
+      value: tooltipContent,
+    });
+
+    const closeSpy = jest.spyOn(cView, 'close');
+
+    const event = new MouseEvent('mouseout', {bubbles: true, cancelable: true});
+    Object.defineProperty(event, 'relatedTarget', {
+      value: targetElement,
+    });
+
+    cView.hideSourceText(event);
+    expect(closeSpy).not.toHaveBeenCalled();
+  });
+
+  it('should return the correct position from posAtCoords', () => {
+    const before = 'hello';
+    const after = ' world';
+
+    const state = EditorState.create({
+      doc: doc(p(before, newInfoIconNode, after)),
+      schema: effSchema,
+      plugins: [plugin],
+    });
+    const dom = document.createElement('div');
+    document.body.appendChild(dom);
+    const view = new EditorView({mount: dom}, {state});
+
+    const cView = new InfoIconView(
+      view.state.doc.nodeAt(6),
+      view,
+      undefined as any
+    );
+
+    const mockPos = {pos: 12, inside: -1};
+    jest.spyOn(view, 'posAtCoords').mockReturnValue(mockPos);
+    const result = cView.getNodePosEx(100, 200);
+    expect(result).toBe(12);
+  });
 });
