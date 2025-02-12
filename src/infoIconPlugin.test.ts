@@ -67,6 +67,8 @@ describe('Info Plugin Extended', () => {
       '"<p>test <a href="ingo" title="ingo">ingo</a> icon</p>"';
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';   
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
 
@@ -521,6 +523,8 @@ describe('Info Plugin', () => {
       "<a href='www.google.com'></a><p>test <a href='ingo' title='ingo'>ingo</a> icon</p>";
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';   
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
 

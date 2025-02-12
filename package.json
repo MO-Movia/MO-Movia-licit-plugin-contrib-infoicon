@@ -1,6 +1,6 @@
 {
   "name": "@modusoperandi/licit-info-icon",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "type": "module",
   "description": "MO's Info Icon ProseMirror Plugin",
   "main": "dist/index.js",
@@ -21,7 +21,7 @@
     "prosemirror-utils": "^1.0.0"
   },
   "devDependencies": {
-    "@cyclonedx/cyclonedx-npm": "^1.7.1",
+    "@cyclonedx/cyclonedx-npm": "^2.0.0",
     "@testing-library/jest-dom": "^6.4.1",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.4.3",
