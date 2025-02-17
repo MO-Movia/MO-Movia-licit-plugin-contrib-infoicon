@@ -13,7 +13,7 @@ import {InfoIconDialog} from './infoIconDialog';
 import {findParentNodeOfTypeClosestToPos} from 'prosemirror-utils';
 import {sanitizeURL} from './plugins/menu/sanitizeURL';
 
-type CBFn = () => void;
+export type CBFn = () => void;
 
 export type Style = {
   styles?: {
@@ -304,13 +304,15 @@ export class InfoIconView {
       const parent = document.getElementsByClassName(
         'ProseMirror czi-prosemirror-editor'
       )[0];
+
       const tooltip = this.dom.appendChild(document.createElement('div'));
       tooltip.className = 'molcit-infoicon-tooltip';
       const ttContent = tooltip.appendChild(document.createElement('div'));
       ttContent.innerHTML = this.node.attrs.description;
       ttContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
       ttContent.id = 'tooltip-content';
-      this.setContentRight(e, parent, tooltip, ttContent);
+      this.setContentRight(e, parent,  tooltip, ttContent);
+      this.adjustTooltipPosition(e, tooltip);
       if (
         window.screen.availHeight - e.clientY < 170 &&
         ttContent.style.right
@@ -346,24 +348,36 @@ export class InfoIconView {
       }
     }
   }
-
+  adjustTooltipPosition(e, tooltip) {
+    const offsetParent = e.currentTarget?.offsetParent?.tagName;
+    if (offsetParent === 'TD') {
+      tooltip.style.top = e.clientY + 10 + 'px'; // Keep it below the cursor
+    }
+  }
   setContentRight(e, parent, tooltip, _ttContent) {
     // Append a tooltip to the outer node
 
     // const MAX_CLIENT_WIDTH = 1100;
     //fix [25-04-2023]
     const MAX_CLIENT_WIDTH = parent?.clientWidth;
+    const editorLeft = parent?.getBoundingClientRect()?.left; // Get left position of editor
+    const clickedPositionX = e.clientX - editorLeft;
 
-    const leftPanelWidth = (
-      document.getElementsByTagName('maw-left-panel')[0] as HTMLElement
-    )?.offsetWidth;
-    const toolAndPosWidth = e.clientX - leftPanelWidth + tooltip.clientWidth;
     if (parent) {
-      if (toolAndPosWidth > MAX_CLIENT_WIDTH) {
-        // const right = toolAndPosWidth - MAX_CLIENT_WIDTH;
-        // ttContent.style.right = right + 'px';
-        //fix [25-04-2023]
-        tooltip.style.right = 0 + 'px';
+      //To check if the parent is table or vignette
+      if (e.currentTarget?.offsetParent?.tagName === 'TD') {
+        tooltip.style.position = 'fixed';
+      }
+      if (
+        MAX_CLIENT_WIDTH - clickedPositionX < tooltip.clientWidth &&
+        clickedPositionX > tooltip.clientWidth
+      ) {
+        if (e.currentTarget?.offsetParent?.tagName === 'TD') {
+          tooltip.style.right = window.innerWidth - e.clientX + 'px';
+        } else {
+          //fix [25-04-2023]
+          tooltip.style.right = 0 + 'px';
+        }
       }
     }
   }

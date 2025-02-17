@@ -6,7 +6,7 @@ import {schema, builders} from 'prosemirror-test-builder';
 import {EditorState} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {Schema, Node} from 'prosemirror-model';
-import {InfoIconView} from './infoIconView';
+import {InfoIconView, CBFn} from './infoIconView';
 import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import {InfoIconDialog} from './infoIconDialog';
 import { sanitizeURL } from './plugins/menu/sanitizeURL';
@@ -58,6 +58,8 @@ describe('Info Plugin Extended', () => {
       '"<p>test <a href="ingo" title="ingo">ingo</a> icon</p>"';
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';   
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
     document.body.appendChild(tooltip);
