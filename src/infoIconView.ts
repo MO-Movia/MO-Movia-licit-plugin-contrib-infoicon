@@ -11,6 +11,7 @@ import {InfoIconSubMenu} from './InfoIconSubMenu';
 import {INFO_ICON} from './constants';
 import {InfoIconDialog} from './infoIconDialog';
 import {findParentNodeOfTypeClosestToPos} from 'prosemirror-utils';
+import {sanitizeURL} from './plugins/menu/sanitizeURL';
 
 export type CBFn = () => void;
 
@@ -102,7 +103,7 @@ export class InfoIconView {
     }
     this.nodePosition = this.getNodePosition(e);
     const popup = this._popUp_subMenu;
-    if(popup){
+    if (popup) {
       popup.close('');
     }
     const viewPops = {
@@ -122,7 +123,7 @@ export class InfoIconView {
     });
   }
   isPNodeNull(pNode) {
-     return pNode === null;
+    return pNode === null;
   }
 
   parentNodeType(pNode) {
@@ -180,7 +181,9 @@ export class InfoIconView {
       this._popUp_subMenu.close('');
     }
     if (this._popUp_subMenu === null) {
-      const subMenu = document.getElementsByClassName('molcit-infoicon-submenu');
+      const subMenu = document.getElementsByClassName(
+        'molcit-infoicon-submenu'
+      );
       if (subMenu.length > 0) {
         subMenu[0].remove();
       }
@@ -192,7 +195,7 @@ export class InfoIconView {
   };
 
   onEditInfo = (view: EditorView): void => {
-    if(this._popUp_subMenu){
+    if (this._popUp_subMenu) {
       this._popUp_subMenu.close('');
     }
 
@@ -316,17 +319,32 @@ export class InfoIconView {
       ) {
         ttContent.style.bottom = '114px';
       }
-      else if( (window.innerHeight - e.clientY < tooltip.clientHeight + 50) && (e.clientY - 50> tooltip.clientHeight)){
-                ttContent.style.transform = `translateY(-${tooltip.clientHeight + 13}px)`;
-      }
-      const toolContent = document.getElementById('tooltip-content');
-      const links = toolContent?.getElementsByTagName('a');
-      if (links) {
-        for (const link of links) {
+      this.addClickListenerToLinks(ttContent);
+    }
+  }
+
+  //New method to add click event to links
+  addClickListenerToLinks(tooltipContent: HTMLElement): void {
+    const links = tooltipContent.getElementsByTagName('a');
+    if (links) {
+      for (const link of links) {
+        link.addEventListener('click', (event) => {
+          event.preventDefault();
+
           const href = link.href;
-          link.setAttribute('href', href);
-          link.setAttribute('target', '_blank');
-        }
+          if (href) {
+            const url = sanitizeURL(href);
+            const popupString = this.outerView.editable
+              ? 'Any unsaved changes will be lost'
+              : '';
+
+            if (this.outerView['runtime'].openLinkDialog) {
+              this.outerView['runtime'].openLinkDialog(url, popupString);
+            } else {
+              window.open(url, '_blank');
+            }
+          }
+        });
       }
     }
   }
