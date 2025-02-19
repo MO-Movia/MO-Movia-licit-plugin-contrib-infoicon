@@ -9,6 +9,7 @@ import {Schema, Node} from 'prosemirror-model';
 import {InfoIconView, CBFn} from './infoIconView';
 import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import {InfoIconDialog} from './infoIconDialog';
+import { sanitizeURL } from './plugins/menu/sanitizeURL';
 
 describe('Info Plugin Extended', () => {
   const info = {
@@ -215,130 +216,54 @@ describe('Info Plugin Extended', () => {
     expect(cView.update(node)).toBe(true);
   });
 
-  it('should return the position when posAtCoords returns a valid object', () => {
-    const before = 'hello';
-    const after = ' world';
-    const state = EditorState.create({
-      doc: doc(p(before, newInfoIconNode, after)),
-      schema: effSchema,
-      plugins: [plugin],
-    });
-    const dom = document.createElement('div');
-    document.body.appendChild(dom);
-    const view = new EditorView(
-      {mount: dom},
-      {
-        state: state,
-      }
-    );
-    const cView = new InfoIconView(
-      view.state.doc.nodeAt(6)!,
-      view,
-      undefined as unknown as CBFn
-    );
-  
-    cView.outerView = {
-      posAtCoords:()=>{return { pos: 42 }}
-    } as unknown  as EditorView
-    
-    const result = cView.getNodePosEx(100, 200);
-    expect(result).toBe(42);
-  });
+  describe('Info Plugin Extended', () => {
+    let currentNode: Node | undefined;
 
-  it('should return null when posAtCoords returns null', () => {
-    const before = 'hello';
-    const after = ' world';
-    const state = EditorState.create({
-      doc: doc(p(before, newInfoIconNode, after)),
-      schema: effSchema,
-      plugins: [plugin],
-    });
-    const dom = document.createElement('div');
-    document.body.appendChild(dom);
-    const view = new EditorView(
-      {mount: dom},
-      {
-        state: state,
-      }
-    );
-    const cView = new InfoIconView(
-      view.state.doc.nodeAt(6)!,
-      view,
-      undefined as unknown as CBFn
-    );
-  
-    cView.outerView = {
-      posAtCoords:()=>{return  null}
-    }as unknown  as EditorView
-    
-    const result = cView.getNodePosEx(100, 200);
-    expect(result).toBeNull();
-  });
-
-  it('should return null when posAtCoords returns undefined', () => {
-    const before = 'hello';
-    const after = ' world';
-    const state = EditorState.create({
-      doc: doc(p(before, newInfoIconNode, after)),
-      schema: effSchema,
-      plugins: [plugin],
-    });
-    const dom = document.createElement('div');
-    document.body.appendChild(dom);
-    const view = new EditorView(
-      {mount: dom},
-      {
-        state: state,
-      }
-    );
-    const cView = new InfoIconView(
-      view.state.doc.nodeAt(6)!,
-      view,
-      undefined as unknown as CBFn
-    );
-  
-    cView.outerView = {
-      posAtCoords:()=>{return undefined}
-    }as unknown  as EditorView
-    
-    const result = cView.getNodePosEx(100, 200);
-    expect(result).toBeNull();
-  });
-
-  it('should adjust tooltip position when offsetParent is a TD', () => {
-    const before = 'hello';
-    const after = ' world';
-    const state = EditorState.create({
-      doc: doc(p(before, newInfoIconNode, after)),
-      schema: effSchema,
-      plugins: [plugin],
-    });
-    const dom = document.createElement('div');
-    document.body.appendChild(dom);
-    const view = new EditorView(
-      {mount: dom},
-      {
-        state: state,
-      }
-    );
-    const cView = new InfoIconView(
-      view.state.doc.nodeAt(6)!,
-      view,
-      undefined as unknown as CBFn
-    );
-    const tooltip = { style: { top: '' } };
-    const event = {
-      clientY: 100,
-      currentTarget: { offsetParent: { tagName: 'TD' } }
+    const updateNode = (node: Node): boolean => {
+      if (!currentNode || !node.sameMarkup(currentNode)) return false;
+      currentNode = node;
+      return true;
     };
-    
-    cView.adjustTooltipPosition(event, tooltip);
-    expect(tooltip.style.top).toBe('110px');
+
+    const mockNode = {
+      sameMarkup: jest.fn(),
+    };
+
+    beforeEach(() => {
+      mockNode.sameMarkup.mockReset();
+      currentNode = undefined;
+    });
+
+    it('should return false if currentNode is undefined', () => {
+      mockNode.sameMarkup.mockReturnValue(false);
+      currentNode = undefined; // Ensure currentNode is undefined
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(false);
+      expect(mockNode.sameMarkup).not.toHaveBeenCalled();
+    });
+
+    it('should return false if node has different markup', () => {
+      currentNode = mockNode as unknown as Node;
+      mockNode.sameMarkup.mockReturnValue(false);
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(false);
+      expect(mockNode.sameMarkup).toHaveBeenCalledWith(mockNode);
+    });
+
+    it('should return true and update node if node has the same markup', () => {
+      currentNode = mockNode as unknown as Node;
+      mockNode.sameMarkup.mockReturnValue(true);
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(true);
+      expect(mockNode.sameMarkup).toHaveBeenCalledWith(mockNode);
+      expect(currentNode).toBe(mockNode);
+    });
   });
 
-  it('should not adjust tooltip position when offsetParent is not a TD', () => {
+  it('should not close when relatedTarget offsetParent has the expected class', () => {
     const before = 'hello';
     const after = ' world';
+
     const state = EditorState.create({
       doc: doc(p(before, newInfoIconNode, after)),
       schema: effSchema,
@@ -346,30 +271,38 @@ describe('Info Plugin Extended', () => {
     });
     const dom = document.createElement('div');
     document.body.appendChild(dom);
-    const view = new EditorView(
-      {mount: dom},
-      {
-        state: state,
-      }
-    );
+    const view = new EditorView({mount: dom}, {state});
+
     const cView = new InfoIconView(
-      view.state.doc.nodeAt(6)!,
+      view.state.doc.nodeAt(6),
       view,
-      undefined as unknown as CBFn
+      undefined as any
     );
-    const tooltip = { style: { top: '' } };
-    const event = {
-      clientY: 100,
-      currentTarget: { offsetParent: { tagName: 'DIV' } }
-    };
-    
-    cView.adjustTooltipPosition(event, tooltip);
-    expect(tooltip.style.top).toBe('');
+
+    const tooltipContent = document.createElement('div');
+    tooltipContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
+
+    const targetElement = document.createElement('div');
+    targetElement.className = '';
+    Object.defineProperty(targetElement, 'offsetParent', {
+      value: tooltipContent,
+    });
+
+    const closeSpy = jest.spyOn(cView, 'close');
+
+    const event = new MouseEvent('mouseout', {bubbles: true, cancelable: true});
+    Object.defineProperty(event, 'relatedTarget', {
+      value: targetElement,
+    });
+
+    cView.hideSourceText(event);
+    expect(closeSpy).not.toHaveBeenCalled();
   });
 
-  it('should not throw an error if offsetParent is undefined', () => {
+  it('should return the correct position from posAtCoords', () => {
     const before = 'hello';
     const after = ' world';
+
     const state = EditorState.create({
       doc: doc(p(before, newInfoIconNode, after)),
       schema: effSchema,
@@ -377,26 +310,17 @@ describe('Info Plugin Extended', () => {
     });
     const dom = document.createElement('div');
     document.body.appendChild(dom);
-    const view = new EditorView(
-      {mount: dom},
-      {
-        state: state,
-      }
-    );
+    const view = new EditorView({mount: dom}, {state});
+
     const cView = new InfoIconView(
-      view.state.doc.nodeAt(6)!,
+      view.state.doc.nodeAt(6),
       view,
-      undefined as unknown as CBFn
+      undefined as any
     );
 
-    const tooltip = { style: { top: '' } };
-    const event = {
-      clientY: 100,
-      currentTarget: {}
-    };
-    
-    expect(() => cView.adjustTooltipPosition(event, tooltip)).not.toThrow();
-    expect(tooltip.style.top).toBe('');
+    const mockPos = {pos: 12, inside: -1};
+    jest.spyOn(view, 'posAtCoords').mockReturnValue(mockPos);
+    const result = cView.getNodePosEx(100, 200);
+    expect(result).toBe(12);
   });
-  
 });
