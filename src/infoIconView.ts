@@ -331,14 +331,14 @@ export class InfoIconView {
         link.addEventListener('click', (event) => {
           event.preventDefault();
 
-          const href = link.href;
+          const href = link.getAttribute('href');
           if (href) {
             const url = sanitizeURL(href);
             const popupString = this.outerView.editable
               ? 'Any unsaved changes will be lost'
               : '';
 
-            if (this.outerView['runtime'].openLinkDialog) {
+            if (this.outerView['runtime']?.openLinkDialog) {
               this.outerView['runtime'].openLinkDialog(url, popupString);
             } else {
               window.open(url, '_blank');
