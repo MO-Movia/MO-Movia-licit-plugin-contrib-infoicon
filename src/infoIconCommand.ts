@@ -64,44 +64,90 @@ export class InfoIconCommand extends UICommand {
     _view: EditorView | undefined,
     infoIcon
   ): boolean => {
-    if (dispatch) {
-      const {selection} = state;
-      let {tr} = state;
-      tr = tr.setSelection(selection);
-      const from = state.selection.from;
-      const to = state.selection.to;
-      const node = getNode(from, to, tr);
-      if (node && infoIcon) {
-        const div = document.createElement('div');
-        const fragm = this.getFragm(infoIcon);
-        div.appendChild(fragm);
-        const desc = div.innerHTML;
-        const infoicon = state.schema.nodes['infoicon'];
-        let newAttrs = {};
-        Object.assign(newAttrs, infoicon['attrs']);
-        newAttrs = this.createInfoIconAttrs(from, to, desc, infoIcon);
-        const infoiconNode = infoicon.create(null);
-        const $head = state.selection.$head;
-        let listNodeAttr = null;
-        let listPos = 0;
-        for (let d = $head.depth; d > 0; d--) {
-          if (this.isList($head, d)) {
-            listNodeAttr = {...$head.node(d).attrs};
-            listPos = $head['path'][d + 4];
-            break;
-          }
-        }
-        tr = tr.insert(to, Fragment.from(infoiconNode));
-        tr = tr.setNodeMarkup(to, undefined, newAttrs);
-        if (listNodeAttr) {
-          tr = tr.setNodeMarkup(listPos, undefined, listNodeAttr);
-        }
-      }
-      dispatch(tr);
+    if (!dispatch || !infoIcon) {
+      return false;
     }
 
-    return false;
+    let {from, to} = state.selection;
+    if (from === to) {
+      ({from, to} = this.adjustCursorPosition(state.doc, from, to));
+    }
+
+    const node = getNode(from, to, state.tr);
+    if (!node) return false;
+
+    const infoiconNode = this.createInfoIconNode(state, from, to, infoIcon);
+    let tr = state.tr.insert(to, Fragment.from(infoiconNode));
+
+    const listNodeData = this.getListNodeData(state);
+    if (listNodeData) {
+      tr = tr.setNodeMarkup(
+        listNodeData.listPos,
+        undefined,
+        listNodeData.listNodeAttr
+      );
+    }
+
+    dispatch(tr);
+    return true;
   };
+
+  adjustCursorPosition(doc, from, to) {
+    const textAfter = doc.textBetween(
+      to,
+      Math.min(to + 50, doc.content.size),
+      '',
+      '\0'
+    );
+    const wordMatch = /^\w+/.exec(textAfter);
+
+    if (wordMatch) {
+      to += wordMatch[0].length;
+      from = to;
+
+      const afterWordText = doc.textBetween(
+        to,
+        Math.min(to + 5, doc.content.size),
+        '',
+        '\0'
+      );
+      const punctMatch = /^[.,;:!?]/.exec(afterWordText);
+
+      if (punctMatch) {
+        to += punctMatch[0].length;
+        from = to;
+      }
+    }
+
+    return {from, to};
+  }
+
+  createInfoIconNode(state, from, to, infoIcon) {
+    const div = document.createElement('div');
+    div.appendChild(this.getFragm(infoIcon));
+
+    const infoicon = state.schema.nodes['infoicon'];
+    const newAttrs = this.createInfoIconAttrs(
+      from,
+      to,
+      div.innerHTML,
+      infoIcon
+    );
+    return infoicon.create(newAttrs);
+  }
+
+  getListNodeData(state) {
+    const $head = state.selection.$head;
+    for (let d = $head.depth; d > 0; d--) {
+      if (this.isList($head, d)) {
+        return {
+          listNodeAttr: {...$head.node(d).attrs},
+          listPos: $head['path'][d + 4],
+        };
+      }
+    }
+    return null;
+  }
 
   cancel(): void {
     return null;
