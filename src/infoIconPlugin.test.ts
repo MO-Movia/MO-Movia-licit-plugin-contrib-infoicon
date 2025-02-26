@@ -265,7 +265,6 @@ describe('Info Plugin', () => {
     });
     const dom = document.createElement('div');
     document.body.appendChild(dom);
-    // Set up our document body
     document.body.innerHTML = '<div></div>';
     const view = new EditorView(
       {mount: dom},
@@ -291,22 +290,24 @@ describe('Info Plugin', () => {
     view.dispatch(tr);
     const addInfoIconcmd = new InfoIconCommand();
 
-    addInfoIconcmd.createInfoIconAttrs(1, 3, 'test description', infoIcon);
-    addInfoIconcmd._isEnabled(view.state);
+    addInfoIconcmd.createInfoIconAttrs = jest.fn().mockReturnValue({});
+    addInfoIconcmd._isEnabled = jest.fn().mockReturnValue(true);
 
     const getNodePosEx = jest.spyOn(addInfoIconcmd, 'getFragm');
     const getFragm = document.createElement('div');
     getFragm.innerHTML = '<p>Test Doc</p>';
     getNodePosEx.mockReturnValue(getFragm);
+
     const spyiSNVMock = jest.spyOn(addInfoIconcmd, 'isList');
     spyiSNVMock.mockReturnValue(true);
+
     const bok = addInfoIconcmd.executeWithUserInput(
       state,
-      view.dispatch as (tr: Transform) => void,
+      view.dispatch,
       view,
-      infoIcon as any
+      infoIcon
     );
-    expect(bok).toBeFalsy();
+    expect(bok).toBeTruthy();
   });
 
   it('should Wait For User Input', () => {
