@@ -42,7 +42,7 @@
     "jest-environment-jsdom": "^29.7.0",
     "jest-junit": "^16.0.0",
     "jest-mock-extended": "^3.0.4",
-    "jest-prosemirror": "^2.1.5",
+    "jest-prosemirror": "^3.0.1",
     "jest-sonar-reporter": "^2.0.0",
     "prettier": "^3.0.0",
     "stylelint-config-standard": "^38.0.0",
