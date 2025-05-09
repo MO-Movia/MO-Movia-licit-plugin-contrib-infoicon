@@ -1,11 +1,11 @@
 {
   "name": "@modusoperandi/licit-info-icon",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "license": "MIT",
   "type": "module",
   "description": "MO's Info Icon ProseMirror Plugin",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "repository": {
     "type": "git",
     "url": ""
