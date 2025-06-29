@@ -21,7 +21,7 @@
     "prosemirror-utils": "^1.0.0"
   },
   "devDependencies": {
-    "@cyclonedx/cyclonedx-npm": "^3.0.0",
+    "@cyclonedx/cyclonedx-npm": "^4.0.0",
     "@testing-library/jest-dom": "^6.4.1",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.4.3",
