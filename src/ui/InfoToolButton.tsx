@@ -1,8 +1,7 @@
 import * as React from 'react';
 import cx from 'classnames';
 import type {PointerSurfaceProps} from '@modusoperandi/licit-ui-commands';
-import {TooltipSurface} from '@modusoperandi/licit-ui-commands';
-import {PointerSurface} from '@modusoperandi/licit-ui-commands';
+import {TooltipSurface,PointerSurface} from '@modusoperandi/licit-ui-commands';
 
 type InfoToolButtonProps = PointerSurfaceProps & {
   icon?: string | React.ReactNode | null;

@@ -6,7 +6,6 @@ import './ui/infoicon-note.css';
 
 type CustomButtonProps = {
   editorView: EditorView;
-  onCancel: (view: EditorView) => void;
   onEdit: (view: EditorView) => void;
   onRemove: (view: EditorView) => void;
   onMouseOut: () => void;
@@ -14,8 +13,6 @@ type CustomButtonProps = {
 
 export class InfoIconSubMenu extends React.PureComponent {
   declare props: CustomButtonProps;
-
-  _unmounted = false;
 
   state = {
     hidden: false,
@@ -26,7 +23,7 @@ export class InfoIconSubMenu extends React.PureComponent {
     const disabled = editorView['readOnly'];
 
     return (
-      <div className="molcit-infoicon-submenu" onMouseLeave={onMouseOut}>
+      <div className="molcit-infoicon-submenu" onMouseLeave={onMouseOut} role='menu' tabIndex={0}>
         <div className="molcit-infoicon-submenu-body">
           <div className="molcit-infoicon-submenu-row">
             <InfoToolButton
