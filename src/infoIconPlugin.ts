@@ -1,5 +1,6 @@
 import { Node, Schema } from 'prosemirror-model';
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 import {
   makeKeyMapWithCommon,
@@ -60,6 +61,14 @@ export class InfoIconPlugin extends Plugin {
       '[info_outline] Add Info Icon': INFO_ICON_CMD,
     };
   }
+
+public static createInfoIcon(
+  state: EditorState,
+  dispatch: (tr: Transform) => void,
+  view: EditorView
+): boolean {
+  return INFO_ICON_CMD.execute(state, dispatch, view);
+}
 }
 
 export function bindInfoIconView(
