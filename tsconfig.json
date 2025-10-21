@@ -7,7 +7,7 @@
     "module": "esnext",
     "moduleResolution": "node",
     "lib": [
-      "es2017",
+      "ES2022",
       "dom",
       "dom.Iterable"
     ],
@@ -17,6 +17,7 @@
     "skipLibCheck": true,
     "types": [
       "jest",
+      "node",
       "jest-prosemirror"
     ],
     // Ensure that .d.ts files are created by tsc, but not .js files
@@ -28,10 +29,12 @@
     "enable": true
   },
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts",
+    "src/**/*.tsx"
   ],
   "exclude": [
     "node_modules",
-    "**/*.test.ts"
+    "**/*.test.ts",
+    "**/*.test.tsx"
   ]
 }
