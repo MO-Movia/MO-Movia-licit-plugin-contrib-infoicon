@@ -63,9 +63,6 @@
     "test": "jest --coverage",
     "verify": "npm run lint -- --fix && npm run ci:build && npm run test:coverage && echo 'All Tests Passed!'"
   },
-  "overrides": {
-    "libxmljs2": "^1.0.0"
-  },
   "importSort": {
     ".js": {
       "parser": "babylon",
