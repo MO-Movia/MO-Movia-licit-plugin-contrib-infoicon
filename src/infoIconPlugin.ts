@@ -1,14 +1,15 @@
 import { Node, Schema } from 'prosemirror-model';
-import { Plugin, PluginKey } from 'prosemirror-state';
+import { EditorState, Plugin, PluginKey } from 'prosemirror-state';
+import {Transform} from 'prosemirror-transform';
 import { EditorView } from 'prosemirror-view';
 import {
   makeKeyMapWithCommon,
   createKeyMapPlugin,
+  UICommand
 } from '@modusoperandi/licit-doc-attrs-step';
 import { InfoIconNodeSpec } from './infoIconNodeSpec';
 import { InfoIconView } from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 import {DarkThemeIcon, LightThemeIcon} from './images';
 
 export const INFO_ICON = 'infoicon';
@@ -57,7 +58,7 @@ export class InfoIconPlugin extends Plugin {
   }
 
   initButtonCommands(theme: string): unknown {
-    
+
       let image = null;
       if ('light' == theme) {
         image = LightThemeIcon;
@@ -68,8 +69,15 @@ export class InfoIconPlugin extends Plugin {
       return {
         [`[${image}] Add Info Icon`]: INFO_ICON_CMD,
       };
-    } 
-  
+    }
+
+public static createInfoIcon(
+  state: EditorState,
+  dispatch: (tr: Transform) => void,
+  view: EditorView
+): Transform |boolean {
+  return INFO_ICON_CMD.execute(state, dispatch, view);
+}
 }
 
 export function bindInfoIconView(

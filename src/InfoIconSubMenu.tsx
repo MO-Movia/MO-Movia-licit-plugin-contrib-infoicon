@@ -2,7 +2,6 @@ import * as React from 'react';
 import {EditorView} from 'prosemirror-view';
 import {InfoToolButton} from './ui/InfoToolButton';
 import {InfoSubMenuIcon} from './ui/InfoSubMenuIcon';
-import './ui/infoicon-note.css';
 
 type CustomButtonProps = {
   editorView: EditorView;

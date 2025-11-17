@@ -6,9 +6,10 @@ import {schema, builders} from 'prosemirror-test-builder';
 import {EditorState} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {Schema, Node} from 'prosemirror-model';
-import {InfoIconView} from './infoIconView';
+import {InfoIconView, CBFn} from './infoIconView';
 import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import {InfoIconDialog} from './infoIconDialog';
+import {sanitizeURL} from './plugins/menu/sanitizeURL';
 
 describe('Info Plugin Extended', () => {
   const info = {
@@ -26,7 +27,7 @@ describe('Info Plugin Extended', () => {
   const effSchema = plugin.getEffectiveSchema(mySchema);
 
   const newInfoIconNode = effSchema.node(effSchema.nodes.infoicon, info);
-  plugin.initButtonCommands();
+  plugin.initButtonCommands('dark');
   const {doc, p} = builders(mySchema, {p: {nodeType: 'paragraph'}});
 
   it('Infoiconview call createInfoIconTooltip', () => {
@@ -57,6 +58,8 @@ describe('Info Plugin Extended', () => {
       '"<p>test <a href="ingo" title="ingo">ingo</a> icon</p>"';
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';   
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
     document.body.appendChild(tooltip);
@@ -144,14 +147,14 @@ describe('Info Plugin Extended', () => {
       bubbles: true,
       cancelable: true,
     });
-  
+
     cView.dom = null as unknown as globalThis.Node;
     const targetElement = document.createElement('div');
     targetElement.className = 'fa';
-      const eventWithCustomData = {
+    const eventWithCustomData = {
       ...mockEvent,
       currentTarget: null, // Add custom data
-      target: targetElement
+      target: targetElement,
     };
     cView.selectNode(eventWithCustomData);
 
@@ -182,13 +185,13 @@ describe('Info Plugin Extended', () => {
       undefined as any
     );
     const node = new Node();
-    
+
     expect(cView.update(node)).toBe(false);
   });
   it('should return true if sameMarkup returns true', () => {
     const before = 'hello';
     const after = ' world';
-  
+
     const state = EditorState.create({
       doc: doc(p(before, newInfoIconNode, after)),
       schema: effSchema,
@@ -207,10 +210,117 @@ describe('Info Plugin Extended', () => {
       view,
       undefined as any
     );
-    
+
     // Simulate a node with the same markup
     const node = cView.node.copy(); // This creates a new node with the same markup
     expect(cView.update(node)).toBe(true);
   });
-  
+
+  describe('Info Plugin Extended', () => {
+    let currentNode: Node | undefined;
+
+    const updateNode = (node: Node): boolean => {
+      if (!currentNode || !node.sameMarkup(currentNode)) return false;
+      currentNode = node;
+      return true;
+    };
+
+    const mockNode = {
+      sameMarkup: jest.fn(),
+    };
+
+    beforeEach(() => {
+      mockNode.sameMarkup.mockReset();
+      currentNode = undefined;
+    });
+
+    it('should return false if currentNode is undefined', () => {
+      mockNode.sameMarkup.mockReturnValue(false);
+      currentNode = undefined; // Ensure currentNode is undefined
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(false);
+      expect(mockNode.sameMarkup).not.toHaveBeenCalled();
+    });
+
+    it('should return false if node has different markup', () => {
+      currentNode = mockNode as unknown as Node;
+      mockNode.sameMarkup.mockReturnValue(false);
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(false);
+      expect(mockNode.sameMarkup).toHaveBeenCalledWith(mockNode);
+    });
+
+    it('should return true and update node if node has the same markup', () => {
+      currentNode = mockNode as unknown as Node;
+      mockNode.sameMarkup.mockReturnValue(true);
+      const result = updateNode(mockNode as unknown as Node);
+      expect(result).toBe(true);
+      expect(mockNode.sameMarkup).toHaveBeenCalledWith(mockNode);
+      expect(currentNode).toBe(mockNode);
+    });
+  });
+
+  it('should not close when relatedTarget offsetParent has the expected class', () => {
+    const before = 'hello';
+    const after = ' world';
+
+    const state = EditorState.create({
+      doc: doc(p(before, newInfoIconNode, after)),
+      schema: effSchema,
+      plugins: [plugin],
+    });
+    const dom = document.createElement('div');
+    document.body.appendChild(dom);
+    const view = new EditorView({mount: dom}, {state});
+
+    const cView = new InfoIconView(
+      view.state.doc.nodeAt(6),
+      view,
+      undefined as any
+    );
+
+    const tooltipContent = document.createElement('div');
+    tooltipContent.className = 'ProseMirror molcit-infoicon-tooltip-content';
+
+    const targetElement = document.createElement('div');
+    targetElement.className = '';
+    Object.defineProperty(targetElement, 'offsetParent', {
+      value: tooltipContent,
+    });
+
+    const closeSpy = jest.spyOn(cView, 'close');
+
+    const event = new MouseEvent('mouseout', {bubbles: true, cancelable: true});
+    Object.defineProperty(event, 'relatedTarget', {
+      value: targetElement,
+    });
+
+    cView.hideSourceText(event);
+    expect(closeSpy).not.toHaveBeenCalled();
+  });
+
+  it('should return the correct position from posAtCoords', () => {
+    const before = 'hello';
+    const after = ' world';
+
+    const state = EditorState.create({
+      doc: doc(p(before, newInfoIconNode, after)),
+      schema: effSchema,
+      plugins: [plugin],
+    });
+    const dom = document.createElement('div');
+    document.body.appendChild(dom);
+    const view = new EditorView({mount: dom}, {state});
+
+    const cView = new InfoIconView(
+      view.state.doc.nodeAt(6),
+      view,
+      undefined as any
+    );
+
+    const mockPos = {pos: 12, inside: -1};
+    jest.spyOn(view, 'posAtCoords').mockReturnValue(mockPos);
+    const result = cView.getNodePosEx(100, 200);
+    expect(result).toBe(12);
+  });
 });

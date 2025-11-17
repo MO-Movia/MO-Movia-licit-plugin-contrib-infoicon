@@ -36,7 +36,7 @@ describe('Info Plugin Extended', () => {
   const effSchema = plugin.getEffectiveSchema(mySchema);
 
   const newInfoIconNode = effSchema.node(effSchema.nodes.infoicon, info);
-  plugin.initButtonCommands();
+  plugin.initButtonCommands('dark');
   const {doc, p} = builders(mySchema, {p: {nodeType: 'paragraph'}});
 
   it('Infoiconview call createInfoIconTooltip', () => {
@@ -67,6 +67,8 @@ describe('Info Plugin Extended', () => {
       '"<p>test <a href="ingo" title="ingo">ingo</a> icon</p>"';
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
 
@@ -95,7 +97,7 @@ describe('Info Plugin', () => {
   const effSchema = plugin.getEffectiveSchema(mySchema);
 
   const newInfoIconNode = effSchema.node(effSchema.nodes.infoicon, info);
-  plugin.initButtonCommands();
+  plugin.initButtonCommands('dark');
   const {doc, p} = builders(mySchema, {p: {nodeType: 'paragraph'}});
 
   it('should create infoplugin', () => {
@@ -521,6 +523,8 @@ describe('Info Plugin', () => {
       "<a href='www.google.com'></a><p>test <a href='ingo' title='ingo'>ingo</a> icon</p>";
     const errorinfodiv = document.createElement('div');
     errorinfodiv.className = 'ProseMirror czi-prosemirror-editor';
+    const extraerrorinfodiv = document.createElement('div');
+    extraerrorinfodiv.className = 'prosemirror-editor-wrapper';
     const tooltip = document.createElement('div');
     tooltip.className = 'molcit-infoicon-tooltip';
 

@@ -15,3 +15,7 @@ it('mock const `isTablet` to the value `true`', () => {
         title: 'title'
     };
 });
+it('should handle empty type and title', () => {
+    const icon = InfoSubMenuIcon.get('', '');
+    expect(icon).toBeDefined();
+  });

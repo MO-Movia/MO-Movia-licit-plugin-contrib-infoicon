@@ -1,12 +1,9 @@
 import * as React from 'react';
-import './ui/infoIconDialog.css';
 import {EditorState} from 'prosemirror-state';
 import {EditorView} from 'prosemirror-view';
 import {DOMSerializer, Schema, DOMParser} from 'prosemirror-model';
 import {schema} from 'prosemirror-schema-basic';
 import {addListNodes} from 'prosemirror-schema-list';
-import 'font-awesome/css/font-awesome.min.css';
-import 'prosemirror-menu/style/menu.css';
 import {SearchInfoIcon} from './searchInfoIcon';
 import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import {plugins} from './plugins';
