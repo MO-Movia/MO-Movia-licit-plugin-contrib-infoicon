@@ -20,8 +20,8 @@
     "prosemirror-schema-basic": "^1.2.0",
     "prosemirror-schema-list": "^1.2.0",
     "prosemirror-utils": "^1.0.0",
-    "@modusoperandi/licit-doc-attrs-step": "file:modusoperandi-licit-doc-attrs-step-3.0.0.tgz",
-    "@modusoperandi/licit-ui-commands": "file:modusoperandi-licit-ui-commands-3.0.0.tgz"
+    "@modusoperandi/licit-doc-attrs-step": "^3.0.0",
+    "@modusoperandi/licit-ui-commands": "^3.0.0"
   },
   "devDependencies": {
     "@cyclonedx/cyclonedx-npm": "^4.1.0",
