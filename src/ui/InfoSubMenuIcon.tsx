@@ -29,6 +29,6 @@ export class InfoSubMenuIcon extends React.PureComponent {
       className = cx('czi-icon', {[type]: true});
       children = type;
     }
-    return <span className={className}>{children}</span>;
+    return <span className={className} style={{ color: 'lightgray' }}>{children}</span>;
   }
 }

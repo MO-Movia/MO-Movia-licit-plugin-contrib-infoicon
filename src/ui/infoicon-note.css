@@ -74,6 +74,10 @@
   width: 400px;
   border: 2px solid #e8b415;
 }
+.czi-editor-frameset .molcit-infoicon-tooltip-content strong {
+  font-weight: 700; 
+}
+
 
 .czi-editor-frameset .molcit-infoicon-tooltip {
   background: transparent !important;
