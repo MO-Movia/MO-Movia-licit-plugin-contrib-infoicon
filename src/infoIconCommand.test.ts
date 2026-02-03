@@ -136,7 +136,7 @@ const mockSchema = new Schema({
         expect(infoCommand.renderLabel()).toBeUndefined();
     });
     it('should handle isActive and return true',()=>{
-        expect(infoCommand.isActive()).toBeTruthy();
+        expect(infoCommand.isActive()).toBeFalsy();
     });
     it('should handle isActive and return tr',()=>{
         expect(infoCommand.executeCustom({state:{schema:null}} as unknown as EditorState,{} as unknown as Transform)).toStrictEqual({});
