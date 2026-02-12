@@ -1,5 +1,7 @@
 import cx from 'classnames';
 import * as React from 'react';
+ import { UICommand
+} from '@modusoperandi/licit-doc-attrs-step';
 const VALID_CHARS = /[a-z_]+/;
 const cached = {};
 
@@ -26,7 +28,7 @@ export class InfoSubMenuIcon extends React.PureComponent {
       className = cx('czi-icon-unknown');
       children = title || type;
     } else {
-      className = cx('czi-icon', {[type]: true});
+      className = cx('czi-icon', {[type]: true}, UICommand.theme);
       children = type;
     }
     return <span className={className}>{children}</span>;

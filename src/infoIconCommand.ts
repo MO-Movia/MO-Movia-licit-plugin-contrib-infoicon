@@ -163,7 +163,7 @@ export class InfoIconCommand extends UICommand {
     return;
   }
   isActive(): boolean {
-    return true;
+    return false;
   }
   executeCustom(_state: EditorState, tr: Transform): Transform {
     return tr;
