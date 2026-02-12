@@ -28,20 +28,20 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
 
       <div
         style={{
-          width: '300px',
+          width: '285px',
           border: '1px solid lightgray',
           boxShadow: '1px 1px',
         }}
       >
-        <form className="czi-form" style={{ height: '300px' }}>
+        <form className="czi-form" style={{ height: '300px', padding: '15px' }}>
           <div className="search-col" style={{ display: 'flex' }}>
-            <input onChange={this.searchIcon} placeholder="Search..." style={{ width: '50%', height: '30px' }} type="text" />
+            <input onChange={this.searchIcon} placeholder="Search..." style={{ width: '50%', height: '27px' }} type="text" />
             <div style={{ float: 'right', paddingLeft: '.5rem' }}>
-              <button disabled={this.state.selectedIcon.name === ''} onClick={this._save.bind(this)} style={{ height: '27px' }}>Save</button>
+              <button disabled={this.state.selectedIcon.name === ''} onClick={this._save.bind(this)} style={{ height: '27px', borderRadius: '5px' }}>Save</button>
               <button className="btnsave" onClick={this._cancel} style={{ height: 27, marginLeft: '.2rem' }}>Cancel</button>
             </div>
           </div>
-          <div className='icons' style={{ height: '16rem', overflowY: 'scroll', width: '255px' }}>
+          <div className='icons' style={{ height: '16rem', overflowY: 'auto', width: '255px' }}>
             {this.state.icons.map((icon) => {
               return <div className='molinfo-icon-list-div' key={icon.id}
               style={{ display: 'contents', float: 'left' }}>

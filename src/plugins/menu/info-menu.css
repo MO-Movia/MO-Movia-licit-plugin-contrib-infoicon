@@ -6,6 +6,11 @@
   align-items: center;
   position: sticky;
   top: 4px;
+  margin-bottom: 1px;
+}
+
+.ProseMirror-menubar.dark {
+  background: #DADDE2 !important;
 }
 
 .ProseMirror-menuitem {
