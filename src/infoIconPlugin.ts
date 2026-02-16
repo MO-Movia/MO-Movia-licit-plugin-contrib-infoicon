@@ -75,7 +75,7 @@ public static createInfoIcon(
   state: EditorState,
   dispatch: (tr: Transform) => void,
   view: EditorView
-): Transform | boolean | Promise<unknown> {
+): Transform | boolean {
   return INFO_ICON_CMD.execute(state, dispatch, view);
 }
 }
