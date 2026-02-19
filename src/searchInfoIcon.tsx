@@ -26,22 +26,16 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
   render(): React.ReactNode {
     return (
 
-      <div
-        style={{
-          width: '300px',
-          border: '1px solid lightgray',
-          boxShadow: '1px 1px',
-        }}
-      >
-        <form className="czi-form" style={{ height: '300px' }}>
+      <div className="addinfo-popup">
+        <form className="czi-form search-info" >
           <div className="search-col" style={{ display: 'flex' }}>
-            <input onChange={this.searchIcon} placeholder="Search..." style={{ width: '50%', height: '30px' }} type="text" />
+            <input className="search-input" onChange={this.searchIcon} placeholder="Search..." type="text" />
             <div style={{ float: 'right', paddingLeft: '.5rem' }}>
-              <button disabled={this.state.selectedIcon.name === ''} onClick={this._save.bind(this)} style={{ height: '27px' }}>Save</button>
+              <button className="savebtn" disabled={this.state.selectedIcon.name === ''} onClick={this._save.bind(this)} >Save</button>
               <button className="btnsave" onClick={this._cancel} style={{ height: 27, marginLeft: '.2rem' }}>Cancel</button>
             </div>
           </div>
-          <div className='icons' style={{ height: '16rem', overflowY: 'scroll', width: '255px' }}>
+          <div className='icons icons-container'>
             {this.state.icons.map((icon) => {
               return <div className='molinfo-icon-list-div' key={icon.id}
               style={{ display: 'contents', float: 'left' }}>

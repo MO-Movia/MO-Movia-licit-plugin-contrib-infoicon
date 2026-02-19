@@ -8,6 +8,7 @@ import { toggleMark } from 'prosemirror-commands';
 import { MarkType } from 'prosemirror-model';
 import { createPopUp } from '@modusoperandi/licit-ui-commands';
 import { LinkURLEditor } from './LinkURLEditor';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
 
 export function markActive(state: EditorState, type: MarkType) {
@@ -100,7 +101,7 @@ export default () =>
             const { dom, update } = renderGrouped(view, content);
 
             const menubar = document.createElement('div');
-            menubar.className = 'ProseMirror-menubar';
+            menubar.className = 'ProseMirror-menubar '+ UICommand.theme;
             menubar.appendChild(dom);
 
             view.dom.parentNode.insertBefore(menubar, view.dom);

@@ -9,6 +9,7 @@ import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import {plugins} from './plugins';
 import {FaIcons, FONTAWESOMEICONS} from './ui/FaIcon';
 import {SELECTEDINFOICON} from './constants';
+import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
 
 type InfoDialogProps = {
   infoIcon: {name; unicode};
@@ -103,7 +104,7 @@ export class InfoIconDialog extends React.PureComponent<
               )}
             </span>
           </div>
-          <div className="molinfo-icon-container">
+          <div className={'molinfo-icon-container ' + UICommand.theme}>
             <div className="molinfo-icon-list">
               {this.state.faIcons.map((icon, index) => {
                 if (index < 10)
@@ -154,7 +155,7 @@ export class InfoIconDialog extends React.PureComponent<
           <div className="molinfo-display-t">
             <span>Display Text</span>
           </div>
-          <div className="molinfo-editor-container" id="editor"></div>
+          <div className={'molinfo-editor-container ' + UICommand.theme} id="editor"></div>
           <div hidden id="content"></div>
           <div className="molinfo-insert-container">
             <button
