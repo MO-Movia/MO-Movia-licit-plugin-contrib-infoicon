@@ -135,10 +135,59 @@ const mockSchema = new Schema({
     it('should handle renderLabel',()=>{
         expect(infoCommand.renderLabel()).toBeUndefined();
     });
-    it('should handle isActive and return true',()=>{
+    it('should handle isActive and return false',()=>{
         expect(infoCommand.isActive()).toBeFalsy();
     });
     it('should handle isActive and return tr',()=>{
         expect(infoCommand.executeCustom({state:{schema:null}} as unknown as EditorState,{} as unknown as Transform)).toStrictEqual({});
+    });
+
+    const buildSelectionState = (text: string, offset: number, to = 10) => ({
+        selection: {
+            empty: true,
+            to,
+            $from: {
+                parentOffset: offset,
+                parent: {
+                    content: { size: text.length },
+                    textBetween: () => text,
+                },
+            },
+        },
+    } as unknown as EditorState);
+
+    it('should move insert position to the end when cursor is at word start', () => {
+        const state = buildSelectionState('hello world', 0, 10);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(15);
+    });
+
+    it('should move insert position to the end when cursor is in word middle', () => {
+        const state = buildSelectionState('hello world', 2, 10);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(13);
+    });
+
+    it('should keep insert position when cursor is at word end', () => {
+        const state = buildSelectionState('hello world', 5, 10);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(10);
+    });
+
+    it('should keep insert position when cursor is on punctuation/space', () => {
+        const state = buildSelectionState('hello, world', 5, 10);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(10);
+    });
+
+    it('should move insert position after sentence-ending punctuation when cursor is inside word', () => {
+        const state = buildSelectionState('hello.', 2, 10);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(14);
+    });
+
+    it('should move insert position after sentence-ending punctuation when cursor is before punctuation', () => {
+        const state = buildSelectionState('hello!', 5, 10);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(11);
+    });
+
+    it('should move insert position after repeated sentence-ending punctuation', () => {
+        const state = buildSelectionState('hello...', 1, 10);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(17);
     });
 });

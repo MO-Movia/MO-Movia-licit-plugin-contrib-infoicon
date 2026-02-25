@@ -36,7 +36,7 @@ describe('Info Plugin Extended', () => {
   const effSchema = plugin.getEffectiveSchema(mySchema);
 
   const newInfoIconNode = effSchema.node(effSchema.nodes.infoicon, info);
-  plugin.initButtonCommands('dark');
+  plugin.initButtonCommands();
   const {doc, p} = builders(mySchema, {p: {nodeType: 'paragraph'}});
 
   it('Infoiconview call createInfoIconTooltip', () => {
@@ -97,7 +97,7 @@ describe('Info Plugin', () => {
   const effSchema = plugin.getEffectiveSchema(mySchema);
 
   const newInfoIconNode = effSchema.node(effSchema.nodes.infoicon, info);
-  plugin.initButtonCommands('dark');
+  plugin.initButtonCommands();
   const {doc, p} = builders(mySchema, {p: {nodeType: 'paragraph'}});
 
   it('should create infoplugin', () => {
@@ -383,6 +383,11 @@ describe('Info Plugin', () => {
   });
   it('should call initKeyCommands', () => {
     expect(plugin.initKeyCommands()).toBeDefined();
+  });
+  it('should initialize light themed toolbar button icon', () => {
+    const commands = plugin.initButtonCommands('light') as Record<string, unknown>;
+    const commandKey = Object.keys(commands)[0];
+    expect(commandKey).toContain('assets/images/light/Icon_Infoicon.svg');
   });
   it('Infoiconview call parentNodeType', () => {
     const before = 'hello';

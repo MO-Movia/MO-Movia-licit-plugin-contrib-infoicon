@@ -112,6 +112,39 @@ background: #DADDE2;
   cursor: pointer;
 }
 
+.molinfo-icon-list-div i.material-icons,
+.molinfo-icon-list-div i.material-icons-outlined,
+.molinfo-icon-list-div i.material-icons-round,
+.molinfo-icon-list-div i.material-icons-sharp,
+.molinfo-icon-list-div i.material-icons-two-tone,
+.molinfo-icon-list-div i.material-symbols-outlined,
+.molinfo-icon-list-div i.material-symbols-rounded,
+.molinfo-icon-list-div i.material-symbols-sharp,
+.molinfo-current-selection.material-icons,
+.molinfo-current-selection.material-icons-outlined,
+.molinfo-current-selection.material-icons-round,
+.molinfo-current-selection.material-icons-sharp,
+.molinfo-current-selection.material-icons-two-tone,
+.molinfo-current-selection.material-symbols-outlined,
+.molinfo-current-selection.material-symbols-rounded,
+.molinfo-current-selection.material-symbols-sharp {
+  align-items: center;
+  background: transparent;
+  display: inline-flex;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  justify-content: center;
+  letter-spacing: normal;
+  line-height: 1;
+  text-rendering: optimizelegibility;
+  text-transform: none;
+  vertical-align: middle;
+  -webkit-font-smoothing: antialiased;
+  font-feature-settings: 'liga';
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+}
+
 .molinfo-icon-active {
   border: 3px solid #e8b415;
 }

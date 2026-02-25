@@ -3,22 +3,31 @@
 import { createPopUp, atViewportCenter } from '@modusoperandi/licit-ui-commands';
 import * as React from 'react';
 import { SELECTEDINFOICON } from './constants';
-import { FaIcons, FONTAWESOMEICONS } from './ui/FaIcon';
+import { FaIcons } from './ui/FaIcon';
 import { AlertInfo } from './ui/AlertInfo';
+import {getConfiguredInfoIcons} from './iconConfig';
+import {getCanonicalIconIdentity, getIconRenderData} from './iconRender';
 
 type SearchInfoProps = {
-  icons,
-  selectedIcon: FaIcons,
+  icons?;
+  selectedIcon?: FaIcons,
   close: (val?) => void;
 };
 
-export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchInfoProps> {
+type SearchInfoState = {
+  icons: FaIcons[];
+  allIcons: FaIcons[];
+  selectedIcon: FaIcons;
+};
+
+export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchInfoState> {
   _popUp = null;
   constructor(props: SearchInfoProps) {
     super(props);
+    const configuredIcons = Array.isArray(props.icons) && props.icons.length > 0 ? props.icons : getConfiguredInfoIcons();
     this.state = {
-      ...props,
-      icons: props.icons || FONTAWESOMEICONS,
+      icons: configuredIcons,
+      allIcons: configuredIcons,
       selectedIcon: props.selectedIcon || { name: '', selected: false, unicode: '' }
     };
   }
@@ -26,26 +35,43 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
   render(): React.ReactNode {
     return (
 
-      <div className="addinfo-popup">
-        <form className="czi-form search-info" >
+      <div
+        style={{
+          width: '300px',
+          border: '1px solid lightgray',
+          boxShadow: '1px 1px',
+        }}
+      >
+        <form className="czi-form" style={{ height: '300px' }}>
           <div className="search-col" style={{ display: 'flex' }}>
-            <input className="search-input" onChange={this.searchIcon} placeholder="Search..." type="text" />
+            <input onChange={this.searchIcon} placeholder="Search..." style={{ width: '50%', height: '30px' }} type="text" />
             <div style={{ float: 'right', paddingLeft: '.5rem' }}>
-              <button className="savebtn" disabled={this.state.selectedIcon.name === ''} onClick={this._save.bind(this)} >Save</button>
+              <button disabled={this.state.selectedIcon.name === ''} onClick={this._save.bind(this)} style={{ height: '27px' }}>Save</button>
               <button className="btnsave" onClick={this._cancel} style={{ height: 27, marginLeft: '.2rem' }}>Cancel</button>
             </div>
           </div>
-          <div className='icons icons-container'>
-            {this.state.icons.map((icon) => {
-              return <div className='molinfo-icon-list-div' key={icon.id}
-              style={{ display: 'contents', float: 'left' }}>
-                <i className={icon.name + (this.state.selectedIcon?.name === icon.name ? ' molinfo-icon-active' : '')}
-                onClick={() => this.selectInfoIcon(icon)} onKeyDown={(e) => {
+          <div className='icons' style={{height: '16rem', overflowY: 'scroll', width: '255px'}}>
+            {this.state.icons.map((icon, index) => {
+                const iconData = getIconRenderData(icon);
+                const className = [
+                  iconData.className,
+                  this.state.selectedIcon?.name === icon.name ? 'molinfo-icon-active' : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ');
+              return <div className='molinfo-icon-list-div' key={icon.id || `${icon.name}-${index}`}
+              style={{display: 'contents', float: 'left'}}>
+                <i
+                className={className}
+                onClick={() => this.selectInfoIcon(icon)}
+                onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
                     this.selectInfoIcon(icon);
                   }
-                }} role='menu'
-                tabIndex={0}></i>
+                }} role='menu' style={iconData.fontFamily ? {fontFamily: iconData.fontFamily} : undefined}
+                tabIndex={0}>
+                  {iconData.glyph}
+                </i>
               </div>;
             })}
           </div>
@@ -62,8 +88,9 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
 
   _save = (): void => {
     const cache = this.getCacheIcons();
+    const selectedIconIdentity = this.getIconIdentity(this.state.selectedIcon);
 
-    if (cache.filter(c => c.name === this.state.selectedIcon.name).length > 0) {
+    if (cache.filter((c) => this.getIconIdentity(c) === selectedIconIdentity).length > 0) {
       this.showAlert();
     } else {
       if (cache.length >= 10) {
@@ -104,12 +131,21 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
   }
 
   searchIcon = (e) => {
-    const searchRes = FONTAWESOMEICONS.filter(d => d?.name?.toLowerCase().includes(e.target.value.toLowerCase()));
+    const searchText = e.target.value.toLowerCase();
+    const searchRes = this.state.allIcons.filter((d) => {
+      const nameMatch = d?.name?.toLowerCase().includes(searchText);
+      const glyphMatch = d?.glyph?.toLowerCase().includes(searchText);
+      return nameMatch || glyphMatch;
+    });
     this.setState({ icons: searchRes });
   };
 
+  getIconIdentity(icon: FaIcons): string {
+    return getCanonicalIconIdentity(icon);
+  }
+
   selectInfoIcon = (icon: FaIcons): void => {
-    if (icon.name === this.state.selectedIcon.name) {
+    if (this.getIconIdentity(icon) === this.getIconIdentity(this.state.selectedIcon)) {
       this.setState({ selectedIcon: { name: '', selected: false, unicode: '' } });
     } else {
       this.setState({ selectedIcon: icon });
@@ -121,5 +157,3 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
     return ccList ? JSON.parse(ccList) : [];
   }
 }
-
-

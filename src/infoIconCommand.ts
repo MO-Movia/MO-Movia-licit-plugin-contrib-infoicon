@@ -69,7 +69,7 @@ export class InfoIconCommand extends UICommand {
       let {tr} = state;
       tr = tr.setSelection(selection);
       const from = state.selection.from;
-      const to = state.selection.to;
+      const to = this.getWordSafeInsertPos(state);
       const node = getNode(from, to, tr);
       if (node && infoIcon) {
         const div = document.createElement('div');
@@ -79,7 +79,7 @@ export class InfoIconCommand extends UICommand {
         const infoicon = state.schema.nodes['infoicon'];
         let newAttrs = {};
         Object.assign(newAttrs, infoicon['attrs']);
-        newAttrs = this.createInfoIconAttrs(from, to, desc, infoIcon);
+        newAttrs = this.createInfoIconAttrs(to, to, desc, infoIcon);
         const infoiconNode = infoicon.create(null);
         const $head = state.selection.$head;
         let listNodeAttr = null;
@@ -103,13 +103,83 @@ export class InfoIconCommand extends UICommand {
     return false;
   };
 
-  executeCustomStyleForTable(
-    _state: EditorState,
-    tr: Transform,
-    _from: number,
-    _to: number
-  ): Transform {
-    return tr;
+  getWordSafeInsertPos(state: EditorState): number {
+    const {selection} = state;
+    if (!selection.empty) {
+      return selection.to;
+    }
+
+    const parent = selection.$from?.parent;
+    const offset = selection.$from?.parentOffset ?? 0;
+    if (!parent || offset < 0) {
+      return selection.to;
+    }
+
+    // Preserve inline node offsets by representing leaf nodes as a single character.
+    const parentText = parent.textBetween(0, parent.content.size, '', ' ');
+    if (!parentText || offset >= parentText.length) {
+      return selection.to;
+    }
+
+    // Move only when cursor is at word start/middle.
+    const currentChar = parentText.charAt(offset);
+    if (!this.isWordCharacter(currentChar)) {
+      // If cursor is right before sentence-ending punctuation after a word,
+      // move past the punctuation marks as well.
+      const prevChar = offset > 0 ? parentText.charAt(offset - 1) : '';
+      if (
+        this.isSentenceEndingCharacter(currentChar) &&
+        this.isWordCharacter(prevChar)
+      ) {
+        let punctuationEnd = offset;
+        while (
+          punctuationEnd < parentText.length &&
+          this.isSentenceEndingCharacter(parentText.charAt(punctuationEnd))
+        ) {
+          punctuationEnd++;
+        }
+        return selection.to + (punctuationEnd - offset);
+      }
+      return selection.to;
+    }
+
+    let wordEnd = offset;
+    while (
+      wordEnd < parentText.length &&
+      this.isWordCharacter(parentText.charAt(wordEnd))
+    ) {
+      wordEnd++;
+    }
+
+    // If word is immediately followed by sentence-ending punctuation,
+    // keep the icon after the punctuation rather than between word and punctuation.
+    let punctuationEnd = wordEnd;
+    while (
+      punctuationEnd < parentText.length &&
+      this.isSentenceEndingCharacter(parentText.charAt(punctuationEnd))
+    ) {
+      punctuationEnd++;
+    }
+
+    return selection.to + (punctuationEnd - offset);
+  }
+
+  isWordCharacter(char: string): boolean {
+    if (!char) {
+      return false;
+    }
+    if (char === '_') {
+      return true;
+    }
+    const code = char.charCodeAt(0);
+    const isNumber = code >= 48 && code <= 57;
+    const isUpper = code >= 65 && code <= 90;
+    const isLower = code >= 97 && code <= 122;
+    return isNumber || isUpper || isLower;
+  }
+
+  isSentenceEndingCharacter(char: string): boolean {
+    return char === '.' || char === '!' || char === '?';
   }
 
   cancel(): void {
@@ -166,6 +236,9 @@ export class InfoIconCommand extends UICommand {
     return false;
   }
   executeCustom(_state: EditorState, tr: Transform): Transform {
+    return tr;
+  }
+  executeCustomStyleForTable(_state: EditorState, tr: Transform): Transform {
     return tr;
   }
 }

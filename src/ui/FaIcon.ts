@@ -786,7 +786,10 @@ export const FONTAWESOMEICONS: FaIcons[] = [
 ];
 
 export type FaIcons = {
+  id?: string | number;
   name: string;
-  unicode: string;
-  selected: boolean;
+  unicode?: string;
+  selected?: boolean;
+  glyph?: string;
+  fontFamily?: string;
 };

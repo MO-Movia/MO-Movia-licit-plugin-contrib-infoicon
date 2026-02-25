@@ -27,7 +27,7 @@ describe('Info Plugin Extended', () => {
   const effSchema = plugin.getEffectiveSchema(mySchema);
 
   const newInfoIconNode = effSchema.node(effSchema.nodes.infoicon, info);
-  plugin.initButtonCommands('dark');
+  plugin.initButtonCommands();
   const {doc, p} = builders(mySchema, {p: {nodeType: 'paragraph'}});
 
   it('Infoiconview call createInfoIconTooltip', () => {

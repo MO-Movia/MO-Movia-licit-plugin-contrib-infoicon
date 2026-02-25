@@ -5,6 +5,7 @@ export * from './searchInfoIcon';
 export * from './infoIconPlugin';
 export * from './infoIconView';
 export * from './infoIconNodeSpec';
+export * from './iconConfig';
 export * from './ui/AlertInfo';
 export * from './ui/InfoSubMenuIcon';
 export * from './ui/InfoToolButton';

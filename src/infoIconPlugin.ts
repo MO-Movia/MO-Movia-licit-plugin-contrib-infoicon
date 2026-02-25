@@ -10,6 +10,7 @@ import {
 import { InfoIconNodeSpec } from './infoIconNodeSpec';
 import { InfoIconView } from './infoIconView';
 import { InfoIconCommand } from './infoIconCommand';
+import {InfoIconPluginOptions, setConfiguredInfoIcons} from './iconConfig';
 import {DarkThemeIcon, LightThemeIcon} from './images';
 
 export const INFO_ICON = 'infoicon';
@@ -27,7 +28,8 @@ function createInfoIconKeyMap() {
 }
 
 export class InfoIconPlugin extends Plugin {
-  constructor() {
+  constructor(options: InfoIconPluginOptions = {}) {
+    setConfiguredInfoIcons(options);
     super({
       key: new PluginKey('InfoIconPlugin'),
       props: {
@@ -57,26 +59,19 @@ export class InfoIconPlugin extends Plugin {
     );
   }
 
-  initButtonCommands(theme: string): unknown {
-
-      let image = null;
-      if ('light' == theme) {
-        image = LightThemeIcon;
-      } else {
-        image = DarkThemeIcon;
-      }
-
-      return {
-        [`[${image}] Add Info Icon`]: INFO_ICON_CMD,
-      };
-    }
+  initButtonCommands(theme?: string): unknown {
+    const image = theme === 'light' ? LightThemeIcon : DarkThemeIcon;
+    return {
+      [`[${image}] Add Info Icon`]: INFO_ICON_CMD,
+    };
+  }
 
 public static createInfoIcon(
   state: EditorState,
   dispatch: (tr: Transform) => void,
   view: EditorView
-): Transform | boolean {
-  return INFO_ICON_CMD.execute(state, dispatch, view);
+): boolean {
+  return !!INFO_ICON_CMD.execute(state, dispatch, view);
 }
 }
 

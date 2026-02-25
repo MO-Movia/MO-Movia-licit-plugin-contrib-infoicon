@@ -7,18 +7,19 @@ import {addListNodes} from 'prosemirror-schema-list';
 import {SearchInfoIcon} from './searchInfoIcon';
 import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import {plugins} from './plugins';
-import {FaIcons, FONTAWESOMEICONS} from './ui/FaIcon';
+import {FaIcons} from './ui/FaIcon';
 import {SELECTEDINFOICON} from './constants';
-import { UICommand } from '@modusoperandi/licit-doc-attrs-step';
+import {getConfiguredInfoIcons} from './iconConfig';
+import {getCanonicalIconIdentity, getIconRenderData} from './iconRender';
 
 type InfoDialogProps = {
-  infoIcon: {name; unicode};
+  infoIcon: FaIcons | null | string;
   description: string;
   editorView: EditorView;
   mode: number;
   from: number;
   to: number;
-  faIcons;
+  faIcons?;
   selectedIconName: string;
   isOpen: boolean;
   isEditorEmpty: boolean;
@@ -35,16 +36,16 @@ export class InfoIconDialog extends React.PureComponent<
   constructor(props: InfoDialogProps) {
     super(props);
     this.state = {
+      ...props,
       editorView: props.editorView,
       from: props.from,
       to: props.to,
       infoIcon: props.infoIcon || null,
-      faIcons: (this.getCacheIcons().length > 0 ? this.getCacheIcons() : props.faIcons),
+      faIcons: this.getCacheIcons(),
       isOpen: props.isOpen || false,
       isButtonEnabled: props.isButtonEnabled || false,
       isEditorEmpty: props.isEditorEmpty || false,
       selectedIconName: props.selectedIconName,
-      ...props,
     };
   }
 
@@ -97,21 +98,30 @@ export class InfoIconDialog extends React.PureComponent<
             <span>
               {this.state.infoIcon ? (
                 <span>
-                  Current Selection (<span className={this.state.infoIcon?.name}></span>)
+                  Current Selection ({this.renderIcon(this.state.infoIcon, 'molinfo-current-selection')})
                 </span>
               ) : (
                 <span>Select Icon</span>
               )}
             </span>
           </div>
-          <div className={'molinfo-icon-container ' + UICommand.theme}>
+          <div className="molinfo-icon-container">
             <div className="molinfo-icon-list">
               {this.state.faIcons.map((icon, index) => {
+                const iconData = getIconRenderData(icon);
+                const className = [
+                  iconData.className,
+                  this.getIconIdentity(this.state.infoIcon) === this.getIconIdentity(icon)
+                    ? 'molinfo-icon-active'
+                    : '',
+                ]
+                  .filter(Boolean)
+                  .join(' ');
                 if (index < 10)
                   return (
-                    <div className="molinfo-icon-list-div"  key={icon.id}>
+                    <div className="molinfo-icon-list-div"  key={icon.id || `${icon.name}-${index}`}>
                       <i
-                        className={icon.name}
+                        className={className}
                         id={`infoIcon ${index}`}
                         onClick={() => this.selectInfoIcon(icon)}
                         onKeyDown={(e) => {
@@ -120,8 +130,11 @@ export class InfoIconDialog extends React.PureComponent<
                           }
                         }}
                         role='menu'
+                        style={iconData.fontFamily ? {fontFamily: iconData.fontFamily} : undefined}
                         tabIndex={0}
-                      ></i>
+                      >
+                        {iconData.glyph}
+                      </i>
                     </div>
                   );
                 else return null;
@@ -129,7 +142,6 @@ export class InfoIconDialog extends React.PureComponent<
             </div>
             <div className="molinfo-dot-container">
               <i
-                className="fa fa-ellipsis-v"
                 onClick={() => this.setVisible(!this.state.isOpen)}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' || e.key === ' ') {
@@ -138,7 +150,7 @@ export class InfoIconDialog extends React.PureComponent<
                 }}
                 role='menu'
                 tabIndex={0}
-              ></i>
+              >&#8942;</i>
               {this.state.isOpen && (
                 <div className="icon-control-cont">
                   <button onClick={this._onAdd.bind(this)}>Add</button>
@@ -155,7 +167,7 @@ export class InfoIconDialog extends React.PureComponent<
           <div className="molinfo-display-t">
             <span>Display Text</span>
           </div>
-          <div className={'molinfo-editor-container ' + UICommand.theme} id="editor"></div>
+          <div className="molinfo-editor-container" id="editor"></div>
           <div hidden id="content"></div>
           <div className="molinfo-insert-container">
             <button
@@ -170,12 +182,47 @@ export class InfoIconDialog extends React.PureComponent<
       </div>
     );
   }
+
+  renderIcon(icon: FaIcons | null | string, className = ''): React.ReactNode {
+    if (!icon || typeof icon === 'string') {
+      return null;
+    }
+    const iconData = getIconRenderData(icon);
+    const cssClass = [iconData.className, className].filter(Boolean).join(' ');
+    return (
+      <i
+        className={cssClass}
+        style={iconData.fontFamily ? {fontFamily: iconData.fontFamily} : undefined}
+      >
+        {iconData.glyph}
+      </i>
+    );
+  }
+
+  getIconIdentity(icon: FaIcons | null | string): string {
+    return getCanonicalIconIdentity(icon);
+  }
+
+  getIconName(icon: FaIcons | null | string): string {
+    if (!icon || typeof icon === 'string') {
+      return '';
+    }
+    return icon.name || '';
+  }
+
+  getAvailableIcons(): FaIcons[] {
+    if (Array.isArray(this.props.faIcons) && this.props.faIcons.length > 0) {
+      return this.props.faIcons;
+    }
+    return getConfiguredInfoIcons();
+  }
+
   _cancel = (): void => {
     this.props.close();
   };
 
   selectInfoIcon = (clickedIcon): void => {
-    if (clickedIcon.unicode === this.state.infoIcon?.unicode) {
+    if (this.getIconIdentity(clickedIcon) === this.getIconIdentity(this.state.infoIcon)) {
       this.setState({infoIcon: null}, () => {
         this.validateInsert();
       });
@@ -201,7 +248,7 @@ export class InfoIconDialog extends React.PureComponent<
       const desc = div.innerHTML;
       if (
         this.state.infoIcon &&
-        (this.state.selectedIconName !== this.state.infoIcon.name ||
+        (this.state.selectedIconName !== this.getIconName(this.state.infoIcon) ||
           desc !== this.state.description)
       ) {
         this.setState({isButtonEnabled: true});
@@ -217,7 +264,10 @@ export class InfoIconDialog extends React.PureComponent<
 
   _onAdd(_event: React.SyntheticEvent): void {
     this.disableInfoWIndow(false);
-    this._popUp = createPopUp(SearchInfoIcon, null, {
+    this._popUp = createPopUp(SearchInfoIcon, {
+      icons: this.getAvailableIcons(),
+      selectedIcon: typeof this.state.infoIcon === 'object' ? this.state.infoIcon : {name: '', selected: false, unicode: ''},
+    }, {
       autoDismiss: false,
       onClose: (val) => {
         if (this._popUp) {
@@ -236,11 +286,11 @@ export class InfoIconDialog extends React.PureComponent<
   }
 
   _onRemove() {
-    const iconName = this.state.infoIcon?.unicode;
     const lcList = localStorage.getItem(SELECTEDINFOICON);
-    const lcListItem = JSON.parse(lcList);
+    const lcListItem = lcList ? JSON.parse(lcList) : [];
+    const iconIdentity = this.getIconIdentity(this.state.infoIcon);
     lcListItem.forEach((element, i) => {
-      if (element.unicode === iconName) {
+      if (this.getIconIdentity(element) === iconIdentity) {
         lcListItem.splice(i, 1);
         localStorage.setItem(SELECTEDINFOICON, JSON.stringify(lcListItem));
         this.setState({faIcons: this.getCacheIcons(), infoIcon: null});
@@ -261,12 +311,25 @@ export class InfoIconDialog extends React.PureComponent<
 
   getCacheIcons(): FaIcons[] {
     const ccList = localStorage.getItem(SELECTEDINFOICON);
+    const availableIcons = this.getAvailableIcons();
+    const defaultIcons = availableIcons.slice(0, 10);
     if (ccList) {
-      return JSON.parse(ccList);
+      const cachedIconsRaw = JSON.parse(ccList);
+      const cachedIcons: FaIcons[] = Array.isArray(cachedIconsRaw) ? cachedIconsRaw : [];
+      const availableIconSet = new Set(
+        availableIcons.map((icon) => this.getIconIdentity(icon))
+      );
+      const isCompatible = cachedIcons.every((icon) =>
+        availableIconSet.has(this.getIconIdentity(icon))
+      );
+      if (isCompatible) {
+        return cachedIcons;
+      }
+      localStorage.setItem(SELECTEDINFOICON, JSON.stringify(defaultIcons));
+      return defaultIcons;
     } else {
-      const fq = FONTAWESOMEICONS.slice(0, 10);
-      localStorage.setItem(SELECTEDINFOICON, JSON.stringify(fq));
-      return fq;
+      localStorage.setItem(SELECTEDINFOICON, JSON.stringify(defaultIcons));
+      return defaultIcons;
     }
   }
 

@@ -7,6 +7,7 @@ import { schema, builders } from 'prosemirror-test-builder';
 import { InfoIconPlugin } from './index';
 import {EditorView} from 'prosemirror-view';
 import { SyntheticEvent } from 'react';
+import {SELECTEDINFOICON} from './constants';
 
 const infoIconProps = {
     infoIcon: { name: 'fa-facebook', unicode: '#12fc3' },
@@ -74,9 +75,28 @@ describe('InfoIconDialog ', () => {
 
     it('should set the infoIcon state to null when the same icon is clicked', () => {
         const instance = new InfoIconDialog({...infoIconProps}) as InfoIconDialog;
-        const clickedIcon = { unicode: instance.state.infoIcon?.unicode };
+        type DialogState = typeof instance.state;
+        type DialogProps = typeof instance.props;
+        const setStateMock = (
+            update:
+                | Partial<DialogState>
+                | ((prevState: DialogState, props: DialogProps) => Partial<DialogState>),
+            callback?: () => void
+        ) => {
+            const nextState =
+                typeof update === 'function' ? update(instance.state, instance.props) : update;
+            instance.state = { ...instance.state, ...nextState };
+            if (callback) {
+                callback();
+            }
+        };
+        (instance as unknown as { setState: typeof setStateMock }).setState = setStateMock;
+        const selectedIcon = typeof instance.state.infoIcon === 'object' && instance.state.infoIcon
+            ? instance.state.infoIcon
+            : { name: '', unicode: '' };
+        const clickedIcon = { name: selectedIcon.name, unicode: selectedIcon.unicode };
         instance.selectInfoIcon(clickedIcon);
-        expect(instance.state.infoIcon.unicode).toBe('#12fc3');
+        expect(instance.state.infoIcon).toBeNull();
     });
 
     it('should toggle the isOpen state when togglePopover is called', () => {
@@ -127,6 +147,43 @@ describe('InfoIconDialog ', () => {
         instance._onAdd({} as unknown as SyntheticEvent<Element, Event>);
         instance._onRemove();
         expect(instance).toBeDefined();
+    });
+
+    it('should remove cached material icon even when current icon is a plain string', () => {
+        const cachedIcons = [
+            {name: 'material-icons', glyph: 'warning', fontFamily: 'Material Icons'},
+            {name: 'fa fa-info-circle', unicode: '&#xf05a;'},
+        ];
+        localStorage.setItem(SELECTEDINFOICON, JSON.stringify(cachedIcons));
+
+        const materialInfoIconProps = {
+            ...infoIconProps,
+            infoIcon: 'warning',
+            faIcons: cachedIcons,
+        };
+
+        const instance = new InfoIconDialog({...materialInfoIconProps}) as InfoIconDialog;
+        type DialogState = typeof instance.state;
+        type DialogProps = typeof instance.props;
+        const setStateMock = (
+            update:
+                | Partial<DialogState>
+                | ((prevState: DialogState, props: DialogProps) => Partial<DialogState>),
+            callback?: () => void
+        ) => {
+            const nextState =
+                typeof update === 'function' ? update(instance.state, instance.props) : update;
+            instance.state = {...instance.state, ...nextState};
+            if (callback) {
+                callback();
+            }
+        };
+        (instance as unknown as {setState: typeof setStateMock}).setState = setStateMock;
+
+        instance._onRemove();
+
+        const updatedCache = JSON.parse(localStorage.getItem(SELECTEDINFOICON) || '[]');
+        expect(updatedCache).toEqual([{name: 'fa fa-info-circle', unicode: '&#xf05a;'}]);
     });
 
     it('should call insertButtonEnble and content is undefined', () => {

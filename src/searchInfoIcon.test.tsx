@@ -1,5 +1,6 @@
 import { SearchInfoIcon } from './searchInfoIcon';
 import { SELECTEDINFOICON } from './constants';
+import * as React from 'react';
 
 describe('should render the SearchInfoIcon component', () => {
     const subMenuProps = {
@@ -128,6 +129,50 @@ describe('should render the SearchInfoIcon component', () => {
         // Call the method with the test input
         wrapper.selectInfoIcon(newIcon);
       });
+
+    it('should render font awesome and material icons together', () => {
+        const mixedIconProps = {
+            icons: [
+                { id: 'fa-1', name: 'fa fa-info-circle', unicode: '&#xf05a;', selected: false },
+                { id: 'mi-1', name: 'material-icons', glyph: 'info', selected: false },
+            ],
+            selectedIcon: {
+                name: '',
+                unicode: '',
+                selected: false
+            },
+            close: () => {
+                return null;
+            },
+        };
+
+        const wrapper = new SearchInfoIcon(mixedIconProps) as SearchInfoIcon;
+        const root = wrapper.render();
+        const iconNodes: Array<React.ReactElement<{className?: string; children?: React.ReactNode}>> = [];
+        const visit = (node: React.ReactNode): void => {
+            if (!node) {
+                return;
+            }
+            if (Array.isArray(node)) {
+                node.forEach(visit);
+                return;
+            }
+            if (React.isValidElement(node)) {
+                if (node.type === 'i') {
+                    iconNodes.push(node as React.ReactElement<{className?: string; children?: React.ReactNode}>);
+                }
+                visit(node.props.children);
+            }
+        };
+
+        visit(root);
+        const faIcon = iconNodes.find((n) => n.props.className?.includes('fa fa-info-circle'));
+        const materialIcon = iconNodes.find((n) => n.props.className?.includes('material-icons'));
+
+        expect(faIcon).toBeDefined();
+        expect(materialIcon).toBeDefined();
+        expect(materialIcon.props.children).toBe('info');
+    });
 
 
 });

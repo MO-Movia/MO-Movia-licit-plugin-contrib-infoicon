@@ -12,6 +12,8 @@ import {INFO_ICON} from './constants';
 import {InfoIconDialog} from './infoIconDialog';
 import {findParentNodeOfTypeClosestToPos} from 'prosemirror-utils';
 import {sanitizeURL} from './plugins/menu/sanitizeURL';
+import {getConfiguredInfoIcons} from './iconConfig';
+import {getIconRenderData} from './iconRender';
 
 export type CBFn = () => void;
 
@@ -71,14 +73,17 @@ export class InfoIconView {
   }
 
   hideSourceText(_e: MouseEvent): void {
-    const target = _e.relatedTarget as HTMLInputElement;
+    const target = _e.relatedTarget as HTMLElement;
+    const className = typeof target?.className === 'string' ? target.className : '';
     const close = !(
       target?.className == 'infoicon' ||
       target?.className == 'ProseMirror molcit-infoicon-tooltip-content' ||
       (target?.className == '' &&
         target?.offsetParent?.className ==
           'ProseMirror molcit-infoicon-tooltip-content') ||
-      target?.className == 'fa'
+      !!target?.closest?.('.infoicon') ||
+      className.includes('fa') ||
+      className.includes('material')
     );
     if (close) {
       this.close();
@@ -90,8 +95,11 @@ export class InfoIconView {
       return;
     }
     this.destroyPopup();
-    const target = e?.target as HTMLInputElement;
-    if (target?.className !== 'fa') return;
+    const target = e?.target as HTMLElement;
+    const isIconClick = !!target?.closest?.('.infoicon');
+    if (!isIconClick) {
+      return;
+    }
 
     let anchorEl = this.dom;
     if (e?.currentTarget) {
@@ -222,6 +230,7 @@ export class InfoIconView {
       editorView: editorView,
       from: this.node.attrs.from,
       to: this.node.attrs.to,
+      faIcons: getConfiguredInfoIcons(),
     };
   }
 
@@ -282,15 +291,25 @@ export class InfoIconView {
 
   showInfoIcon() {
     if (this.node.attrs.infoIcon) {
+      const icon = this.node.attrs.infoIcon;
+      const iconData = getIconRenderData(icon);
       const iconSuperScript = this.dom.appendChild(
         document.createElement('sup')
       );
       const iconSpan = iconSuperScript.appendChild(
         document.createElement('span')
       );
-      iconSpan.innerHTML = this.node.attrs.infoIcon?.unicode;
-      iconSpan.className = 'fa';
-      iconSpan.style.fontFamily = 'FontAwesome';
+      if (iconData.className) {
+        iconSpan.className = iconData.className;
+      }
+      if (iconData.fontFamily) {
+        iconSpan.style.fontFamily = iconData.fontFamily;
+      }
+      if (iconData.glyph) {
+        iconSpan.textContent = iconData.glyph;
+      } else if (!icon?.name && icon?.unicode) {
+        iconSpan.innerHTML = icon.unicode;
+      }
     }
   }
 
