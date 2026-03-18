@@ -156,6 +156,31 @@ const mockSchema = new Schema({
         },
     } as unknown as EditorState);
 
+    const buildSelectionStateWithInlineNodes = (offset: number, to = 10) => ({
+        selection: {
+            empty: true,
+            to,
+            $from: {
+                parentOffset: offset,
+                parent: {
+                    content: { size: 12 },
+                    forEach: (cb) => {
+                        const children = [
+                            { isText: true, text: 'hello', nodeSize: 5 },
+                            { isText: false, nodeSize: 2 },
+                            { isText: true, text: 'world', nodeSize: 5 },
+                        ];
+                        let pos = 0;
+                        children.forEach((child, index) => {
+                            cb(child, pos, index);
+                            pos += child.nodeSize;
+                        });
+                    },
+                },
+            },
+        },
+    } as unknown as EditorState);
+
     it('should move insert position to the end when cursor is at word start', () => {
         const state = buildSelectionState('hello world', 0, 10);
         expect(infoCommand.getWordSafeInsertPos(state)).toBe(15);
@@ -189,5 +214,10 @@ const mockSchema = new Schema({
     it('should move insert position after repeated sentence-ending punctuation', () => {
         const state = buildSelectionState('hello...', 1, 10);
         expect(infoCommand.getWordSafeInsertPos(state)).toBe(17);
+    });
+
+    it('should handle inline non-text nodes when calculating word end', () => {
+        const state = buildSelectionStateWithInlineNodes(9, 20);
+        expect(infoCommand.getWordSafeInsertPos(state)).toBe(23);
     });
 });

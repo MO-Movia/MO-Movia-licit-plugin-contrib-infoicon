@@ -7,7 +7,7 @@ import {InfoIconDialog} from './infoIconDialog';
 import {createPopUp} from '@modusoperandi/licit-ui-commands';
 import type {PopUpHandle} from '@modusoperandi/licit-ui-commands';
 import {getNode} from './constants';
-import {DOMSerializer, Fragment} from 'prosemirror-model';
+import {DOMSerializer, Fragment, Node as PMNode} from 'prosemirror-model';
 
 export class InfoIconCommand extends UICommand {
   _popUp: PopUpHandle | null = null;
@@ -115,8 +115,8 @@ export class InfoIconCommand extends UICommand {
       return selection.to;
     }
 
-    // Preserve inline node offsets by representing leaf nodes as a single character.
-    const parentText = parent.textBetween(0, parent.content.size, '', ' ');
+    // Preserve inline node offsets by representing non-text inline nodes as placeholders.
+    const parentText = this.getParentTextWithOffsets(parent);
     if (!parentText || offset >= parentText.length) {
       return selection.to;
     }
@@ -180,6 +180,35 @@ export class InfoIconCommand extends UICommand {
 
   isSentenceEndingCharacter(char: string): boolean {
     return char === '.' || char === '!' || char === '?';
+  }
+
+  getParentTextWithOffsets(parent: PMNode): string {
+    if (!parent) {
+      return '';
+    }
+    const parentWithForEach = parent as PMNode & {
+      forEach?: (f: (node: PMNode, offset: number, index: number) => void) => void;
+      textBetween?: (...args: unknown[]) => string;
+      content?: {size: number};
+    };
+    if (typeof parentWithForEach.forEach !== 'function') {
+      return parentWithForEach.textBetween
+        ? parentWithForEach.textBetween(0, parentWithForEach.content?.size ?? 0, '', ' ')
+        : '';
+    }
+
+    const parts: string[] = [];
+    parentWithForEach.forEach((child) => {
+      if (child.isText) {
+        parts.push(child.text || '');
+        return;
+      }
+      const size = child.nodeSize || 0;
+      if (size > 0) {
+        parts.push(' '.repeat(size));
+      }
+    });
+    return parts.join('');
   }
 
   cancel(): void {

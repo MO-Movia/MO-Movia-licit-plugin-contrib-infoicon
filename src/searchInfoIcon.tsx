@@ -33,6 +33,7 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
   }
 
   render(): React.ReactNode {
+    const selectedIdentity = this.getIconIdentity(this.state.selectedIcon);
     return (
 
       <div
@@ -53,9 +54,10 @@ export class SearchInfoIcon extends React.PureComponent<SearchInfoProps, SearchI
           <div className='icons' style={{height: '16rem', overflowY: 'scroll', width: '255px'}}>
             {this.state.icons.map((icon, index) => {
                 const iconData = getIconRenderData(icon);
+                const isSelected = !!selectedIdentity && selectedIdentity === this.getIconIdentity(icon);
                 const className = [
                   iconData.className,
-                  this.state.selectedIcon?.name === icon.name ? 'molinfo-icon-active' : '',
+                  isSelected ? 'molinfo-icon-active' : '',
                 ]
                   .filter(Boolean)
                   .join(' ');
