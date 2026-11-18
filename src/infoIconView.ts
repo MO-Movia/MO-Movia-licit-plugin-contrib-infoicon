@@ -31,6 +31,14 @@ export class InfoIconView {
   dom: globalThis.Node = null;
   offsetLeft: Element;
   nodePosition = 0;
+  // Bound handler references kept stable so removeEventListener can
+  // actually unregister them (a fresh `.bind(this)` never matches).
+  private readonly _boundShowSourceText = (e: Event): void =>
+    this.showSourceText(e as MouseEvent);
+  private readonly _boundHideSourceText = (e: Event): void =>
+    this.hideSourceText(e as MouseEvent);
+  private readonly _boundSelectNode = (e: Event): void =>
+    this.selectNode(e as MouseEvent);
   constructor(node: Node, view: EditorView, getPos: CBFn) {
     // We'll need these later
     this.node = node;
@@ -59,15 +67,16 @@ export class InfoIconView {
   }
 
   addEventListenerToView(): void {
-    this.dom.addEventListener('mouseover', this.showSourceText.bind(this));
-    this.dom.addEventListener('mouseout', this.hideSourceText.bind(this));
-    this.dom.addEventListener('keypress', this.hideSourceText.bind(this));
-    this.dom.addEventListener('click', this.selectNode.bind(this));
+    this.dom.addEventListener('mouseover', this._boundShowSourceText);
+    this.dom.addEventListener('mouseout', this._boundHideSourceText);
+    this.dom.addEventListener('keypress', this._boundHideSourceText);
+    this.dom.addEventListener('click', this._boundSelectNode);
   }
   removeEventListenerToView(): void {
-    this.dom.removeEventListener('mouseover', this.showSourceText.bind(this));
-    this.dom.removeEventListener('mouseout', this.hideSourceText.bind(this));
-    this.dom.removeEventListener('click', this.selectNode.bind(this));
+    this.dom.removeEventListener('mouseover', this._boundShowSourceText);
+    this.dom.removeEventListener('mouseout', this._boundHideSourceText);
+    this.dom.removeEventListener('keypress', this._boundHideSourceText);
+    this.dom.removeEventListener('click', this._boundSelectNode);
   }
 
   hideSourceText(_e: MouseEvent): void {
